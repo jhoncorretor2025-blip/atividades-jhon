@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V1.8">
-<title>Atividades do Jhon · Delta | V1.8</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=1.8">
+<meta name="delta-version" content="V1.9">
+<title>Atividades do Jhon · Delta | V1.9</title>
+<link rel="stylesheet" href="./assets/css/app.css?v=1.9">
 </head>
 <body>
-<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V1.8">V1.8</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V1.9">V1.9</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="stats" aria-label="Resumo das atividades">
@@ -18,7 +18,10 @@
  <div class="stat"><div class="label">Pendentes de atenção</div><div class="num" id="pendingCount">0</div><div class="sub">Itens em destaque</div></div>
  <div class="stat"><div class="label">Progresso diário</div><div class="num" id="progressText">0%</div><div class="progress-wrap"><div class="progress" id="progressBar"></div></div></div>
 </section>
-<div class="data-actions" aria-label="Backup e ajuda"><button class="toolbar-action" id="backupBtn" type="button">⬇ Backup JSON</button><button class="toolbar-action" id="importBtn" type="button">⬆ Restaurar backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden><button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda e privacidade</button><button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button></div>\n<div class="toolbar">
+<div class="data-actions" aria-label="Backup e ajuda"><button class="toolbar-action" id="backupBtn" type="button">⬇ Backup JSON</button><button class="toolbar-action" id="importBtn" type="button">⬆ Restaurar backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden><button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda e privacidade</button><button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button></div>
+<section id="modeChooser" class="mode-chooser" aria-labelledby="modeTitle"><div class="mode-heading"><h3 id="modeTitle">Por onde vamos começar?</h3><p>Escolha uma área para ver somente as atividades correspondentes.</p></div><div class="mode-cards"><button class="mode-card work-mode" id="chooseWork" type="button"><span class="mode-icon">💼</span><span class="mode-card-title">Atividades de trabalho</span><span class="mode-card-desc">Delta Imóveis, atendimento, anúncios, locações e tarefas administrativas.</span><span class="mode-card-cta">Abrir atividades de trabalho →</span></button><button class="mode-card personal-mode" id="choosePersonal" type="button"><span class="mode-icon">🌱</span><span class="mode-card-title">Vida pessoal</span><span class="mode-card-desc">Estudos, projetos de IA, saúde, academia, redes sociais e lazer.</span><span class="mode-card-cta">Abrir vida pessoal →</span></button></div></section>
+<div id="activityWorkspace" hidden><div class="workspace-top"><div><span class="workspace-eyebrow" id="workspaceEyebrow">MINHAS ATIVIDADES</span><h3 id="workspaceTitle">Atividades</h3></div><button class="toolbar-action" id="changeModeBtn" type="button">↩ Trocar área</button></div>
+<div class="toolbar">
  <div class="search"><input type="search" id="searchInput" placeholder="🔎 Buscar uma atividade..." aria-label="Buscar atividades"></div>
  <select id="periodFilter" aria-label="Filtrar frequência"><option value="all">Todas as frequências</option><option value="Diário">Diárias</option><option value="Semanal">Semanais</option><option value="Mensal">Mensais</option><option value="Noturno">Noturnas</option></select>
  <select id="areaFilter" aria-label="Filtrar área"><option value="all">Todas as áreas</option><option value="ADM">Administrativo</option><option value="Comercial">Comercial</option><option value="Ambos">ADM e Comercial</option><option value="Estudos">Estudos</option><option value="Trabalho pessoal">Trabalho pessoal</option><option value="IA e DroidManiacos">IA e DroidManiacos</option><option value="Favoritos pessoais">Favoritos pessoais</option><option value="Redes sociais">Redes sociais</option><option value="Lazer">Lazer</option><option value="Atividades secundárias">Atividades secundárias</option><option value="Outros">Outros</option><option value="Saúde">Saúde</option></select>
@@ -28,11 +31,12 @@
   <button class="toolbar-action" id="clearFiltersBtn" type="button">Limpar filtros</button>
  </div>
 </div>
-<div class="section-head"><h3>📋 Sua lista de trabalho</h3><span class="count" id="resultCount">0 atividades</span></div>
+<div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V1.8 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V1.9 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="./assets/js/app.js?v=1.8" defer></script>
+</div>
+<script src="./assets/js/app.js?v=1.9" defer></script>
 </body>
 </html>
