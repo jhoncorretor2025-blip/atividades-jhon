@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f1f5f9">
-<title>Atividades do Jhon · Delta</title>
+<meta name="theme-color" content="#2563eb">
+<meta name="delta-version" content="V1.1">
+<title>Atividades do Jhon · Delta | V1.1</title>
 <style>
 :root{--bg:#f1f5f9;--card:#fff;--ink:#202d43;--muted:#7c8da8;--blue:#2563eb;--line:#e8edf4;--green:#08b85a;--amber:#f5b51b;--red:#ff3548;--shadow:0 2px 4px #1725540c}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}button,input,select{font:inherit}
@@ -19,10 +20,60 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
 .toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,20px);background:#202b3e;color:#fff;padding:12px 17px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;z-index:20;font-weight:700;font-size:13px}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.task{padding:18px;grid-template-columns:46px minmax(0,1fr) 27px;gap:12px;border-radius:20px}.task.urgent,.task.critical{padding:16px}.task-icon{width:46px;height:46px;font-size:20px}.task-title{font-size:16px}.intro h2{font-size:21px}header{position:static}.date-label{width:100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* V1.1 — cinco melhorias de UX/UI sem alterar os dados das atividades */
+/* 1. Hierarquia visual e leitura */
+:root{--shadow:0 5px 18px rgba(23,37,84,.055)}
+.intro h2{font-size:clamp(22px,2.5vw,28px)}
+.intro p{max-width:680px;line-height:1.65}
+.stat{transition:border-color .16s,box-shadow .16s}
+.stat:focus-within{border-color:#b9ccff}
+/* 2. Celular: ações flexíveis, campos sem overflow e alvos de toque confortáveis */
+.head-actions .btn{min-height:44px}
+.toolbar .btn{min-height:44px}
+.toolbar select{min-height:44px}
+@media(max-width:760px){
+  header{padding:14px 14px}
+  .head{align-items:flex-start}
+  .head-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .head-actions .btn{width:100%;padding:10px 8px;font-size:13px}
+  main{padding-top:18px}
+  .toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .toolbar .search{grid-column:1/-1;min-width:0}
+  .toolbar select{width:100%;min-width:0;font-size:13px;padding:11px 9px}
+  .toolbar .toolbar-action{width:100%;font-size:12px;padding:10px 7px}
+  .stats{gap:8px}
+  .stat{padding:13px}
+  .stat .num{font-size:24px}
+  .task{min-width:0}
+}
+@media(max-width:380px){
+  .brand{align-items:flex-start}
+  .brand h1{font-size:20px}
+  .head-actions{grid-template-columns:1fr}
+  .toolbar{grid-template-columns:1fr}
+  .toolbar .search{grid-column:auto}
+}
+/* 3. Navegação e feedback dos elementos interativos */
+.btn,.check,.toolbar select{touch-action:manipulation}
+.btn:focus-visible,.check:focus-visible,.toolbar select:focus-visible,.search input:focus-visible{
+  outline:3px solid #2563eb55;outline-offset:2px
+}
+@media(hover:hover){.task:not(.done):hover{border-color:#c7d7f5;box-shadow:0 8px 24px rgba(23,37,84,.09)}}
+/* 4. Ação rápida sobre as tarefas que estão visíveis após os filtros */
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;width:100%}
+.toolbar-action{border:1px solid #dbe4f0;background:#fff;color:#26364f;border-radius:11px;padding:10px 13px;font-weight:800;cursor:pointer}
+.toolbar-action.primary{background:#eaf1ff;border-color:#c8d8ff;color:#1d4ed8}
+.toolbar-action:disabled{opacity:.45;cursor:not-allowed}
+@media(min-width:761px){.toolbar-actions{width:auto;margin-left:auto}}
+/* 5. Acessibilidade e movimento */
+.task:focus-within{outline:2px solid #2563eb30;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.stat,.task,.btn{transition:none!important;transform:none!important}}
+.version-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 8px;border-radius:999px;background:#eaf1ff;color:#1d4ed8;border:1px solid #c8d8ff;font-size:10px;font-weight:900;vertical-align:middle}
 </style>
 </head>
 <body>
-<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades</h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button></div></div></header>
+<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V1.1">V1.1</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Atividades de trabalho</h2><p>Organize as tarefas da imobiliária, acompanhe as pendências e marque o que já foi feito.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="stats" aria-label="Resumo das atividades">
@@ -36,11 +87,15 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
  <select id="periodFilter" aria-label="Filtrar frequência"><option value="all">Todas as frequências</option><option value="Diário">Diárias</option><option value="Semanal">Semanais</option></select>
  <select id="areaFilter" aria-label="Filtrar área"><option value="all">Todas as áreas</option><option value="ADM">Administrativo</option><option value="Comercial">Comercial</option><option value="Ambos">ADM e Comercial</option></select>
  <select id="statusFilter" aria-label="Filtrar situação"><option value="all">Todas as situações</option><option value="pending">Pendentes</option><option value="done">Concluídas</option><option value="attention">Atenção</option></select>
+ <div class="toolbar-actions">
+  <button class="toolbar-action primary" id="completeVisibleBtn" type="button">✓ Concluir visíveis</button>
+  <button class="toolbar-action" id="clearFiltersBtn" type="button">Limpar filtros</button>
+ </div>
 </div>
 <div class="section-head"><h3>📋 Sua lista de trabalho</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>v1.0 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V1.1 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 const tasks = [
@@ -127,6 +182,20 @@ function render(){
 }
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
+$("completeVisibleBtn").addEventListener("click",()=>{
+ const visible=filtered().filter(t=>!done.has(t.id));
+ if(!visible.length){showToast("Não há atividades pendentes visíveis.");return}
+ visible.forEach(t=>done.add(t.id));
+ saveDone();render();
+ showToast(visible.length+" atividade(s) concluída(s). ✅");
+});
+$("clearFiltersBtn").addEventListener("click",()=>{
+ $("searchInput").value="";
+ $("periodFilter").value="all";
+ $("areaFilter").value="all";
+ $("statusFilter").value="all";
+ render();showToast("Filtros limpos.");
+});
 $("searchInput").addEventListener("input",render);
 ["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
 $("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje?"))return;done.clear();saveDone();render();showToast("Atividades do dia reiniciadas.")});
