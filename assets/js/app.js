@@ -28,6 +28,29 @@ const tasks = [
 {id:"imoveis-antigos",title:"Verificar imóveis antigos se ainda estão disponíveis",icon:"⌂",area:"Ambos",period:"Semanal",priority:"Normal",desc:"Revisar disponibilidade da carteira de imóveis antigos (ação administrativa e comercial)."},
 {id:"fotos-vilson",title:"Verificar fotos que o Vilson cadastrou se tem algum imóvel não cadastrado",icon:"▧",area:"ADM",period:"Diário",priority:"Normal",desc:"Auditar a pasta/acervo de fotos do Vilson para identificar e cadastrar novos imóveis pendentes."},
 {id:"etiquetas-whatsapp",title:"Verificar etiquetas do WhatsApp",icon:"◇",area:"Comercial",period:"Diário",priority:"Normal",desc:"Revisar contatos e leads categorizados por etiquetas coloridas para garantir que nenhum cliente fique sem retorno."}
+,{id:"estudar-20-min",title:"Estudar 20 minutos — novidades de jogos e IA",icon:"🧠",area:"Estudos",period:"Diário",priority:"Crítica",critical:true,desc:"Reservar 20 minutos para ver o chat de atualização de jogos e novidades de inteligência artificial."}
+,{id:"criar-peca-3d",title:"Criar peça 3D",icon:"🧩",area:"Trabalho pessoal",period:"Diário",priority:"Crítica",critical:true,desc:"Avançar no projeto de criação da peça 3D."}
+,{id:"pendencia-whats",title:"Resolver pendências do WhatsApp",icon:"💬",area:"Trabalho pessoal",period:"Diário",priority:"Alta",attention:true,desc:"Revisar e resolver as pendências registradas no WhatsApp."}
+,{id:"google-tarefa",title:"Revisar Google Tarefas",icon:"☑️",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Conferir tarefas e compromissos registrados no Google Tarefas."}
+,{id:"explorar-ias",title:"Explorar novas IAs",icon:"🤖",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Projetos: sistema Biobel (perfil corretor); análise de WhatsApp (perfil corretor); sistema Delta para o canal Mente Aberto."}
+,{id:"rever-projetos-google-studio",title:"Rever projetos de IA no Google AI Studio",icon:"🛠️",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Revisar os projetos do Sistema Biobel e do sistema de leitura de WhatsApp."}
+,{id:"gravar-tiktok",title:"Gravar TikTok",icon:"🎬",area:"IA e DroidManiacos",period:"Diário",priority:"Baixa",desc:"Gravar conteúdo para o TikTok."}
+,{id:"gravar-youtube",title:"Gravar vídeo para o canal do YouTube",icon:"📹",area:"IA e DroidManiacos",period:"Diário",priority:"Baixa",desc:"Preparar e gravar conteúdo para o canal DroidManiacos."}
+,{id:"tomar-vitaminas",title:"Tomar vitaminas e suplementos",icon:"💊",area:"Favoritos pessoais",period:"Diário",priority:"Crítica",critical:true,desc:"Checklist: creatina; NAC pela manhã; colágeno. Siga os horários e as orientações profissionais que já utiliza."}
+,{id:"treino-academia",title:"Treino do dia — academia às 18h10",icon:"🏋️",area:"Favoritos pessoais",period:"Diário",priority:"Alta",attention:true,desc:"Realizar o treino planejado do dia."}
+,{id:"higiene-sono",title:"Higiene do sono e placa de bruxismo",icon:"🌙",area:"Favoritos pessoais",period:"Diário",priority:"Média",desc:"Fazer a rotina de higiene do sono e usar a placa conforme orientação recebida."}
+,{id:"organizacao-financeira",title:"Organização financeira",icon:"💰",area:"Favoritos pessoais",period:"Diário",priority:"Alta",desc:"Conferir despesas, receitas e pendências financeiras."}
+,{id:"postar-status-pessoal",title:"Postar fotos nos status",icon:"📱",area:"Redes sociais",period:"Diário",priority:"Crítica",critical:true,desc:"Publicar fotos ou atualizações nos status das redes sociais."}
+,{id:"rever-redes",title:"Rever redes sociais (@, 4 etc.)",icon:"🔔",area:"Redes sociais",period:"Diário",priority:"Média",desc:"Conferir notificações e interações nas redes sociais."}
+,{id:"videos-inscricao-youtube",title:"Ver vídeos de inscrição do YouTube",icon:"▶️",area:"Lazer",period:"Diário",priority:"Crítica",critical:true,desc:"Assistir aos vídeos de inscrição do YouTube que estão na lista."}
+,{id:"sessao-gamer",title:"Sessão gamer — Xbox (Palworld ou ARK)",icon:"🎮",area:"Lazer",period:"Diário",priority:"Média",desc:"Reservar um tempo de lazer para jogar Palworld ou ARK no Xbox."}
+,{id:"olhar-steam",title:"Olhar Steam",icon:"🎮",area:"Lazer",period:"Diário",priority:"Alta",desc:"Conferir novidades, biblioteca e atualizações na Steam."}
+,{id:"ver-shopee",title:"Ver Shopee",icon:"🛍️",area:"Atividades secundárias",period:"Diário",priority:"Alta",desc:"Conferir a Shopee e os itens de interesse."}
+,{id:"rever-gpts",title:"Rever GPTs do ChatGPT",icon:"✨",area:"Atividades secundárias",period:"Diário",priority:"Média",desc:"Revisar os GPTs salvos e possíveis melhorias."}
+,{id:"deixar-seguir-auto",title:"Revisar tarefa de deixar de seguir automaticamente",icon:"👥",area:"Atividades secundárias",period:"Diário",priority:"Baixa",desc:"Conferir a rotina de deixar de seguir contas automaticamente."}
+,{id:"manutencao-moto",title:"Manutenção da moto",icon:"🏍️",area:"Outros",period:"Semanal",priority:"Baixa",desc:"Conferir necessidades de manutenção da moto."}
+,{id:"tomar-creatina-20h",title:"Tomar creatina — 20h",icon:"💊",area:"Saúde",period:"Noturno",priority:"Alta",attention:true,desc:"Lembrete noturno conforme a rotina pessoal informada."}
+
 ];
 const $=id=>document.getElementById(id);
 const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
@@ -50,9 +73,10 @@ function tags(t){
  if(t.area==="ADM")a.push('<span class="tag admin">💼 ADM</span>');
  if(t.area==="Comercial")a.push('<span class="tag commercial">📣 COMERCIAL</span>');
  if(t.area==="Ambos")a.push('<span class="tag both">💼 📣 ADM &amp; COMERCIAL</span>');
+ if(!["ADM","Comercial","Ambos"].includes(t.area))a.push('<span class="tag category">📂 '+escapeHtml(t.area.toLocaleUpperCase("pt-BR"))+'</span>');
  return a.join("");
 }
-function iconStyle(t){if(t.critical)return "background:#fff0f1;color:#ff3045";if(t.attention)return "background:#fff5d9;color:#bf6b1e";if(t.area==="Comercial")return "background:#dcebff;color:#2475ff";const colors={"status-social":"background:#ffe3f2;color:#e92b8e","pastas-entrada-saida":"background:#fff6be;color:#ad7200","conversa-prestador":"background:#f2e2ff;color:#a52aff","avalyst":"background:#dcebff;color:#3280ff","cobranca-condominio":"background:#ffead4;color:#ff6500","chaves-mural":"background:#fff6be;color:#bd8000","emails":"background:#dcebff;color:#3585ff","planilha":"background:#e2e8f0;color:#53657b","conversas-antigas":"background:#eae6ff;color:#7356ff","etiquetas-interessados":"background:#fff2bd;color:#b47a00","imoveis-antigos":"background:#f4e6ff;color:#a52cff","fotos-vilson":"background:#d0faf1;color:#00a99b","etiquetas-whatsapp":"background:#d1fae5;color:#059669"};return colors[t.id]||"background:#e2eaff;color:#3574ff"}
+function iconStyle(t){if(t.critical)return "background:#fff0f1;color:#ff3045";if(t.attention)return "background:#fff5d9;color:#bf6b1e";if(t.area==="Comercial")return "background:#dcebff;color:#2475ff";if(!["ADM","Ambos"].includes(t.area))return "background:#e7f8ee;color:#177245";const colors={"status-social":"background:#ffe3f2;color:#e92b8e","pastas-entrada-saida":"background:#fff6be;color:#ad7200","conversa-prestador":"background:#f2e2ff;color:#a52aff","avalyst":"background:#dcebff;color:#3280ff","cobranca-condominio":"background:#ffead4;color:#ff6500","chaves-mural":"background:#fff6be;color:#bd8000","emails":"background:#dcebff;color:#3585ff","planilha":"background:#e2e8f0;color:#53657b","conversas-antigas":"background:#eae6ff;color:#7356ff","etiquetas-interessados":"background:#fff2bd;color:#b47a00","imoveis-antigos":"background:#f4e6ff;color:#a52cff","fotos-vilson":"background:#d0faf1;color:#00a99b","etiquetas-whatsapp":"background:#d1fae5;color:#059669"};return colors[t.id]||"background:#e2eaff;color:#3574ff"}
 function filtered(){
  const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value;
  return tasks.filter(t=>{
@@ -87,7 +111,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.7",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.8",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado.");
 });
@@ -127,7 +151,7 @@ $("searchInput").addEventListener("input",render);
 ["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
 $("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje?"))return;done.clear();saveDone();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
- const lines=["ATIVIDADES DE TRABALHO — JHON", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
+ const lines=["ATIVIDADES DO JHON — TRABALHO E ROTINA PESSOAL", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
  tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+(t.desc?"\n    "+t.desc:"")));
  const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="atividades-trabalho-"+localDate()+".txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Resumo exportado.");
