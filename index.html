@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V1.3">
-<title>Atividades do Jhon · Delta | V1.3</title>
+<meta name="delta-version" content="V1.4">
+<title>Atividades do Jhon · Delta | V1.4</title>
 <style>
 :root{--bg:#f1f5f9;--card:#fff;--ink:#202d43;--muted:#7c8da8;--blue:#2563eb;--line:#e8edf4;--green:#08b85a;--amber:#f5b51b;--red:#ff3548;--shadow:0 2px 4px #1725540c}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}button,input,select{font:inherit}
@@ -21,7 +21,7 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
 @media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.task{padding:18px;grid-template-columns:46px minmax(0,1fr) 27px;gap:12px;border-radius:20px}.task.urgent,.task.critical{padding:16px}.task-icon{width:46px;height:46px;font-size:20px}.task-title{font-size:16px}.intro h2{font-size:21px}header{position:static}.date-label{width:100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
-/* V1.3 — tema, backup/restauração validada e ajuda/privacidade */
+/* V1.4 — tema, backup/restauração validada e ajuda/privacidade */
 /* 1. Hierarquia visual e leitura */
 :root{--shadow:0 5px 18px rgba(23,37,84,.055)}
 .intro h2{font-size:clamp(22px,2.5vw,28px)}
@@ -70,7 +70,7 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
 .task:focus-within{outline:2px solid #2563eb30;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.stat,.task,.btn{transition:none!important;transform:none!important}}
 .version-pill{display:inline-flex;align-items:center;margin-left:9px;padding:5px 10px;border-radius:999px;background:#1d4ed8;color:#fff;border:2px solid #1d4ed8;font-size:12px;font-weight:950;letter-spacing:.04em;vertical-align:middle;box-shadow:0 2px 8px #1d4ed833}
-/* V1.3: tema escuro opcional e controles de dados */
+/* V1.4: tema escuro opcional e controles de dados */
 body[data-theme="dark"]{--bg:#0f172a;--card:#172338;--ink:#e6edf7;--muted:#a0aec3;--line:#2a3850;--shadow:0 5px 18px rgba(0,0,0,.18);background:var(--bg);color:var(--ink)}
 body[data-theme="dark"] header,body[data-theme="dark"] .date-label,body[data-theme="dark"] .stat,body[data-theme="dark"] .task,body[data-theme="dark"] .search input,body[data-theme="dark"] .toolbar select,body[data-theme="dark"] .toolbar-action,body[data-theme="dark"] .btn:not(.primary),body[data-theme="dark"] .empty{background:var(--card);color:var(--ink);border-color:var(--line)}
 body[data-theme="dark"] .task-desc,body[data-theme="dark"] .intro p{color:#a8b7cd}
@@ -82,7 +82,7 @@ body[data-theme="dark"] .version-pill{background:#2563eb;color:#fff;border-color
 </style>
 </head>
 <body>
-<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V1.3">V1.3</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V1.4">V1.4</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Atividades de trabalho</h2><p>Organize as tarefas da imobiliária, acompanhe as pendências e marque o que já foi feito.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="stats" aria-label="Resumo das atividades">
@@ -104,7 +104,7 @@ body[data-theme="dark"] .version-pill{background:#2563eb;color:#fff;border-color
 <div class="section-head"><h3>📋 Sua lista de trabalho</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V1.3 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V1.4 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 const tasks = [
@@ -191,7 +191,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.3",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.4",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado.");
 });
@@ -237,6 +237,7 @@ $("exportBtn").addEventListener("click",()=>{
  a.href=url;a.download="atividades-trabalho-"+localDate()+".txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Resumo exportado.");
 });
 $("todayLabel").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+applyPrefs();
 render();
 </script>
 </body>
