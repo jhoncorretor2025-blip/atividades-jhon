@@ -13,7 +13,7 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
 @media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.task{padding:18px;grid-template-columns:46px minmax(0,1fr) 27px;gap:12px;border-radius:20px}.task.urgent,.task.critical{padding:16px}.task-icon{width:46px;height:46px;font-size:20px}.task-title{font-size:16px}.intro h2{font-size:21px}header{position:static}.date-label{width:100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
-/* V1.9 — tema, backup/restauração validada e ajuda/privacidade */
+/* V2.0 — tema, backup/restauração validada e ajuda/privacidade */
 /* 1. Hierarquia visual e leitura */
 :root{--shadow:0 5px 18px rgba(23,37,84,.055)}
 .intro h2{font-size:clamp(22px,2.5vw,28px)}
@@ -62,7 +62,7 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
 .task:focus-within{outline:2px solid #2563eb30;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.stat,.task,.btn{transition:none!important;transform:none!important}}
 .version-pill{display:inline-flex;align-items:center;margin-left:9px;padding:5px 10px;border-radius:999px;background:#1d4ed8;color:#fff;border:2px solid #1d4ed8;font-size:12px;font-weight:950;letter-spacing:.04em;vertical-align:middle;box-shadow:0 2px 8px #1d4ed833}
-/* V1.9: tema escuro opcional e controles de dados */
+/* V2.0: tema escuro opcional e controles de dados */
 body[data-theme="dark"]{--bg:#0f172a;--card:#172338;--ink:#e6edf7;--muted:#a0aec3;--line:#2a3850;--shadow:0 5px 18px rgba(0,0,0,.18);background:var(--bg);color:var(--ink)}
 body[data-theme="dark"] header,body[data-theme="dark"] .date-label,body[data-theme="dark"] .stat,body[data-theme="dark"] .task,body[data-theme="dark"] .search input,body[data-theme="dark"] .toolbar select,body[data-theme="dark"] .toolbar-action,body[data-theme="dark"] .btn:not(.primary),body[data-theme="dark"] .empty{background:var(--card);color:var(--ink);border-color:var(--line)}
 body[data-theme="dark"] .task-desc,body[data-theme="dark"] .intro p{color:#a8b7cd}
@@ -88,3 +88,8 @@ body[data-theme="dark"] .version-pill{background:#2563eb;color:#fff;border-color
 [hidden]{display:none!important}
 body[data-theme="dark"] .mode-card{background:var(--card);color:var(--ink);border-color:var(--line)}
 @media(max-width:680px){.mode-cards{grid-template-columns:1fr;gap:14px}.mode-card{min-height:190px;padding:22px}.mode-heading h3{font-size:21px}.workspace-top h3{font-size:20px}}
+
+.mode-card-count{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#eaf1ff;color:#2059d6;font-size:12px;font-weight:800}
+.personal-mode .mode-card-count{background:#e5f8ed;color:#147647}
+body[data-theme="dark"] .mode-card-count{background:#243b64;color:#dbeafe}
+body[data-theme="dark"] .personal-mode .mode-card-count{background:#164b36;color:#bbf7d0}
