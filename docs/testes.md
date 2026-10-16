@@ -1,6 +1,6 @@
-# Testes manuais — Atividades do Jhon V2.0
+# Testes manuais — Atividades do Jhon V2.1
 
-- [ ] A página abre e mostra V2.0.
+- [ ] A página abre e mostra V2.1.
 - [ ] As 28 atividades aparecem.
 - [ ] Busca e filtros funcionam.
 - [ ] Marcar/desmarcar atividade persiste após recarregar.
@@ -15,22 +15,22 @@
 - [ ] Página publicada no GitHub Pages repete os testes.
 
 
-## Validação automatizada V2.0
+## Validação automatizada V2.1
 O workflow `.github/workflows/validar-atividades.yml` executa `node .github/scripts/validar-atividades.js` em push, pull request e manualmente. Ele confere versão, caminhos CSS/JS, IDs de controles essenciais e os 28 identificadores de atividade. Isso é uma verificação estática, não substitui os testes reais no navegador.
 
 
-## Correção emergencial V2.0
+## Correção emergencial V2.1
 Corrigidos caracteres de quebra de linha literais que interrompiam a execução do JavaScript. A validação estática confirma os trechos e a versão; ainda é necessário validar o site no navegador.
 
 
-## V2.0 — Rotina pessoal integrada
+## V2.1 — Rotina pessoal integrada
 - [ ] Confirmar as 28 atividades de trabalho existentes.
 - [ ] Confirmar a inclusão das 22 rotinas novas sem duplicar Emitir Nota Fiscal.
 - [ ] Testar filtros por categoria e frequência, incluindo tarefas noturnas.
 - [ ] Testar marcações e exportação de resumo.
 
 
-## V2.0 — Escolha inicial de área
+## V2.1 — Escolha inicial de área
 - [ ] Tela inicial mostra dois cards: Trabalho e Vida pessoal.
 - [ ] Card Trabalho filtra as tarefas administrativas e comerciais.
 - [ ] Card Vida pessoal mostra estudos, projetos pessoais, saúde e lazer.
@@ -39,7 +39,15 @@ Corrigidos caracteres de quebra de linha literais que interrompiam a execução 
 - [ ] A lista continua com 50 atividades.
 
 
-## V2.0 — Contagem de atividades
+## V2.1 — Contagem de atividades
 - [ ] Cards iniciais exibem 28 atividades de trabalho e 22 pessoais.
 - [ ] Filtro por área mostra o número de atividades por categoria.
 - [ ] Conferir que as contagens correspondem às tarefas cadastradas.
+
+
+## V2.1 — Card Geral
+- [ ] A tela inicial apresenta Geral (50), Trabalho (28) e Vida pessoal (22).
+- [ ] Geral mostra as 50 atividades juntas.
+- [ ] Trabalho mostra somente as 28 tarefas profissionais.
+- [ ] Vida pessoal mostra somente as 22 tarefas pessoais.
+- [ ] Trocar área retorna à tela inicial.
