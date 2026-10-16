@@ -8,10 +8,10 @@ const html = read('index.html');
 const js = read('assets/js/app.js');
 const css = read('assets/css/app.css');
 const checks = [
-  ['versão do HTML', /<meta name="delta-version" content="V1\.8">/.test(html)],
-  ['versão visível no cabeçalho', /aria-label="Versão atual V1\.8">V1\.8<\/span>/.test(html)],
-  ['CSS externo com cache-busting', /assets\/css\/app\.css\?v=1\.8/.test(html)],
-  ['JavaScript externo com cache-busting', /assets\/js\/app\.js\?v=1\.8/.test(html)],
+  ['versão do HTML', /<meta name="delta-version" content="V1\.9">/.test(html)],
+  ['versão visível no cabeçalho', /aria-label="Versão atual V1\.9">V1\.9<\/span>/.test(html)],
+  ['CSS externo com cache-busting', /assets\/css\/app\.css\?v=1\.9/.test(html)],
+  ['JavaScript externo com cache-busting', /assets\/js\/app\.js\?v=1\.9/.test(html)],
   ['controles essenciais da interface', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id => html.includes('id="'+id+'"'))],
   ['50 atividades declaradas', (js.match(/\{id:"/g)||[]).length === 50],
   ['salvamento local', /localStorage\.setItem\(key\(\)/.test(js)],
