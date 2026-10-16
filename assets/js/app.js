@@ -71,6 +71,7 @@ function tags(t){
  if(t.period==="Diário")a.push('<span class="tag daily">▤ DIÁRIO</span>');
  if(t.period==="Semanal")a.push('<span class="tag weekly">▤ SEMANAL</span>');
  if(t.period==="Mensal")a.push('<span class="tag weekly">▤ MENSAL</span>');
+ if(t.period==="Noturno")a.push('<span class="tag weekly">🌙 NOTURNO</span>');
  if(t.area==="ADM")a.push('<span class="tag admin">💼 ADM</span>');
  if(t.area==="Comercial")a.push('<span class="tag commercial">📣 COMERCIAL</span>');
  if(t.area==="Ambos")a.push('<span class="tag both">💼 📣 ADM &amp; COMERCIAL</span>');
@@ -115,9 +116,9 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.1",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.2",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado.");
+ a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado. Guarde o arquivo em local seguro.");
 });
 $("importBtn").addEventListener("click",()=>$("backupFile").click());
 $("backupFile").addEventListener("change",async e=>{
@@ -125,15 +126,16 @@ $("backupFile").addEventListener("change",async e=>{
  if(file.size>2*1024*1024){showToast("Arquivo muito grande (limite de 2 MB).");return}
  try{
   const data=JSON.parse(await file.text());
-  if(!data||data.schema!=="atividades-jhon-backup"||data.schemaVersion!==1||!Array.isArray(data.doneIds)||!data.doneIds.every(id=>typeof id==="string"))throw new Error("Formato inválido");
-  const validIds=new Set(tasks.map(t=>t.id));if(!data.doneIds.every(id=>validIds.has(id)))throw new Error("Atividades não reconhecidas");
+  if(!data||typeof data!=="object"||data.schema!=="atividades-jhon-backup"||data.schemaVersion!==1||!Array.isArray(data.tasks)||!Array.isArray(data.doneIds)||data.doneIds.length>tasks.length||!data.doneIds.every(id=>typeof id==="string"))throw new Error("Formato inválido");
+  const validIds=new Set(tasks.map(t=>t.id));
+  if(!data.tasks.every(t=>t&&typeof t.id==="string"&&validIds.has(t.id))||!data.doneIds.every(id=>validIds.has(id))||new Set(data.doneIds).size!==data.doneIds.length)throw new Error("Atividades não reconhecidas");
   if(!confirm("Restaurar as atividades concluídas e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
   done=new Set(data.doneIds);saveDone();
   if(data.preferences&&typeof data.preferences==="object"&&["light","dark"].includes(data.preferences.theme)){prefs={theme:data.preferences.theme};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}}
   applyPrefs();render();showToast("Backup restaurado para hoje.");
  }catch(err){showToast("Backup inválido ou incompatível. Nenhum dado foi alterado.");}
 });
-$("helpBtn").addEventListener("click",()=>alert("AJUDA E PRIVACIDADE — ATIVIDADES DO JHON\\n\\nAs marcações e preferências ficam armazenadas neste navegador (localStorage), neste dispositivo e perfil de navegador. Não há sincronização automática com outros dispositivos.\\n\\nUse “Backup JSON” para guardar uma cópia manual e “Restaurar backup” para importar um arquivo JSON criado por este sistema. A restauração substitui as marcações de hoje após confirmação. O backup inclui os IDs/títulos das atividades, marcações atuais e preferência de tema; não inclui senhas ou tokens.\\n\\nLimpar dados do navegador pode apagar as marcações locais."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\\n\\nVersão: V2.2. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\\n\\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\\n\\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\\n\\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
