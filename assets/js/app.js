@@ -57,6 +57,7 @@ const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getM
 const key=()=>"atividades-jhon:"+localDate();
 function loadDone(){try{return JSON.parse(localStorage.getItem(key())||"[]")}catch{return[]}}
 let done=new Set(loadDone());
+let currentMode=null;
 const PREF_KEY="atividades-jhon:preferences";
 function loadPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||"{}")}catch{return {}}}
 let prefs=loadPrefs();
@@ -80,6 +81,9 @@ function iconStyle(t){if(t.critical)return "background:#fff0f1;color:#ff3045";if
 function filtered(){
  const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value;
  return tasks.filter(t=>{
+  const workAreas=["ADM","Comercial","Ambos"];
+  if(currentMode==="work"&&!workAreas.includes(t.area))return false;
+  if(currentMode==="personal"&&workAreas.includes(t.area))return false;
   const isDone=done.has(t.id);
   return (!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
@@ -111,7 +115,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.8",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.9",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado.");
 });
@@ -139,6 +143,30 @@ $("completeVisibleBtn").addEventListener("click",()=>{
  visible.forEach(t=>done.add(t.id));
  saveDone();render();
  showToast(visible.length+" atividade(s) concluída(s). ✅");
+});
+function chooseMode(mode){
+ currentMode=mode;
+ $("modeChooser").hidden=true;
+ $("activityWorkspace").hidden=false;
+ const isWork=mode==="work";
+ $("workspaceEyebrow").textContent=isWork?"ROTINA PROFISSIONAL":"ROTINA PESSOAL";
+ $("workspaceTitle").textContent=isWork?"Atividades de trabalho":"Vida pessoal";
+ $("taskListTitle").textContent=isWork?"💼 Atividades de trabalho":"🌱 Atividades da vida pessoal";
+ $("areaFilter").value="all";
+ $("periodFilter").value="all";
+ $("statusFilter").value="all";
+ $("searchInput").value="";
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+$("chooseWork").addEventListener("click",()=>chooseMode("work"));
+$("choosePersonal").addEventListener("click",()=>chooseMode("personal"));
+$("changeModeBtn").addEventListener("click",()=>{
+ currentMode=null;
+ $("activityWorkspace").hidden=true;
+ $("modeChooser").hidden=false;
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
 });
 $("clearFiltersBtn").addEventListener("click",()=>{
  $("searchInput").value="";
