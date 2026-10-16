@@ -13,7 +13,7 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
 @media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.task{padding:18px;grid-template-columns:46px minmax(0,1fr) 27px;gap:12px;border-radius:20px}.task.urgent,.task.critical{padding:16px}.task-icon{width:46px;height:46px;font-size:20px}.task-title{font-size:16px}.intro h2{font-size:21px}header{position:static}.date-label{width:100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
-/* V1.8 — tema, backup/restauração validada e ajuda/privacidade */
+/* V1.9 — tema, backup/restauração validada e ajuda/privacidade */
 /* 1. Hierarquia visual e leitura */
 :root{--shadow:0 5px 18px rgba(23,37,84,.055)}
 .intro h2{font-size:clamp(22px,2.5vw,28px)}
@@ -62,7 +62,7 @@ footer{max-width:1440px;padding:0 clamp(16px,3vw,40px) 28px;margin:auto;color:#8
 .task:focus-within{outline:2px solid #2563eb30;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.stat,.task,.btn{transition:none!important;transform:none!important}}
 .version-pill{display:inline-flex;align-items:center;margin-left:9px;padding:5px 10px;border-radius:999px;background:#1d4ed8;color:#fff;border:2px solid #1d4ed8;font-size:12px;font-weight:950;letter-spacing:.04em;vertical-align:middle;box-shadow:0 2px 8px #1d4ed833}
-/* V1.8: tema escuro opcional e controles de dados */
+/* V1.9: tema escuro opcional e controles de dados */
 body[data-theme="dark"]{--bg:#0f172a;--card:#172338;--ink:#e6edf7;--muted:#a0aec3;--line:#2a3850;--shadow:0 5px 18px rgba(0,0,0,.18);background:var(--bg);color:var(--ink)}
 body[data-theme="dark"] header,body[data-theme="dark"] .date-label,body[data-theme="dark"] .stat,body[data-theme="dark"] .task,body[data-theme="dark"] .search input,body[data-theme="dark"] .toolbar select,body[data-theme="dark"] .toolbar-action,body[data-theme="dark"] .btn:not(.primary),body[data-theme="dark"] .empty{background:var(--card);color:var(--ink);border-color:var(--line)}
 body[data-theme="dark"] .task-desc,body[data-theme="dark"] .intro p{color:#a8b7cd}
@@ -73,3 +73,18 @@ body[data-theme="dark"] .version-pill{background:#2563eb;color:#fff;border-color
 @media(max-width:760px){.data-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.data-actions button{width:100%;font-size:12px;padding:10px 7px}}
 
 .tag.category{background:#f0eaff;color:#6941c6;border:1px solid #e0d4ff}
+
+.mode-chooser{margin:24px 0 32px}
+.mode-heading{text-align:center;margin:0 auto 20px;max-width:650px}
+.mode-heading h3{font-size:24px;margin:0 0 8px;color:var(--ink)}
+.mode-heading p{margin:0;color:var(--muted);font-size:14px}
+.mode-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;max-width:1000px;margin:0 auto}
+.mode-card{appearance:none;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:28px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--ink);box-shadow:0 8px 26px rgba(31,55,90,.07);cursor:pointer;min-height:230px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.mode-card:hover,.mode-card:focus-visible{transform:translateY(-3px);box-shadow:0 14px 34px rgba(31,55,90,.13);outline:3px solid #93b4ff;outline-offset:2px}
+.work-mode{border-top:5px solid #2864e8}.personal-mode{border-top:5px solid #16a36a}
+.mode-icon{font-size:34px}.mode-card-title{font-size:22px;font-weight:800}.mode-card-desc{font-size:14px;line-height:1.6;color:var(--muted);flex:1}.mode-card-cta{font-size:14px;font-weight:800;color:#2864e8}.personal-mode .mode-card-cta{color:#128354}
+.workspace-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 16px}
+.workspace-top h3{margin:4px 0;font-size:24px;color:var(--ink)}.workspace-eyebrow{font-size:11px;letter-spacing:1.1px;font-weight:800;color:var(--muted)}
+[hidden]{display:none!important}
+body[data-theme="dark"] .mode-card{background:var(--card);color:var(--ink);border-color:var(--line)}
+@media(max-width:680px){.mode-cards{grid-template-columns:1fr;gap:14px}.mode-card{min-height:190px;padding:22px}.mode-heading h3{font-size:21px}.workspace-top h3{font-size:20px}}
