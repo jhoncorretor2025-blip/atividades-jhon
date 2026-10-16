@@ -1,8 +1,8 @@
 # Atividades do Jhon
 
-Painel pessoal de atividades de trabalho da Delta.
+Painel de trabalho e rotina pessoal, com tarefas profissionais, estudos, projetos de IA, saúde e lazer.
 
-Versão atual: **V1.7**
+Versão atual: **V1.8**
 
 Abra a página publicada pelo GitHub Pages. O estado das atividades fica no armazenamento local do navegador; use o backup JSON para guardar uma cópia manual.
 
