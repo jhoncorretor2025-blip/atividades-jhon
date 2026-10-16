@@ -1,4 +1,4 @@
-# Atividades do Jhon — estrutura V1.6
+# Atividades do Jhon — estrutura V1.7
 
 ## Organização
 - `index.html`: entrada principal do GitHub Pages.
