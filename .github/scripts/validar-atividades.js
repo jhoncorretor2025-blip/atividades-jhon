@@ -16,7 +16,7 @@ const checks = [
   ['28 atividades declaradas', (js.match(/\{id:"/g)||[]).length === 28],
   ['salvamento local', /localStorage\.setItem\(key\(\)/.test(js)],
   ['restauração com confirmação', /confirm\("Restaurar as atividades concluídas/.test(js)],
-  ['versão nos estilos', css.includes('V1.6')]
+  ['versão nos estilos', css.includes('V1.7')]
 ];
 let failed = 0;
 for (const [name, ok] of checks) { console.log((ok ? 'OK  ' : 'FALHA  ') + name); if(!ok) failed++; }
