@@ -1,8 +1,8 @@
 # Atividades do Jhon
 
-Painel de trabalho e rotina pessoal, com tarefas profissionais, estudos, projetos de IA, saúde e lazer.
+Painel com tela inicial para escolher entre atividades de trabalho e vida pessoal.
 
-Versão atual: **V1.8**
+Versão atual: **V1.9**
 
 Abra a página publicada pelo GitHub Pages. O estado das atividades fica no armazenamento local do navegador; use o backup JSON para guardar uma cópia manual.
 
