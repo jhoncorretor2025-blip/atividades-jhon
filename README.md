@@ -2,7 +2,7 @@
 
 Painel pessoal de atividades de trabalho da Delta.
 
-Versão atual: **V1.6**
+Versão atual: **V1.7**
 
 Abra a página publicada pelo GitHub Pages. O estado das atividades fica no armazenamento local do navegador; use o backup JSON para guardar uma cópia manual.
 
