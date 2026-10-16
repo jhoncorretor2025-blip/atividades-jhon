@@ -1,6 +1,6 @@
-# Testes manuais — Atividades do Jhon V1.5
+# Testes manuais — Atividades do Jhon V1.6
 
-- [ ] A página abre e mostra V1.5.
+- [ ] A página abre e mostra V1.6.
 - [ ] As 28 atividades aparecem.
 - [ ] Busca e filtros funcionam.
 - [ ] Marcar/desmarcar atividade persiste após recarregar.
@@ -13,3 +13,7 @@
 - [ ] Network: app.css e app.js carregam com HTTP 200.
 - [ ] Console sem erros JavaScript.
 - [ ] Página publicada no GitHub Pages repete os testes.
+
+
+## Validação automatizada V1.6
+O workflow `.github/workflows/validar-atividades.yml` executa `node .github/scripts/validar-atividades.js` em push, pull request e manualmente. Ele confere versão, caminhos CSS/JS, IDs de controles essenciais e os 28 identificadores de atividade. Isso é uma verificação estática, não substitui os testes reais no navegador.
