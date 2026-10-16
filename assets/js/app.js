@@ -33,7 +33,11 @@ const $=id=>document.getElementById(id);
 const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const key=()=>"atividades-jhon:"+localDate();
 function loadDone(){try{return JSON.parse(localStorage.getItem(key())||"[]")}catch{return[]}}
-let done=new Set(loadDone());\nconst PREF_KEY="atividades-jhon:preferences";\nfunction loadPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||"{}")}catch{return {}}}\nlet prefs=loadPrefs();\nfunction applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
+let done=new Set(loadDone());
+const PREF_KEY="atividades-jhon:preferences";
+function loadPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||"{}")}catch{return {}}}
+let prefs=loadPrefs();
+function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
 function saveDone(){try{localStorage.setItem(key(),JSON.stringify([...done]))}catch{showToast("Não foi possível salvar neste navegador.")}}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tags(t){
@@ -83,7 +87,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.6",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V1.7",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado.");
 });
