@@ -8,13 +8,14 @@ const html = read('index.html');
 const js = read('assets/js/app.js');
 const css = read('assets/css/app.css');
 const checks = [
-  ['versão do HTML', /<meta name="delta-version" content="V2\.0">/.test(html)],
-  ['versão visível no cabeçalho', /aria-label="Versão atual V2\.0">V2\.0<\/span>/.test(html)],
-  ['CSS externo com cache-busting', /assets\/css\/app\.css\?v=2\.0/.test(html)],
-  ['JavaScript externo com cache-busting', /assets\/js\/app\.js\?v=2\.0/.test(html)],
+  ['versão do HTML', /<meta name="delta-version" content="V2\.1">/.test(html)],
+  ['versão visível no cabeçalho', /aria-label="Versão atual V2\.1">V2\.1<\/span>/.test(html)],
+  ['CSS externo com cache-busting', /assets\/css\/app\.css\?v=2\.1/.test(html)],
+  ['JavaScript externo com cache-busting', /assets\/js\/app\.js\?v=2\.1/.test(html)],
   ['controles essenciais da interface', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id => html.includes('id="'+id+'"'))],
   ['50 atividades declaradas', (js.match(/\{id:"/g)||[]).length === 50],
-  ['contagens nas duas áreas iniciais', html.includes('28 atividades cadastradas') && html.includes('22 atividades cadastradas')],
+  ['contagens nos três cards', html.includes('50 atividades cadastradas') && html.includes('28 atividades cadastradas') && html.includes('22 atividades cadastradas')],
+  ['card Geral disponível', html.includes('id="chooseGeneral"')],
   ['contagens das categorias no filtro', ['Administrativo (13)','Comercial (12)','ADM e Comercial (3)','Estudos (1)','Trabalho pessoal (3)','IA e DroidManiacos (4)','Favoritos pessoais (4)','Redes sociais (2)','Lazer (3)','Atividades secundárias (3)','Outros (1)','Saúde (1)'].every(label => html.includes(label))],
   ['salvamento local', /localStorage\.setItem\(key\(\)/.test(js)],
   ['restauração com confirmação', /confirm\("Restaurar as atividades concluídas/.test(js)],
