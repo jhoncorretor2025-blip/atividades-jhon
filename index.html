@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V2.6">
-<title>Atividades do Jhon · Delta | V2.6</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=2.6">
+<meta name="delta-version" content="V2.7">
+<title>Atividades do Jhon · Delta | V2.7</title>
+<link rel="stylesheet" href="./assets/css/app.css?v=2.7">
 </head>
 <body>
-<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V2.6">V2.6</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V2.7">V2.7</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="stats" aria-label="Resumo das atividades">
@@ -18,7 +18,19 @@
  <div class="stat"><div class="label">Pendentes de atenção</div><div class="num" id="pendingCount">0</div><div class="sub">Itens em destaque</div></div>
  <div class="stat"><div class="label">Progresso diário</div><div class="num" id="progressText">0%</div><div class="progress-wrap"><div class="progress" id="progressBar"></div></div></div>
 </section>
-<div class="data-actions" aria-label="Backup e ajuda"><button class="toolbar-action" id="backupBtn" type="button">⬇ Backup JSON</button><button class="toolbar-action" id="importBtn" type="button">⬆ Restaurar backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden><button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda, privacidade e diagnóstico</button><button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button></div>
+<div class="data-actions" aria-label="Backup e ajuda"><button class="toolbar-action" id="weeklyReportBtn" type="button">📊 Relatório semanal</button><button class="toolbar-action" id="backupBtn" type="button">⬇ Backup JSON</button><button class="toolbar-action" id="importBtn" type="button">⬆ Restaurar backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden><button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda, privacidade e diagnóstico</button><button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button></div>
+<section class="weekly-report" id="weeklyReport" hidden aria-live="polite">
+ <div class="weekly-report-head"><div><span class="workspace-eyebrow">ANÁLISE DA ROTINA</span><h3>Relatório semanal</h3><p id="weeklyRange">Últimos 7 dias</p></div><button class="toolbar-action" id="closeWeeklyReport" type="button">✕ Fechar</button></div>
+ <div class="weekly-kpis">
+  <div class="weekly-kpi"><span>Executadas</span><strong id="weekDone">0</strong></div>
+  <div class="weekly-kpi"><span>Puladas</span><strong id="weekSkipped">0</strong></div>
+  <div class="weekly-kpi"><span>Conclusão média</span><strong id="weekRate">0%</strong></div>
+  <div class="weekly-kpi"><span>Melhor dia</span><strong id="weekBest">—</strong></div>
+ </div>
+ <div class="weekly-comparison"><span>Comparação com os 7 dias anteriores</span><strong id="weekComparison">—</strong></div>
+ <h4>Atividades por dia</h4><div class="weekly-days" id="weeklyDays"></div>
+ <p class="weekly-note">O relatório considera as marcações salvas neste navegador. Dias sem registros aparecem com zero atividades executadas.</p>
+</section>
 <section id="modeChooser" class="mode-chooser" aria-labelledby="modeTitle"><div class="mode-heading"><h3 id="modeTitle">Por onde vamos começar?</h3><p>Escolha uma área para ver somente as atividades correspondentes.</p></div><div class="mode-cards mode-cards-three"><button class="mode-card general-mode" id="chooseGeneral" type="button"><span class="mode-icon">🌐</span><span class="mode-card-title">Geral</span><span class="mode-card-desc">Todas as atividades de trabalho e vida pessoal juntas, em uma única lista.</span><span class="mode-card-count">50 atividades cadastradas</span><span class="mode-card-cta">Ver tudo →</span></button><button class="mode-card work-mode" id="chooseWork" type="button"><span class="mode-icon">💼</span><span class="mode-card-title">Atividades de trabalho</span><span class="mode-card-desc">Delta Imóveis, atendimento, anúncios, locações e tarefas administrativas.</span><span class="mode-card-count">28 atividades cadastradas</span><span class="mode-card-cta">Ver atividades de trabalho →</span></button><button class="mode-card personal-mode" id="choosePersonal" type="button"><span class="mode-icon">🌱</span><span class="mode-card-title">Vida pessoal</span><span class="mode-card-desc">Estudos, projetos de IA, saúde, academia, redes sociais e lazer.</span><span class="mode-card-count">22 atividades cadastradas</span><span class="mode-card-cta">Ver vida pessoal →</span></button></div></section>
 <div id="activityWorkspace" hidden><div class="workspace-top"><div><span class="workspace-eyebrow" id="workspaceEyebrow">MINHAS ATIVIDADES</span><h3 id="workspaceTitle">Atividades</h3></div><button class="toolbar-action" id="changeModeBtn" type="button">↩ Trocar área</button></div>
 <section class="activity-summary" aria-label="Resumo do dia"><div class="summary-item"><span>Total</span><strong id="summaryTotal">0</strong></div><div class="summary-item executed"><span>Executadas</span><strong id="summaryDone">0</strong></div><div class="summary-item skipped-summary"><span>Puladas</span><strong id="summarySkipped">0</strong></div><div class="summary-item pending-summary"><span>Pendentes</span><strong id="summaryPending">0</strong></div></section>
@@ -35,9 +47,9 @@
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V2.6 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V2.7 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="./assets/js/app.js?v=2.6" defer></script>
+<script src="./assets/js/app.js?v=2.7" defer></script>
 </body>
 </html>
