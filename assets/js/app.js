@@ -92,11 +92,19 @@ function filtered(){
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
   return (!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
-  (status==="all"||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
+  (status==="all"&&!isSkipped||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
  });
 }
 function render(){
  const list=filtered(), grid=$("taskGrid");
+ const scope=tasks.filter(t=>currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true);
+ const executed=scope.filter(t=>done.has(t.id)).length;
+ const skippedCount=scope.filter(t=>skipped.has(t.id)).length;
+ const pending=scope.length-executed-skippedCount;
+ $("summaryTotal").textContent=scope.length;
+ $("summaryDone").textContent=executed;
+ $("summarySkipped").textContent=skippedCount;
+ $("summaryPending").textContent=pending;
  $("totalCount").textContent=list.length;
  const completed=list.filter(t=>done.has(t.id)).length;
  $("doneCount").textContent=completed;
