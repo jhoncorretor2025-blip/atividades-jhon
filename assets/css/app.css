@@ -107,3 +107,11 @@ body[data-theme="dark"] .toolbar-action.primary{background:#243b64;color:#dbeafe
 
 /* V2.3 — ação de pular e retomar atividades */
 .task-actions{display:flex;flex-direction:column;align-items:flex-end;gap:9px;min-width:64px}.skip-btn{border:1px solid #dbe4f0;background:#f8fafc;color:#52627a;border-radius:9px;padding:7px 9px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.skip-btn:hover{background:#eef2f7}.task.skipped{opacity:.65;border-style:dashed}.skipped-tag{background:#eee8ff;color:#6941c6;border:1px solid #ded2ff}.task-actions .check:disabled{opacity:.35;cursor:not-allowed}body[data-theme="dark"] .skip-btn{background:#243247;color:#d8e2f1;border-color:#40516a}body[data-theme="dark"] .skipped-tag{background:#35265b;color:#e9ddff;border-color:#59438b}@media(max-width:760px){.task-actions{min-width:58px}.skip-btn{font-size:10px;padding:7px 6px}}
+
+/* V2.4 — resumo de executadas/puladas/pendentes e ocultação automática das puladas */
+.activity-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 18px}
+.summary-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 15px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);color:var(--muted);font-size:12px;font-weight:800}
+.summary-item strong{font-size:24px;color:var(--ink);font-weight:900}
+.summary-item.executed strong{color:#08a653}.summary-item.skipped-summary strong{color:#8052d6}.summary-item.pending-summary strong{color:#d18a10}
+body[data-theme="dark"] .summary-item{background:var(--card);border-color:var(--line)}
+@media(max-width:600px){.activity-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.summary-item{padding:11px 12px}.summary-item strong{font-size:22px}}
