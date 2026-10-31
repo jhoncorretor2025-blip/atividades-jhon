@@ -139,3 +139,9 @@ body[data-theme="dark"] .summary-item{background:var(--card);border-color:var(--
 .weekly-note{font-size:11px;line-height:1.5;color:var(--muted);margin:18px 0 0}
 body[data-theme="dark"] .weekly-comparison{background:#203453;color:#dbeafe}
 @media(max-width:600px){.weekly-report{padding:15px}.weekly-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.weekly-day{grid-template-columns:68px minmax(40px,1fr) 25px;gap:7px}.weekly-day span{grid-column:2/-1;text-align:left;font-size:10px}.weekly-report-head h3{font-size:20px}}
+
+/* V2.8 — link rápido para abrir a ferramenta da atividade */
+.task-link{display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:7px 11px;border-radius:9px;background:#eaf1ff;color:#1d4ed8;border:1px solid #c8d8ff;font-size:12px;font-weight:850;text-decoration:none;transition:background .15s,transform .15s}
+.task-link:hover{background:#dce8ff;transform:translateY(-1px);text-decoration:underline}
+.task-link:focus-visible{outline:3px solid #2563eb55;outline-offset:2px}
+body[data-theme="dark"] .task-link{background:#203b68;color:#dbeafe;border-color:#365b91}
