@@ -31,7 +31,7 @@ const tasks = [
 ,{id:"estudar-20-min",title:"Estudar 20 minutos — novidades de jogos e IA",icon:"🧠",area:"Estudos",period:"Diário",priority:"Crítica",critical:true,desc:"Reservar 20 minutos para ver o chat de atualização de jogos e novidades de inteligência artificial."}
 ,{id:"criar-peca-3d",title:"Criar peça 3D",icon:"🧩",area:"Trabalho pessoal",period:"Diário",priority:"Crítica",critical:true,desc:"Avançar no projeto de criação da peça 3D."}
 ,{id:"pendencia-whats",title:"Resolver pendências do WhatsApp",icon:"💬",area:"Trabalho pessoal",period:"Diário",priority:"Alta",attention:true,desc:"Revisar e resolver as pendências registradas no WhatsApp."}
-,{id:"google-tarefa",title:"Revisar Google Tarefas",icon:"☑️",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Conferir tarefas e compromissos registrados no Google Tarefas."}
+,{id:"google-tarefa",title:"Revisar Google Tarefas",icon:"☑️",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Conferir tarefas e compromissos registrados no Google Tarefas.",link:"https://keep.google.com/u/0/#home",linkLabel:"↗ Abrir Google Tarefas"}
 ,{id:"explorar-ias",title:"Explorar novas IAs",icon:"🤖",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Projetos: sistema Biobel (perfil corretor); análise de WhatsApp (perfil corretor); sistema Delta para o canal Mente Aberto."}
 ,{id:"rever-projetos-google-studio",title:"Rever projetos de IA no Google AI Studio",icon:"🛠️",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Revisar os projetos do Sistema Biobel e do sistema de leitura de WhatsApp."}
 ,{id:"gravar-tiktok",title:"Gravar TikTok",icon:"🎬",area:"IA e DroidManiacos",period:"Diário",priority:"Baixa",desc:"Gravar conteúdo para o TikTok."}
@@ -165,7 +165,7 @@ function render(){
    '<div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
    '<div class="tags">'+tags(t)+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
-   (t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+'</div>'+
+   (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+'</div>'+
    '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button></div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
  grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.skip;if(skipped.has(id)){skipped.delete(id);showToast("Atividade voltou para a lista.");}else{skipped.add(id);done.delete(id);showToast("Atividade pulada. Você pode retomá-la depois.");}saveSkipped();saveDone();render();}));
@@ -176,7 +176,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.7",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.8",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado. Guarde o arquivo em local seguro.");
 });
@@ -198,7 +198,7 @@ $("backupFile").addEventListener("change",async e=>{
   applyPrefs();render();showToast("Backup restaurado para hoje.");
  }catch(err){showToast("Backup inválido ou incompatível. Nenhum dado foi alterado.");}
 });
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V2.7. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V2.8. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
