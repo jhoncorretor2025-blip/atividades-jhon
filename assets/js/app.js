@@ -57,6 +57,10 @@ const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getM
 const key=()=>"atividades-jhon:"+localDate();
 function loadDone(){try{return JSON.parse(localStorage.getItem(key())||"[]")}catch{return[]}}
 let done=new Set(loadDone());
+const skipKey=()=>"atividades-jhon:skipped:"+localDate();
+function loadSkipped(){try{return JSON.parse(localStorage.getItem(skipKey())||"[]")}catch{return[]}}
+let skipped=new Set(loadSkipped());
+function saveSkipped(){try{localStorage.setItem(skipKey(),JSON.stringify([...skipped]))}catch{showToast("Não foi possível salvar neste navegador.")}}
 let currentMode=null;
 const PREF_KEY="atividades-jhon:preferences";
 function loadPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||"{}")}catch{return {}}}
@@ -85,10 +89,10 @@ function filtered(){
   const workAreas=["ADM","Comercial","Ambos"];
   if(currentMode==="work"&&!workAreas.includes(t.area))return false;
   if(currentMode==="personal"&&workAreas.includes(t.area))return false;
-  const isDone=done.has(t.id);
+  const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
   return (!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
-  (status==="all"||(status==="done"&&isDone)||(status==="pending"&&!isDone)||(status==="attention"&&t.attention&&!isDone));
+  (status==="all"||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
  });
 }
 function render(){
@@ -96,19 +100,21 @@ function render(){
  $("totalCount").textContent=list.length;
  const completed=list.filter(t=>done.has(t.id)).length;
  $("doneCount").textContent=completed;
- $("pendingCount").textContent=list.filter(t=>t.attention&&!done.has(t.id)).length;
- const pct=list.length?Math.round(completed/list.length*100):0;
+ $("pendingCount").textContent=list.filter(t=>t.attention&&!done.has(t.id)&&!skipped.has(t.id)).length;
+ const eligible=list.filter(t=>!skipped.has(t.id)).length;
+ const pct=eligible?Math.round(completed/eligible*100):100;
  $("progressText").textContent=pct+"%"; $("progressBar").style.width=pct+"%";
  $("resultCount").textContent=list.length+" "+(list.length===1?"atividade":"atividades");
  grid.innerHTML=list.length?list.map(t=>{
-  const isDone=done.has(t.id);
-  return '<article class="task '+(t.critical?'critical':t.urgent?'urgent':'')+(isDone?' done':'')+'">'+
+  const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
+  return '<article class="task '+(isSkipped?' skipped':'')+(t.critical?'critical':t.urgent?'urgent':'')+(isDone?' done':'')+'">'+
    '<div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
-   '<div class="tags">'+tags(t)+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
+   '<div class="tags">'+tags(t)+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
    (t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+'</div>'+
-   '<input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+'></article>';
+   '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button></div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
+ grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.skip;if(skipped.has(id)){skipped.delete(id);showToast("Atividade voltou para a lista.");}else{skipped.add(id);done.delete(id);showToast("Atividade pulada. Você pode retomá-la depois.");}saveSkipped();saveDone();render();}));
  grid.querySelectorAll(".check").forEach(el=>el.addEventListener("change",()=>{
   if(el.checked)done.add(el.dataset.id);else done.delete(el.dataset.id);
   saveDone();render();showToast(el.checked?"Atividade concluída! ✅":"Atividade voltou para pendente.");
@@ -116,7 +122,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.2",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.3",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado. Guarde o arquivo em local seguro.");
 });
@@ -131,6 +137,9 @@ $("backupFile").addEventListener("change",async e=>{
   if(!data.tasks.every(t=>t&&typeof t.id==="string"&&validIds.has(t.id))||!data.doneIds.every(id=>validIds.has(id))||new Set(data.doneIds).size!==data.doneIds.length)throw new Error("Atividades não reconhecidas");
   if(!confirm("Restaurar as atividades concluídas e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
   done=new Set(data.doneIds);saveDone();
+  const skippedIds=Array.isArray(data.skippedIds)?data.skippedIds:[];
+  if(skippedIds.some(id=>!validIds.has(id))||new Set(skippedIds).size!==skippedIds.length)throw new Error("Atividades puladas não reconhecidas");
+  skipped=new Set(skippedIds);saveSkipped();
   if(data.preferences&&typeof data.preferences==="object"&&["light","dark"].includes(data.preferences.theme)){prefs={theme:data.preferences.theme};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}}
   applyPrefs();render();showToast("Backup restaurado para hoje.");
  }catch(err){showToast("Backup inválido ou incompatível. Nenhum dado foi alterado.");}
@@ -142,7 +151,8 @@ function showToast(message){const el=$("toast");el.textContent=message;el.classL
 $("completeVisibleBtn").addEventListener("click",()=>{
  const visible=filtered().filter(t=>!done.has(t.id));
  if(!visible.length){showToast("Não há atividades pendentes visíveis.");return}
- visible.forEach(t=>done.add(t.id));
+ visible.forEach(t=>{done.add(t.id);skipped.delete(t.id)});
+ saveSkipped();
  saveDone();render();
  showToast(visible.length+" atividade(s) concluída(s). ✅");
 });
@@ -181,10 +191,10 @@ $("clearFiltersBtn").addEventListener("click",()=>{
 });
 $("searchInput").addEventListener("input",render);
 ["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
-$("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje?"))return;done.clear();saveDone();render();showToast("Atividades do dia reiniciadas.")});
+$("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje?"))return;done.clear();skipped.clear();saveDone();saveSkipped();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
  const lines=["ATIVIDADES DO JHON — TRABALHO E ROTINA PESSOAL", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
- tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+(t.desc?"\n    "+t.desc:"")));
+ tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":skipped.has(t.id)?"[PULADA] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+(t.desc?"\n    "+t.desc:"")));
  const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="atividades-trabalho-"+localDate()+".txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Resumo exportado.");
 });
