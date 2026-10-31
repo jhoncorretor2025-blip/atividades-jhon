@@ -187,7 +187,7 @@ $("backupFile").addEventListener("change",async e=>{
  if(file.size>2*1024*1024){showToast("Arquivo muito grande (limite de 2 MB).");return}
  try{
   const data=JSON.parse(await file.text());
-  if(!data||typeof data!=="object"||data.schema!=="atividades-jhon-backup"||data.schemaVersion!==1||!Array.isArray(data.tasks)||data.tasks.length>tasks.length||new Set(data.tasks.map(t=>t&&t.id)).size!==tasks.length||!Array.isArray(data.doneIds)||data.doneIds.length>tasks.length||!data.doneIds.every(id=>typeof id==="string"))throw new Error("Formato inválido");
+  if(!data||typeof data!=="object"||data.schema!=="atividades-jhon-backup"||data.schemaVersion!==1||!Array.isArray(data.tasks)||data.tasks.length>tasks.length||new Set(data.tasks.map(t=>t&&t.id)).size!==data.tasks.length||!Array.isArray(data.doneIds)||data.doneIds.length>tasks.length||!data.doneIds.every(id=>typeof id==="string"))throw new Error("Formato inválido");
   const validIds=new Set(tasks.map(t=>t.id));
   if(!data.tasks.every(t=>t&&typeof t.id==="string"&&validIds.has(t.id))||!data.doneIds.every(id=>validIds.has(id))||new Set(data.doneIds).size!==data.doneIds.length)throw new Error("Atividades não reconhecidas");
   if(!confirm("Restaurar as atividades concluídas e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
