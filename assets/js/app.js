@@ -32,6 +32,7 @@ const tasks = [
 ,{id:"criar-peca-3d",title:"Criar peça 3D",icon:"🧩",area:"Trabalho pessoal",period:"Diário",priority:"Crítica",critical:true,desc:"Avançar no projeto de criação da peça 3D."}
 ,{id:"pendencia-whats",title:"Resolver pendências do WhatsApp",icon:"💬",area:"Trabalho pessoal",period:"Diário",priority:"Alta",attention:true,desc:"Revisar e resolver as pendências registradas no WhatsApp."}
 ,{id:"google-tarefa",title:"Revisar Google Tarefas",icon:"☑️",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Conferir tarefas e compromissos registrados no Google Tarefas.",link:"https://keep.google.com/u/0/#home",linkLabel:"↗ Abrir Google Tarefas"}
+,{id:"usar-codex",title:"Usar Codex",icon:"💻",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Reservar um tempo para utilizar o Codex, desenvolver projetos, revisar código e avançar nas tarefas de programação."}
 ,{id:"explorar-ias",title:"Explorar novas IAs",icon:"🤖",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Projetos: sistema Biobel (perfil corretor); análise de WhatsApp (perfil corretor); sistema Delta para o canal Mente Aberto."}
 ,{id:"rever-projetos-google-studio",title:"Rever projetos de IA no Google AI Studio",icon:"🛠️",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Revisar os projetos do Sistema Biobel e do sistema de leitura de WhatsApp."}
 ,{id:"gravar-tiktok",title:"Gravar TikTok",icon:"🎬",area:"IA e DroidManiacos",period:"Diário",priority:"Baixa",desc:"Gravar conteúdo para o TikTok."}
@@ -176,7 +177,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.8",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.9",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado. Guarde o arquivo em local seguro.");
 });
@@ -186,7 +187,7 @@ $("backupFile").addEventListener("change",async e=>{
  if(file.size>2*1024*1024){showToast("Arquivo muito grande (limite de 2 MB).");return}
  try{
   const data=JSON.parse(await file.text());
-  if(!data||typeof data!=="object"||data.schema!=="atividades-jhon-backup"||data.schemaVersion!==1||!Array.isArray(data.tasks)||data.tasks.length!==tasks.length||new Set(data.tasks.map(t=>t&&t.id)).size!==tasks.length||!Array.isArray(data.doneIds)||data.doneIds.length>tasks.length||!data.doneIds.every(id=>typeof id==="string"))throw new Error("Formato inválido");
+  if(!data||typeof data!=="object"||data.schema!=="atividades-jhon-backup"||data.schemaVersion!==1||!Array.isArray(data.tasks)||data.tasks.length>tasks.length||new Set(data.tasks.map(t=>t&&t.id)).size!==tasks.length||!Array.isArray(data.doneIds)||data.doneIds.length>tasks.length||!data.doneIds.every(id=>typeof id==="string"))throw new Error("Formato inválido");
   const validIds=new Set(tasks.map(t=>t.id));
   if(!data.tasks.every(t=>t&&typeof t.id==="string"&&validIds.has(t.id))||!data.doneIds.every(id=>validIds.has(id))||new Set(data.doneIds).size!==data.doneIds.length)throw new Error("Atividades não reconhecidas");
   if(!confirm("Restaurar as atividades concluídas e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
@@ -198,7 +199,7 @@ $("backupFile").addEventListener("change",async e=>{
   applyPrefs();render();showToast("Backup restaurado para hoje.");
  }catch(err){showToast("Backup inválido ou incompatível. Nenhum dado foi alterado.");}
 });
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V2.8. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V2.9. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
