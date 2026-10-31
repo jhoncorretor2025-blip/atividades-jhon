@@ -149,7 +149,7 @@ $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as pre
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
 $("completeVisibleBtn").addEventListener("click",()=>{
- const visible=filtered().filter(t=>!done.has(t.id));
+ const visible=filtered().filter(t=>!done.has(t.id)&&!skipped.has(t.id));
  if(!visible.length){showToast("Não há atividades pendentes visíveis.");return}
  visible.forEach(t=>{done.add(t.id);skipped.delete(t.id)});
  saveSkipped();
