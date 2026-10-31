@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V2.2">
+<meta name="delta-version" content="V2.3">
 <title>Atividades do Jhon · Delta | V2.2</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=2.2">
+<link rel="stylesheet" href="./assets/css/app.css?v=2.3">
 </head>
 <body>
 <header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V2.2">V2.2</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
@@ -25,7 +25,7 @@
  <div class="search"><input type="search" id="searchInput" placeholder="🔎 Buscar uma atividade..." aria-label="Buscar atividades"></div>
  <select id="periodFilter" aria-label="Filtrar frequência"><option value="all">Todas as frequências</option><option value="Diário">Diárias</option><option value="Semanal">Semanais</option><option value="Mensal">Mensais</option><option value="Noturno">Noturnas</option></select>
  <select id="areaFilter" aria-label="Filtrar área"><option value="all">Todas as áreas (50)</option><option value="ADM">Administrativo (13)</option><option value="Comercial">Comercial (12)</option><option value="Ambos">ADM e Comercial (3)</option><option value="Estudos">Estudos (1)</option><option value="Trabalho pessoal">Trabalho pessoal (3)</option><option value="IA e DroidManiacos">IA e DroidManiacos (4)</option><option value="Favoritos pessoais">Favoritos pessoais (4)</option><option value="Redes sociais">Redes sociais (2)</option><option value="Lazer">Lazer (3)</option><option value="Atividades secundárias">Atividades secundárias (3)</option><option value="Outros">Outros (1)</option><option value="Saúde">Saúde (1)</option></select>
- <select id="statusFilter" aria-label="Filtrar situação"><option value="all">Todas as situações</option><option value="pending">Pendentes</option><option value="done">Concluídas</option><option value="attention">Atenção</option></select>
+ <select id="statusFilter" aria-label="Filtrar situação"><option value="all">Todas as situações</option><option value="pending">Pendentes</option><option value="done">Concluídas</option><option value="attention">Atenção</option><option value="skipped">Puladas</option></select>
  <div class="toolbar-actions">
   <button class="toolbar-action primary" id="completeVisibleBtn" type="button">✓ Concluir visíveis</button>
   <button class="toolbar-action" id="clearFiltersBtn" type="button">Limpar filtros</button>
@@ -37,6 +37,6 @@
 <footer><span>Atividades Jhon · Delta Imóveis</span><span>V2.2 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="./assets/js/app.js?v=2.2" defer></script>
+<script src="./assets/js/app.js?v=2.3" defer></script>
 </body>
 </html>
