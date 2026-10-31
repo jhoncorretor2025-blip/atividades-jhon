@@ -104,3 +104,6 @@ body[data-theme="dark"] .general-mode .mode-card-count{background:#35265b;color:
 .toolbar-action:focus-visible,.mode-card:focus-visible,.btn:focus-visible{outline:3px solid #2563eb88;outline-offset:3px}
 body[data-theme="dark"] .toolbar-action.primary{background:#243b64;color:#dbeafe;border-color:#42639a}
 @media(max-width:760px){.toolbar-action,.data-actions .toolbar-action{min-height:44px}}
+
+/* V2.3 — ação de pular e retomar atividades */
+.task-actions{display:flex;flex-direction:column;align-items:flex-end;gap:9px;min-width:64px}.skip-btn{border:1px solid #dbe4f0;background:#f8fafc;color:#52627a;border-radius:9px;padding:7px 9px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.skip-btn:hover{background:#eef2f7}.task.skipped{opacity:.65;border-style:dashed}.skipped-tag{background:#eee8ff;color:#6941c6;border:1px solid #ded2ff}.task-actions .check:disabled{opacity:.35;cursor:not-allowed}body[data-theme="dark"] .skip-btn{background:#243247;color:#d8e2f1;border-color:#40516a}body[data-theme="dark"] .skipped-tag{background:#35265b;color:#e9ddff;border-color:#59438b}@media(max-width:760px){.task-actions{min-width:58px}.skip-btn{font-size:10px;padding:7px 6px}}
