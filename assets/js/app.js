@@ -106,10 +106,10 @@ function render(){
  $("summarySkipped").textContent=skippedCount;
  $("summaryPending").textContent=pending;
  $("totalCount").textContent=list.length;
- const completed=list.filter(t=>done.has(t.id)).length;
+ const completed=scope.filter(t=>done.has(t.id)).length;
  $("doneCount").textContent=completed;
  $("pendingCount").textContent=list.filter(t=>t.attention&&!done.has(t.id)&&!skipped.has(t.id)).length;
- const eligible=list.filter(t=>!skipped.has(t.id)).length;
+ const eligible=scope.length-skippedCount;
  const pct=eligible?Math.round(completed/eligible*100):100;
  $("progressText").textContent=pct+"%"; $("progressBar").style.width=pct+"%";
  $("resultCount").textContent=list.length+" "+(list.length===1?"atividade":"atividades");
