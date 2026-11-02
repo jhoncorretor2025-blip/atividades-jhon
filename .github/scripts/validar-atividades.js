@@ -38,7 +38,7 @@ const checks = [
   ['tema escuro e foco visível', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
   ['etiqueta visual para tarefas noturnas', js.includes('t.period==="Noturno"') && js.includes('NOTURNO')],
   ['privacidade documenta armazenamento local', structure.includes('localStorage') && structure.includes('Não existe sincronização automática')],
-  ['roteiro de regressão V3.2 atualizado', tests.includes('V3.2 — melhorias e regressão')]
+  ['roteiro de regressão V3.2 atualizado', tests.includes('V3.2 — análise por período')]
 ];
 let failed = 0;
 for (const [name,ok] of checks) { console.log((ok ? 'OK  ' : 'FALHA  ') + name); if (!ok) failed++; }
