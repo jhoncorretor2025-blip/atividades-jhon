@@ -20,12 +20,12 @@ const skippedValidation = js.indexOf('skippedIds.every');
 const doneWrite = js.indexOf('done=new Set(data.doneIds)');
 const checks = [
   ['pastas da Etapa 1 organizadas', fs.existsSync(path.join(root,'docs/architecture/estrutura.md')) && fs.existsSync(path.join(root,'docs/testing/testes.md')) && fs.existsSync(path.join(root,'tests/validar-atividades.js'))],
-  ['versão V3.5 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.5">') && html.includes('aria-label="Versão atual V3.5">V3.5</span>')],
-  ['cache-busting V3.5 nos três arquivos', ['app.css?v=3.5','app.js?v=3.5','analytics.js?v=3.5'].every(x => html.includes(x))],
-  ['rodapé informa V3.5', html.includes('V3.5 · Os itens')],
-  ['redirecionamento antigo aponta para V3.5', legacy.includes('index.html?v=3.4') && legacy.includes('V3.5')],
-  ['versão V3.5 na ajuda e no backup', js.includes('Versão: V3.5') && js.includes('appVersion:"V3.5"')],
-  ['versão V3.5 no backup do banco de atividades', analytics.includes('appVersion:"V3.5"')],
+  ['versão V3.6 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.6">') && html.includes('aria-label="Versão atual V3.6">V3.6</span>')],
+  ['cache-busting V3.6 nos três arquivos', ['app.css?v=3.5','app.js?v=3.5','analytics.js?v=3.5'].every(x => html.includes(x))],
+  ['rodapé informa V3.6', html.includes('V3.6 · Os itens')],
+  ['redirecionamento antigo aponta para V3.6', legacy.includes('index.html?v=3.4') && legacy.includes('V3.6')],
+  ['versão V3.6 na ajuda e no backup', js.includes('Versão: V3.6') && js.includes('appVersion:"V3.6"')],
+  ['versão V3.6 no backup do banco de atividades', analytics.includes('appVersion:"V3.6"')],
   ['sintaxe JavaScript válida', appSyntaxValid],
   ['sintaxe do banco de atividades válida', (()=>{try{new vm.Script(analytics,{filename:'assets/js/analytics.js'});return true}catch(e){console.error('Erro de sintaxe em analytics.js:',e.message);return false}})()],
   ['análise por período implementada', html.includes('id="analyticsPeriod"') && analytics.includes('const periodStart=') && analytics.includes('Sem registro') && analytics.includes('Frequência por atividade')],
@@ -39,7 +39,7 @@ const checks = [
   ['tema escuro e foco visível', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
   ['etiqueta visual para tarefas noturnas', js.includes('t.period==="Noturno"') && js.includes('NOTURNO')],
   ['privacidade documenta armazenamento local', structure.includes('localStorage') && structure.includes('Não existe sincronização automática')],
-  ['roteiro de regressão V3.5 atualizado', tests.includes('Regressão da análise V3.2')]
+  ['roteiro de regressão V3.6 atualizado', tests.includes('Regressão da análise V3.2')]
 ];
 let failed = 0;
 for (const [name,ok] of checks) { console.log((ok ? 'OK  ' : 'FALHA  ') + name); if (!ok) failed++; }
