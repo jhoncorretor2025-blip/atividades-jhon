@@ -27,7 +27,7 @@ const checks = [
   ['versão V3.2 no backup do banco de atividades', analytics.includes('appVersion:"V3.2"')],
   ['sintaxe JavaScript válida', appSyntaxValid],
   ['sintaxe do banco de atividades válida', (()=>{try{new vm.Script(analytics,{filename:'assets/js/analytics.js'});return true}catch(e){console.error('Erro de sintaxe em analytics.js:',e.message);return false}})()],
-  ['análise por período implementada', html.includes('id="analyticsPeriod"') && analytics.includes('function periodStart') && analytics.includes('Sem registro') && analytics.includes('Frequência por atividade')],
+  ['análise por período implementada', html.includes('id="analyticsPeriod"') && analytics.includes('const periodStart=') && analytics.includes('Sem registro') && analytics.includes('Frequência por atividade')],
   ['51 atividades cadastradas', taskCount === 51],
   ['contagens dinâmicas nos cards e filtros', ['generalCount','workCount','personalCount'].every(id => html.includes('id="'+id+'"')) && js.includes('function updateActivityCounts')],
   ['controles essenciais presentes', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','helpBtn','prefsBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id => html.includes('id="'+id+'"'))],
