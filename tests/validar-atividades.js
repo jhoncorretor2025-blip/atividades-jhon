@@ -6,42 +6,61 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const read = p => fs.readFileSync(path.join(root,p),'utf8');
 const html = read('index.html');
-const js = read('assets/js/app.js');
-const css = read('assets/css/app.css');
+const legacy = read('teste.html');
+const tasks = read('assets/js/tasks.js');
+const storage = read('assets/js/storage.js');
+const backup = read('assets/js/backup.js');
+const dashboard = read('assets/js/dashboard.js');
 const analytics = read('assets/js/analytics.js');
+const css = read('assets/css/app.css');
 const structure = read('docs/architecture/estrutura.md');
 const tests = read('docs/testing/testes.md');
-const legacy = read('teste.html');
-let appSyntaxValid = true;
-try { new vm.Script(js, { filename: 'assets/js/app.js' }); }
-catch (error) { appSyntaxValid = false; console.error('Erro de sintaxe em app.js:', error.message); }
-const taskCount = js.split('{id:"').length - 1;
-const skippedValidation = js.indexOf('skippedIds.every');
-const doneWrite = js.indexOf('done=new Set(data.doneIds)');
-const checks = [
-  ['pastas da Etapa 1 organizadas', fs.existsSync(path.join(root,'docs/architecture/estrutura.md')) && fs.existsSync(path.join(root,'docs/testing/testes.md')) && fs.existsSync(path.join(root,'tests/validar-atividades.js'))],
-  ['versão V3.6 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.6">') && html.includes('aria-label="Versão atual V3.6">V3.6</span>')],
-  ['cache-busting V3.6 nos três arquivos', ['app.css?v=3.5','app.js?v=3.5','analytics.js?v=3.5'].every(x => html.includes(x))],
-  ['rodapé informa V3.6', html.includes('V3.6 · Os itens')],
-  ['redirecionamento antigo aponta para V3.6', legacy.includes('index.html?v=3.4') && legacy.includes('V3.6')],
-  ['versão V3.6 na ajuda e no backup', js.includes('Versão: V3.6') && js.includes('appVersion:"V3.6"')],
-  ['versão V3.6 no backup do banco de atividades', analytics.includes('appVersion:"V3.6"')],
-  ['sintaxe JavaScript válida', appSyntaxValid],
-  ['sintaxe do banco de atividades válida', (()=>{try{new vm.Script(analytics,{filename:'assets/js/analytics.js'});return true}catch(e){console.error('Erro de sintaxe em analytics.js:',e.message);return false}})()],
-  ['análise por período implementada', html.includes('id="analyticsPeriod"') && analytics.includes('const periodStart=') && analytics.includes('Sem registro') && analytics.includes('Frequência por atividade')],
-  ['51 atividades cadastradas', taskCount === 51],
-  ['contagens dinâmicas nos cards e filtros', ['generalCount','workCount','personalCount'].every(id => html.includes('id="'+id+'"')) && js.includes('function updateActivityCounts')],
-  ['controles essenciais presentes', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','helpBtn','prefsBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id => html.includes('id="'+id+'"'))],
-  ['salvamento local e preferências', js.includes('localStorage.setItem(key()') && js.includes('localStorage.setItem(PREF_KEY')],
-  ['importação limitada e valida estrutura', js.includes('file.size>2*1024*1024') && js.includes('data.schema!=="atividades-jhon-backup"')],
-  ['IDs concluídos e pulados validados antes de gravar', skippedValidation >= 0 && skippedValidation < doneWrite],
-  ['concluídas hoje respeita filtros aplicados', js.includes('const completed=list.filter(t=>done.has(t.id))')],
-  ['tema escuro e foco visível', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
-  ['etiqueta visual para tarefas noturnas', js.includes('t.period==="Noturno"') && js.includes('NOTURNO')],
-  ['privacidade documenta armazenamento local', structure.includes('localStorage') && structure.includes('Não existe sincronização automática')],
-  ['roteiro de regressão V3.6 atualizado', tests.includes('Regressão da análise V3.2')]
+const modules = [
+  ['assets/js/tasks.js', tasks],
+  ['assets/js/storage.js', storage],
+  ['assets/js/backup.js', backup],
+  ['assets/js/dashboard.js', dashboard],
+  ['assets/js/analytics.js', analytics]
 ];
-let failed = 0;
-for (const [name,ok] of checks) { console.log((ok ? 'OK  ' : 'FALHA  ') + name); if (!ok) failed++; }
-if (failed) { console.error('Falharam '+failed+' verificação(ões).'); process.exit(1); }
+const syntax = modules.map(([name,source]) => {
+  try { new vm.Script(source,{filename:name}); return true; }
+  catch(error) { console.error('Erro de sintaxe em '+name+':',error.message); return false; }
+});
+const taskCount = tasks.split('{id:"').length - 1;
+const scriptPaths = [
+  './assets/js/tasks.js?v=3.7',
+  './assets/js/storage.js?v=3.7',
+  './assets/js/backup.js?v=3.7',
+  './assets/js/dashboard.js?v=3.7',
+  './assets/js/analytics.js?v=3.7'
+];
+const scriptPositions = scriptPaths.map(p=>html.indexOf(p));
+const orderedScripts = scriptPositions.every((p,i)=>p>=0&&(i===0||p>scriptPositions[i-1]));
+const checks = [
+  ['cinco módulos JavaScript existem', modules.every(([name])=>fs.existsSync(path.join(root,name)))],
+  ['app.js antigo removido da estrutura', !fs.existsSync(path.join(root,'assets/js/app.js'))],
+  ['scripts carregados na ordem correta', orderedScripts],
+  ['versão V3.7 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.7">') && html.includes('aria-label="Versão atual V3.7">V3.7</span>')],
+  ['cache-busting V3.7 nos cinco módulos e CSS', [...scriptPaths,'./assets/css/app.css?v=3.7'].every(x=>html.includes(x))],
+  ['rodapé informa V3.7', html.includes('V3.7 · Os itens')],
+  ['redirecionamento antigo aponta para V3.7', legacy.includes('index.html?v=3.7') && legacy.includes('V3.7')],
+  ['versão V3.7 na ajuda e no backup', dashboard.includes('Versão: V3.7') && backup.includes('appVersion:"V3.7"')],
+  ['sintaxe de todos os módulos válida', syntax.every(Boolean)],
+  ['51 atividades cadastradas e IDs preservados', taskCount===51 && tasks.includes('id:"whatsapp-focus"') && tasks.includes('id:"tomar-creatina-20h"')],
+  ['contagens dinâmicas por área preservadas', tasks.includes('function updateActivityCounts') && ['generalCount','workCount','personalCount'].every(id=>html.includes('id="'+id+'"'))],
+  ['chaves históricas do armazenamento preservadas', storage.includes('"atividades-jhon:"') && storage.includes('"atividades-jhon:skipped:"') && storage.includes('"atividades-jhon:preferences"')],
+  ['persistência local de concluídas, puladas e preferências', storage.includes('localStorage.getItem(key()') && storage.includes('localStorage.setItem(key()') && storage.includes('localStorage.setItem(skipKey()')],
+  ['backup valida tamanho, estrutura e IDs', backup.includes('file.size>2*1024*1024') && backup.includes('data.schema!=="atividades-jhon-backup"') && backup.includes('validIds.has(id)')],
+  ['backup mantém histórico e atividades arquivadas', backup.includes('occurrences:analytics?analytics.getLogs():[]') && backup.includes('archivedIds:analytics?analytics.getArchived():[]') && analytics.includes('restore:(nextLogs,nextArchived)')],
+  ['importação mantém compatibilidade com backup anterior', backup.includes('if(data.occurrences!==undefined)') && backup.includes('if(data.archivedIds!==undefined)')],
+  ['controles essenciais do painel preservados', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','helpBtn','prefsBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id=>html.includes('id="'+id+'"'))],
+  ['renderização, filtros e relatórios no dashboard', dashboard.includes('function render()') && dashboard.includes('function filtered()') && dashboard.includes('function renderWeeklyReport()')],
+  ['análise por período, histórico e ranking preservados', html.includes('id="analyticsPeriod"') && analytics.includes('const periodStart=') && analytics.includes('Frequência por atividade')],
+  ['tema escuro e foco visível preservados', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
+  ['privacidade e ordem dos módulos documentadas', structure.includes('localStorage') && structure.includes('Ordem de carregamento') && structure.includes('V3.7')],
+  ['roteiro manual de regressão V3.7 atualizado', tests.includes('Atividades do Jhon V3.7') && tests.includes('Restaurar backup antigo')]
+];
+let failed=0;
+for(const [name,ok] of checks){console.log((ok?'OK  ':'FALHA  ')+name);if(!ok)failed++;}
+if(failed){console.error('Falharam '+failed+' verificação(ões).');process.exit(1);}
 console.log('Validação estática concluída: '+checks.length+' verificações aprovadas.');

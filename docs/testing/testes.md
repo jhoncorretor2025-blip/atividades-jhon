@@ -1,35 +1,36 @@
-# Testes manuais — Atividades do Jhon V3.6
+# Testes — Atividades do Jhon V3.7
 
-## Verificação da estrutura
-- [ ] A página principal continua em `index.html` na raiz.
-- [ ] A documentação está em `docs/architecture/` e `docs/testing/`.
-- [ ] O validador está em `tests/validar-atividades.js`.
-- [ ] O workflow executa `node tests/validar-atividades.js`.
+## Verificações automatizadas
+O workflow `.github/workflows/validar-atividades.yml` executa `node tests/validar-atividades.js` em push, pull request e execução manual.
 
-## Testes funcionais
-- [ ] A página abre e mostra V3.6.
-- [ ] As atividades aparecem com a contagem dinâmica correta.
-- [ ] Busca, filtros e marcações funcionam.
-- [ ] Marcações e tema persistem após recarregar.
-- [ ] Exportar resumo TXT e backup JSON.
-- [ ] Restaurar backup válido após confirmação.
-- [ ] Backup inválido não altera dados.
-- [ ] Layout em celular e desktop.
-- [ ] Arquivos CSS e JavaScript carregam com HTTP 200.
-- [ ] Console sem erros JavaScript.
-- [ ] Página publicada no GitHub Pages repete os testes.
+- [ ] Estrutura e existência dos cinco módulos.
+- [ ] Ordem de carregamento no HTML.
+- [ ] Versão V3.7 no meta, cabeçalho, rodapé, ajuda e backup.
+- [ ] Cache-busting V3.7 nos arquivos.
+- [ ] Sintaxe de todos os módulos.
+- [ ] Presença das 51 atividades.
+- [ ] Chaves de armazenamento local preservadas.
+- [ ] Validação do backup e compatibilidade com campos opcionais.
+- [ ] Histórico, ranking e filtro por período preservados.
 
-## Validação automatizada V3.6
-O workflow `.github/workflows/validar-atividades.yml` executa `node tests/validar-atividades.js` em push, pull request e manualmente. A validação estática não substitui testes reais no navegador.
+## Testes manuais de regressão
+- [ ] Abrir a página no desktop e no celular.
+- [ ] Escolher Geral, Trabalho e Vida pessoal.
+- [ ] Pesquisar, filtrar e limpar filtros.
+- [ ] Marcar, desmarcar, pular e retomar atividades.
+- [ ] Recarregar e confirmar persistência das marcações.
+- [ ] Alternar tema claro/escuro e recarregar.
+- [ ] Concluir atividades visíveis.
+- [ ] Abrir e conferir o relatório semanal.
+- [ ] Abrir o banco de atividades e alternar ranking, histórico e classificação.
+- [ ] Alternar período de 7, 30, 90 dias e todo o histórico.
+- [ ] Exportar backup JSON e conferir marcações, preferências, ocorrências e arquivadas.
+- [ ] Restaurar backup recém-exportado após confirmação.
+- [ ] Restaurar backup antigo sem campos de ocorrências/arquivadas.
+- [ ] Tentar importar JSON inválido e confirmar que nenhum dado é alterado.
+- [ ] Exportar resumo TXT.
+- [ ] Console sem erros e arquivos CSS/JS com HTTP 200.
+- [ ] Confirmar publicação no GitHub Pages.
 
-## Regressão da análise V3.2
-- [ ] Alternar entre 7, 30, 90 dias e todo o histórico atualiza indicadores e ranking.
-- [ ] Indicadores distinguem volume, atividades realizadas e atividades sem registro.
-- [ ] Histórico individual continua exibindo todas as datas.
-- [ ] Classificação geral e arquivamento continuam funcionando.
-- [ ] O filtro funciona em tela estreita e no tema escuro.
-
-## Regressão de funcionalidades anteriores
-- [ ] Tela inicial Geral/Trabalho/Vida pessoal e contagens dinâmicas.
-- [ ] Filtros, marcações diárias, atividades puladas e relatório semanal.
-- [ ] Tema, backup/restauração, foco de teclado e layout responsivo.
+## Dados
+Não limpar o armazenamento local durante testes de regressão. Se necessário, exportar backup antes de qualquer teste destrutivo.

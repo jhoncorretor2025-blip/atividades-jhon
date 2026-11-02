@@ -1,28 +1,35 @@
-# Atividades do Jhon — estrutura V3.6
+# Atividades do Jhon — arquitetura V3.7
 
-## Organização do repositório
-- `index.html`: entrada principal do GitHub Pages; permanece na raiz.
-- `teste.html`: compatibilidade com o endereço antigo.
+## Estrutura do repositório
+- `index.html`: entrada do GitHub Pages.
+- `teste.html`: redirecionamento compatível com endereço antigo.
 - `assets/css/app.css`: estilos, temas e responsividade.
-- `assets/js/app.js`: lógica principal da interface, atividades, armazenamento local e backup.
-- `assets/js/analytics.js`: histórico de ocorrências, ranking e classificação.
-- `docs/architecture/estrutura.md`: arquitetura e cuidados de manutenção.
-- `docs/testing/testes.md`: roteiro de validação manual e regressão.
-- `tests/validar-atividades.js`: validação automatizada estática.
-- `.github/workflows/validar-atividades.yml`: execução da validação.
-- `README.md`: apresentação e atalhos para a documentação.
+- `assets/js/tasks.js`: catálogo de atividades e contagens por área.
+- `assets/js/storage.js`: estado diário, preferências e persistência local.
+- `assets/js/backup.js`: exportação e restauração do backup JSON.
+- `assets/js/dashboard.js`: interface, filtros, marcações, relatórios e ações do painel.
+- `assets/js/analytics.js`: ocorrências, ranking, histórico e classificação.
+- `tests/validar-atividades.js`: validação estática e de sintaxe.
+- `.github/workflows/validar-atividades.yml`: execução automática da validação.
+- `docs/`: documentação e roteiro de testes.
 
-## Cuidados com a publicação
-O GitHub Pages publica a partir da raiz do repositório. Por isso, `index.html`, `teste.html` e `assets/` permanecem nos caminhos atuais. Nesta etapa, somente documentação e teste automatizado foram reorganizados.
+## Ordem de carregamento
+Os scripts usam JavaScript clássico com atributo `defer`, mantendo a ordem no HTML:
+1. `tasks.js`
+2. `storage.js`
+3. `backup.js`
+4. `dashboard.js`
+5. `analytics.js`
 
-## Dados e privacidade
-As marcações diárias e preferências são guardadas no localStorage deste navegador. Não existe sincronização automática ou integração externa. O backup JSON é manual e contém IDs/títulos das atividades, marcações atuais, tema e histórico de ocorrências; não inclui senhas, tokens ou chaves secretas. A importação limita o arquivo a 2 MB, valida estrutura e IDs e pede confirmação antes de substituir as marcações do dia.
+Essa ordem mantém as declarações compartilhadas disponíveis para os módulos seguintes. O painel e a análise continuam usando as mesmas entidades globais compatíveis com a estrutura anterior.
 
-## Compatibilidade de dados
-Os identificadores das atividades, as chaves do localStorage e o formato do backup foram preservados. A reorganização não migra, apaga nem reescreve dados do navegador.
+## Dados e compatibilidade
+Foram preservadas as chaves `atividades-jhon:AAAA-MM-DD`, `atividades-jhon:skipped:AAAA-MM-DD` e `atividades-jhon:preferences`, além dos identificadores das 51 atividades. Não há migração nem limpeza automática de dados locais.
 
-## Versão atual
-A versão publicada é **V3.6**. Esta versão reorganiza documentação e validação automatizada sem alterar o comportamento da aplicação.
+O backup mantém `schema: atividades-jhon-backup` e `schemaVersion: 1`. A exportação inclui marcações do dia, preferências, histórico de ocorrências e atividades arquivadas. A restauração aceita backups anteriores sem os campos opcionais de histórico, valida IDs e limita o arquivo a 2 MB.
 
-## Próxima evolução
-A separação de `app.js` em módulos independentes fica para uma etapa posterior, após ampliar os testes de regressão para proteger a ordem de carregamento e as dependências compartilhadas.
+## Privacidade
+Os dados ficam no `localStorage` do navegador e do dispositivo. Não existe sincronização automática nem envio para servidor. O backup JSON é manual e deve ser guardado em local seguro.
+
+## Versão
+Versão atual: **V3.7**. A mudança modulariza o JavaScript sem alterar o layout ou o fluxo funcional pretendido.

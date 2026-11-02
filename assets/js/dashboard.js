@@ -1,0 +1,168 @@
+/* V3.7 — interface, filtros, relatórios e interação do painel. */
+function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function tags(t){
+ let a=[];
+ if(t.critical)a.push('<span class="tag criticaltag">🚨 CRÍTICA</span>');
+ if(t.attention)a.push('<span class="tag pending">◷ ATENÇÃO 11H (PENDENTE)</span>');
+ if(t.period==="Diário")a.push('<span class="tag daily">▤ DIÁRIO</span>');
+ if(t.period==="Semanal")a.push('<span class="tag weekly">▤ SEMANAL</span>');
+ if(t.period==="Mensal")a.push('<span class="tag weekly">▤ MENSAL</span>');
+ if(t.period==="Noturno")a.push('<span class="tag weekly">🌙 NOTURNO</span>');
+ if(t.area==="ADM")a.push('<span class="tag admin">💼 ADM</span>');
+ if(t.area==="Comercial")a.push('<span class="tag commercial">📣 COMERCIAL</span>');
+ if(t.area==="Ambos")a.push('<span class="tag both">💼 📣 ADM &amp; COMERCIAL</span>');
+ if(!["ADM","Comercial","Ambos"].includes(t.area))a.push('<span class="tag category">📂 '+escapeHtml(t.area.toLocaleUpperCase("pt-BR"))+'</span>');
+ return a.join("");
+}
+function iconStyle(t){if(t.critical)return "background:#fff0f1;color:#ff3045";if(t.attention)return "background:#fff5d9;color:#bf6b1e";if(t.area==="Comercial")return "background:#dcebff;color:#2475ff";if(!["ADM","Ambos"].includes(t.area))return "background:#e7f8ee;color:#177245";const colors={"status-social":"background:#ffe3f2;color:#e92b8e","pastas-entrada-saida":"background:#fff6be;color:#ad7200","conversa-prestador":"background:#f2e2ff;color:#a52aff","avalyst":"background:#dcebff;color:#3280ff","cobranca-condominio":"background:#ffead4;color:#ff6500","chaves-mural":"background:#fff6be;color:#bd8000","emails":"background:#dcebff;color:#3585ff","planilha":"background:#e2e8f0;color:#53657b","conversas-antigas":"background:#eae6ff;color:#7356ff","etiquetas-interessados":"background:#fff2bd;color:#b47a00","imoveis-antigos":"background:#f4e6ff;color:#a52cff","fotos-vilson":"background:#d0faf1;color:#00a99b","etiquetas-whatsapp":"background:#d1fae5;color:#059669"};return colors[t.id]||"background:#e2eaff;color:#3574ff"}
+function filtered(){
+ const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value;
+ return tasks.filter(t=>{
+  const workAreas=["ADM","Comercial","Ambos"];
+  if(currentMode==="work"&&!workAreas.includes(t.area))return false;
+  if(currentMode==="personal"&&workAreas.includes(t.area))return false;
+  const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
+  return (!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
+  (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
+  (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
+ });
+}
+
+function dateKeyOffset(offset){
+ const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-offset);
+ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function historyForDate(date){
+ const read=(k)=>{try{const v=JSON.parse(localStorage.getItem(k)||"[]");return Array.isArray(v)?v:[]}catch{return[]}};
+ return {done:new Set(read("atividades-jhon:"+date)),skipped:new Set(read("atividades-jhon:skipped:"+date))};
+}
+function reportScope(){
+ return tasks.filter(t=>currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true);
+}
+function renderWeeklyReport(){
+ const scope=reportScope(),ids=new Set(scope.map(t=>t.id)),total=scope.length;
+ const days=Array.from({length:7},(_,i)=>{
+  const date=dateKeyOffset(6-i),data=historyForDate(date);
+  const completed=[...data.done].filter(id=>ids.has(id)).length;
+  const skippedCount=[...data.skipped].filter(id=>ids.has(id)&&!data.done.has(id)).length;
+  const label=new Date(date+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit"});
+  return {date,label,completed,skipped:skippedCount,pending:Math.max(0,total-completed-skippedCount),rate:total?Math.round(completed/total*100):0};
+ });
+ const previous=Array.from({length:7},(_,i)=>{
+  const date=dateKeyOffset(13-i),data=historyForDate(date);
+  return [...data.done].filter(id=>ids.has(id)).length;
+ });
+ const doneTotal=days.reduce((s,d)=>s+d.completed,0),skipTotal=days.reduce((s,d)=>s+d.skipped,0);
+ const rate=total?Math.round(doneTotal/(total*7)*100):0;
+ const prevRate=total?Math.round(previous.reduce((s,n)=>s+n,0)/(total*7)*100):0;
+ const best=days.reduce((a,b)=>b.completed>a.completed?b:a,days[0]);
+ $("weeklyRange").textContent=days[0].label+" a "+days[6].label+" · "+(currentMode==="work"?"Trabalho":currentMode==="personal"?"Vida pessoal":"Todas as áreas");
+ $("weekDone").textContent=doneTotal;
+ $("weekSkipped").textContent=skipTotal;
+ $("weekRate").textContent=rate+"%";
+ $("weekBest").textContent=best&&best.completed?best.label+" ("+best.completed+")":"—";
+ const diff=rate-prevRate;
+ $("weekComparison").textContent=(diff>0?"▲ +":diff<0?"▼ ":"=")+diff+" pontos percentuais · semana anterior: "+prevRate+"%";
+ $("weekComparison").className=diff>0?"positive":diff<0?"negative":"";
+ const max=Math.max(1,...days.map(d=>d.completed));
+ $("weeklyDays").innerHTML=days.map(d=>'<div class="weekly-day"><div class="weekly-day-label">'+d.label+'</div><div class="weekly-bar-track"><div class="weekly-bar" style="width:'+Math.round(d.completed/max*100)+'%"></div></div><strong>'+d.completed+'</strong><span>'+d.skipped+' puladas · '+d.rate+'%</span></div>').join("");
+}
+$("weeklyReportBtn").addEventListener("click",()=>{
+ const panel=$("weeklyReport");panel.hidden=!panel.hidden;
+ if(!panel.hidden){renderWeeklyReport();panel.scrollIntoView({behavior:"smooth",block:"start"});}
+});
+$("closeWeeklyReport").addEventListener("click",()=>{$("weeklyReport").hidden=true;});
+
+function render(){
+ const list=filtered(), grid=$("taskGrid");
+ const scope=tasks.filter(t=>currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true);
+ const executed=scope.filter(t=>done.has(t.id)).length;
+ const skippedCount=scope.filter(t=>skipped.has(t.id)).length;
+ const pending=scope.length-executed-skippedCount;
+ $("summaryTotal").textContent=scope.length;
+ $("summaryDone").textContent=executed;
+ $("summarySkipped").textContent=skippedCount;
+ $("summaryPending").textContent=pending;
+ $("totalCount").textContent=list.length;
+ const completed=list.filter(t=>done.has(t.id)).length;
+ $("doneCount").textContent=completed;
+ $("pendingCount").textContent=list.filter(t=>t.attention&&!done.has(t.id)&&!skipped.has(t.id)).length;
+ const eligible=scope.length-skippedCount;
+ const pct=eligible?Math.round(completed/eligible*100):100;
+ $("progressText").textContent=pct+"%"; $("progressBar").style.width=pct+"%";
+ $("resultCount").textContent=list.length+" "+(list.length===1?"atividade":"atividades");
+ grid.innerHTML=list.length?list.map(t=>{
+  const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
+  return '<article class="task '+(isSkipped?' skipped':'')+(t.critical?'critical':t.urgent?'urgent':'')+(isDone?' done':'')+'">'+
+   '<div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+
+   '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
+   '<div class="tags">'+tags(t)+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
+   (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+'</div>'+
+   '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button></div></article>';
+ }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
+ grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.skip;if(skipped.has(id)){skipped.delete(id);showToast("Atividade voltou para a lista.");}else{skipped.add(id);done.delete(id);showToast("Atividade pulada. Você pode retomá-la depois.");}saveSkipped();saveDone();render();}));
+ grid.querySelectorAll(".check").forEach(el=>el.addEventListener("change",()=>{
+  if(el.checked)done.add(el.dataset.id);else done.delete(el.dataset.id);
+  saveDone();render();showToast(el.checked?"Atividade concluída! ✅":"Atividade voltou para pendente.");
+ }));
+}
+$("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V3.7. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
+let toastTimer;
+function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
+$("completeVisibleBtn").addEventListener("click",()=>{
+ const visible=filtered().filter(t=>!done.has(t.id)&&!skipped.has(t.id));
+ if(!visible.length){showToast("Não há atividades pendentes visíveis.");return}
+ visible.forEach(t=>{done.add(t.id);skipped.delete(t.id)});
+ saveSkipped();
+ saveDone();render();
+ showToast(visible.length+" atividade(s) concluída(s). ✅");
+});
+function chooseMode(mode){
+ currentMode=mode;
+ $("modeChooser").hidden=true;
+ $("activityWorkspace").hidden=false;
+ const isWork=mode==="work";
+ const isGeneral=mode==="general";
+ $("workspaceEyebrow").textContent=isGeneral?"ROTINA COMPLETA":isWork?"ROTINA PROFISSIONAL":"ROTINA PESSOAL";
+ $("workspaceTitle").textContent=isGeneral?"Todas as atividades":isWork?"Atividades de trabalho":"Vida pessoal";
+ $("taskListTitle").textContent=isGeneral?"🌐 Todas as atividades":isWork?"💼 Atividades de trabalho":"🌱 Atividades da vida pessoal";
+ $("areaFilter").value="all";
+ $("periodFilter").value="all";
+ $("statusFilter").value="all";
+ $("searchInput").value="";
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+$("chooseGeneral").addEventListener("click",()=>chooseMode("general"));
+$("chooseWork").addEventListener("click",()=>chooseMode("work"));
+$("choosePersonal").addEventListener("click",()=>chooseMode("personal"));
+$("changeModeBtn").addEventListener("click",()=>{
+ currentMode=null;
+ $("activityWorkspace").hidden=true;
+ $("modeChooser").hidden=false;
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
+});
+$("clearFiltersBtn").addEventListener("click",()=>{
+ $("searchInput").value="";
+ $("periodFilter").value="all";
+ $("areaFilter").value="all";
+ $("statusFilter").value="all";
+ render();showToast("Filtros limpos.");
+});
+$("searchInput").addEventListener("input",render);
+["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
+$("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje?"))return;done.clear();skipped.clear();saveDone();saveSkipped();render();showToast("Atividades do dia reiniciadas.")});
+$("exportBtn").addEventListener("click",()=>{
+ const lines=["ATIVIDADES DO JHON — TRABALHO E ROTINA PESSOAL", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
+ tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":skipped.has(t.id)?"[PULADA] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+(t.desc?"\n    "+t.desc:"")));
+ const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="atividades-trabalho-"+localDate()+".txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Resumo exportado.");
+});
+$("todayLabel").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+updateActivityCounts();
+applyPrefs();
+render();
