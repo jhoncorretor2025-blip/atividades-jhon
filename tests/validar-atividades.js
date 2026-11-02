@@ -28,11 +28,11 @@ const syntax = modules.map(([name,source]) => {
 });
 const taskCount = tasks.split('{id:"').length - 1;
 const scriptPaths = [
-  './assets/js/tasks.js?v=3.8',
-  './assets/js/storage.js?v=3.8',
-  './assets/js/backup.js?v=3.8',
-  './assets/js/dashboard.js?v=3.8',
-  './assets/js/analytics.js?v=3.8'
+  './assets/js/tasks.js?v=3.9',
+  './assets/js/storage.js?v=3.9',
+  './assets/js/backup.js?v=3.9',
+  './assets/js/dashboard.js?v=3.9',
+  './assets/js/analytics.js?v=3.9'
 ];
 const scriptPositions = scriptPaths.map(p=>html.indexOf(p));
 const orderedScripts = scriptPositions.every((p,i)=>p>=0&&(i===0||p>scriptPositions[i-1]));
@@ -40,11 +40,11 @@ const checks = [
   ['cinco módulos JavaScript existem', modules.every(([name])=>fs.existsSync(path.join(root,name)))],
   ['app.js antigo removido da estrutura', !fs.existsSync(path.join(root,'assets/js/app.js'))],
   ['scripts carregados na ordem correta', orderedScripts],
-  ['versão V3.8 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.8">') && html.includes('aria-label="Versão atual V3.8">V3.8</span>')],
-  ['cache-busting V3.8 nos cinco módulos e CSS', [...scriptPaths,'./assets/css/app.css?v=3.8'].every(x=>html.includes(x))],
-  ['rodapé informa V3.8', html.includes('V3.8 · Os itens')],
-  ['redirecionamento antigo aponta para V3.8', legacy.includes('index.html?v=3.8') && legacy.includes('V3.8')],
-  ['versão V3.8 na ajuda e no backup', dashboard.includes('Versão: V3.8') && backup.includes('appVersion:"V3.8"')],
+  ['versão V3.9 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.9">') && html.includes('aria-label="Versão atual V3.9">V3.9</span>')],
+  ['cache-busting V3.9 nos cinco módulos e CSS', [...scriptPaths,'./assets/css/app.css?v=3.9'].every(x=>html.includes(x))],
+  ['rodapé informa V3.9', html.includes('V3.9 · Os itens')],
+  ['redirecionamento antigo aponta para V3.9', legacy.includes('index.html?v=3.9') && legacy.includes('V3.9')],
+  ['versão V3.9 na ajuda e no backup', dashboard.includes('Versão: V3.9') && backup.includes('appVersion:"V3.9"')],
   ['sintaxe de todos os módulos válida', syntax.every(Boolean)],
   ['51 atividades cadastradas e IDs preservados', taskCount===51 && tasks.includes('id:"whatsapp-focus"') && tasks.includes('id:"tomar-creatina-20h"')],
   ['contagens dinâmicas por área preservadas', tasks.includes('function updateActivityCounts') && ['generalCount','workCount','personalCount'].every(id=>html.includes('id="'+id+'"'))],
@@ -58,9 +58,12 @@ const checks = [
   ['streak atual, recorde e últimos sete dias', html.includes('id="currentStreak"') && html.includes('id="bestStreak"') && dashboard.includes('function getStreakStats()') && dashboard.includes('function renderStreak()') && dashboard.includes('renderStreak();') && css.includes('.streak-panel')],
   ['streak considera dias com ao menos uma atividade concluída', dashboard.includes('value.length)activeDates.add') && dashboard.includes('activeDates.has(today)') && dashboard.includes('activeDates.has(yesterday)')],
   ['análise por período, histórico e ranking preservados', html.includes('id="analyticsPeriod"') && analytics.includes('const periodStart=') && analytics.includes('Frequência por atividade')],
+  ['indicadores de taxa de conclusão e média diária', analytics.includes('function completionMetrics(data)') && analytics.includes('distinct/data.length*100') && analytics.includes('periodRows.length/dayCount') && analytics.includes('Taxa de conclusão geral (%)') && analytics.includes('Média diária de conclusões')],
+  ['filtros rápidos de Trabalho, Saúde, Estudos e Lazer', ['all','work','health','studies','leisure'].every(category=>html.includes('data-category="'+category+'"')) && analytics.includes('currentCategory=b.dataset.category')],
+  ['classificação de atividades por categoria definida', analytics.includes('["ADM","Comercial","Ambos","Trabalho pessoal"]') && analytics.includes('["tomar-vitaminas","treino-academia","higiene-sono","tomar-creatina-20h"]') && analytics.includes('["Estudos","IA e DroidManiacos"]') && analytics.includes('task.area==="Lazer"')],
   ['tema escuro e foco visível preservados', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
-  ['privacidade e ordem dos módulos documentadas', structure.includes('localStorage') && structure.includes('Ordem de carregamento') && structure.includes('V3.8')],
-  ['roteiro manual de regressão V3.8 atualizado', tests.includes('Atividades do Jhon V3.8') && tests.includes('Restaurar backup antigo')]
+  ['privacidade e ordem dos módulos documentadas', structure.includes('localStorage') && structure.includes('Ordem de carregamento') && structure.includes('V3.9')],
+  ['roteiro manual de regressão V3.9 atualizado', tests.includes('Atividades do Jhon V3.9') && tests.includes('Restaurar backup antigo')]
 ];
 let failed=0;
 for(const [name,ok] of checks){console.log((ok?'OK  ':'FALHA  ')+name);if(!ok)failed++;}
