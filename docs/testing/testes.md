@@ -1,18 +1,21 @@
-# Testes — Atividades do Jhon V3.8
+# Testes — Atividades do Jhon V3.9
 
 ## Verificações automatizadas
 O workflow `.github/workflows/validar-atividades.yml` executa `node tests/validar-atividades.js` em push, pull request e execução manual.
 
 - [ ] Estrutura e existência dos cinco módulos.
 - [ ] Ordem de carregamento no HTML.
-- [ ] Versão V3.8 no meta, cabeçalho, rodapé, ajuda e backup.
-- [ ] Cache-busting V3.8 nos arquivos.
+- [ ] Versão V3.9 no meta, cabeçalho, rodapé, ajuda e backup.
+- [ ] Cache-busting V3.9 nos arquivos.
 - [ ] Sintaxe de todos os módulos.
 - [ ] Presença das 51 atividades.
 - [ ] Chaves de armazenamento local preservadas.
 - [ ] Validação do backup e compatibilidade com campos opcionais.
 - [ ] Histórico, ranking e filtro por período preservados.
 - [ ] Streak atual, melhor sequência e últimos sete dias.
+- [ ] Taxa de conclusão por atividades diferentes realizadas sobre o total da categoria.
+- [ ] Média diária calculada sobre todos os dias do período selecionado.
+- [ ] Filtros Todas, Trabalho, Saúde, Estudos e Lazer atualizam ranking, histórico e classificação.
 - [ ] Marcar a primeira atividade do dia inicia/continua a sequência; desmarcar atualiza o contador.
 - [ ] Dia sem atividade interrompe a sequência; atividade pulada não conta.
 
@@ -26,7 +29,8 @@ O workflow `.github/workflows/validar-atividades.yml` executa `node tests/valida
 - [ ] Concluir atividades visíveis.
 - [ ] Abrir e conferir o relatório semanal.
 - [ ] Abrir o banco de atividades e alternar ranking, histórico e classificação.
-- [ ] Alternar período de 7, 30, 90 dias e todo o histórico.
+- [ ] Alternar período de 7, 30, 90 dias e todo o histórico e conferir a atualização dos indicadores.
+- [ ] Comparar a taxa com o número de atividades únicas realizadas e a média com o total de conclusões dividido pelos dias do período.
 - [ ] Exportar backup JSON e conferir marcações, preferências, ocorrências e arquivadas.
 - [ ] Restaurar backup recém-exportado após confirmação.
 - [ ] Restaurar backup antigo sem campos de ocorrências/arquivadas.
