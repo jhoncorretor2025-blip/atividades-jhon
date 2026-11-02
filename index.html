@@ -56,6 +56,35 @@
 <footer><span>Atividades Jhon · Delta Imóveis</span><span>V3.0 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
+<script>
+/* Verifica automaticamente se há uma versão nova publicada. */
+(function(){
+  const current = document.querySelector('meta[name="delta-version"]')?.content || '';
+  let checking = false;
+  async function checkForUpdate(){
+    if(checking || document.visibilityState === 'hidden') return;
+    checking = true;
+    try {
+      const url = new URL(location.href);
+      url.searchParams.set('_delta_update_check', Date.now().toString());
+      const response = await fetch(url.toString(), {cache:'no-store', headers:{'Cache-Control':'no-cache'}});
+      if(!response.ok) return;
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const latest = doc.querySelector('meta[name="delta-version"]')?.content || '';
+      if(latest && current && latest !== current){
+        location.reload();
+      }
+    } catch(e) {
+      /* Sem conexão: mantém o app funcionando com os dados locais. */
+    } finally { checking = false; }
+  }
+  checkForUpdate();
+  setInterval(checkForUpdate, 60000);
+  document.addEventListener('visibilitychange', checkForUpdate);
+})();
+</script>
+
 <script src="./assets/js/app.js?v=3.0" defer></script>
 <script src="./assets/js/analytics.js?v=3.0" defer></script>
 </body>
