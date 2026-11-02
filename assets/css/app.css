@@ -148,3 +148,19 @@ body[data-theme="dark"] .task-link{background:#203b68;color:#dbeafe;border-color
 
 /* V3.0 — banco de atividades, ranking, histórico e status */
 .analytics-panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin:18px 0;box-shadow:var(--shadow)}.analytics-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.analytics-head h3{margin:5px 0;font-size:22px}.analytics-head p,.analytics-muted{color:var(--muted);font-size:13px;line-height:1.5}.analytics-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.analytics-panel h4{margin:14px 0 8px}.analytics-row,.status-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.rank{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:var(--bg);font-weight:900}.analytics-row-main{flex:1;min-width:0}.analytics-row-main strong,.analytics-row-main small{display:block}.analytics-row-main small,.status-item small{font-size:11px;color:var(--muted);margin-top:3px}.analytics-count{white-space:nowrap}.analytics-select{width:100%;max-width:520px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);margin:10px 0}.history-detail{margin-top:14px;padding:14px;background:var(--bg);border-radius:12px}.history-list{padding-left:22px;line-height:1.9}.status-group{margin:18px 0}.status-group h5{display:flex;justify-content:space-between;margin:0 0 8px}.status-group h5 span{color:var(--muted)}.status-item span{flex:1}.status-item{flex-wrap:wrap}.status-item small{margin-right:8px}.status-item button,.analytics-row button{font-size:11px;padding:7px 9px}body[data-theme="dark"] .history-detail{background:#111c30}@media(max-width:600px){.analytics-panel{padding:14px}.analytics-row{gap:8px;flex-wrap:wrap}.analytics-row-main{flex-basis:calc(100% - 45px)}.analytics-row button{margin-left:40px}.status-item{align-items:flex-start}.status-item span{flex-basis:100%}}
+
+
+/* V3.1 — alvos de toque e foco de teclado mais claros */
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{
+ outline:3px solid #2563eb88;outline-offset:3px
+}
+@media(max-width:760px){
+ .task-actions{gap:8px}
+ .task-actions .check{width:34px;height:34px;border-radius:11px}
+ .task-actions .skip-btn{min-height:40px;padding:8px 9px}
+ .task{padding:17px;gap:10px}
+}
+body[data-theme="dark"] button:focus-visible,
+body[data-theme="dark"] a:focus-visible,
+body[data-theme="dark"] input:focus-visible,
+body[data-theme="dark"] select:focus-visible{outline-color:#93c5fd}
