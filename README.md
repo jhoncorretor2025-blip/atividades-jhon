@@ -1,8 +1,8 @@
 # Atividades do Jhon
 
-Painel com tela inicial para escolher entre geral (50 atividades), trabalho (28) e vida pessoal (22), além de contagens por categoria nos filtros.
+Painel com tela inicial para escolher entre geral (51 atividades), trabalho (28) e vida pessoal (22), além de contagens por categoria nos filtros.
 
-Versão atual: **V2.2**
+Versão atual: **V3.1**
 
 Abra a página publicada pelo GitHub Pages. O estado das atividades fica no armazenamento local do navegador; use o backup JSON para guardar uma cópia manual.
 
