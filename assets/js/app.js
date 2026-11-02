@@ -53,6 +53,22 @@ const tasks = [
 ,{id:"tomar-creatina-20h",title:"Tomar creatina — 20h",icon:"💊",area:"Saúde",period:"Noturno",priority:"Alta",attention:true,desc:"Lembrete noturno conforme a rotina pessoal informada."}
 
 ];
+function updateActivityCounts(){
+ const workAreas=["ADM","Comercial","Ambos"];
+ const work=tasks.filter(t=>workAreas.includes(t.area)).length;
+ const counts=new Map();
+ tasks.forEach(t=>counts.set(t.area,(counts.get(t.area)||0)+1));
+ const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
+ set("generalCount",tasks.length);set("workCount",work);set("personalCount",tasks.length-work);
+ const area=document.getElementById("areaFilter");
+ if(area)Array.from(area.options).forEach(option=>{
+  if(option.value==="all")option.textContent="Todas as áreas ("+tasks.length+")";
+  else if(counts.has(option.value)){
+   const label=option.textContent.replace(/\\s*\\(\\d+\\)$/, "");
+   option.textContent=label+" ("+counts.get(option.value)+")";
+  }
+ });
+}
 const $=id=>document.getElementById(id);
 const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const key=()=>"atividades-jhon:"+localDate();
@@ -153,7 +169,7 @@ function render(){
  $("summarySkipped").textContent=skippedCount;
  $("summaryPending").textContent=pending;
  $("totalCount").textContent=list.length;
- const completed=scope.filter(t=>done.has(t.id)).length;
+ const completed=list.filter(t=>done.has(t.id)).length;
  $("doneCount").textContent=completed;
  $("pendingCount").textContent=list.filter(t=>t.attention&&!done.has(t.id)&&!skipped.has(t.id)).length;
  const eligible=scope.length-skippedCount;
@@ -177,7 +193,7 @@ function render(){
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
 $("backupBtn").addEventListener("click",()=>{
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V2.9",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],preferences:prefs};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V3.1",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],preferences:prefs};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup JSON exportado. Guarde o arquivo em local seguro.");
 });
@@ -190,16 +206,16 @@ $("backupFile").addEventListener("change",async e=>{
   if(!data||typeof data!=="object"||data.schema!=="atividades-jhon-backup"||data.schemaVersion!==1||!Array.isArray(data.tasks)||data.tasks.length>tasks.length||new Set(data.tasks.map(t=>t&&t.id)).size!==data.tasks.length||!Array.isArray(data.doneIds)||data.doneIds.length>tasks.length||!data.doneIds.every(id=>typeof id==="string"))throw new Error("Formato inválido");
   const validIds=new Set(tasks.map(t=>t.id));
   if(!data.tasks.every(t=>t&&typeof t.id==="string"&&validIds.has(t.id))||!data.doneIds.every(id=>validIds.has(id))||new Set(data.doneIds).size!==data.doneIds.length)throw new Error("Atividades não reconhecidas");
+  const skippedIds=Array.isArray(data.skippedIds)?data.skippedIds:[];
+  if(!skippedIds.every(id=>typeof id==="string"&&validIds.has(id))||new Set(skippedIds).size!==skippedIds.length)throw new Error("Atividades puladas não reconhecidas");
   if(!confirm("Restaurar as atividades concluídas e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
   done=new Set(data.doneIds);saveDone();
-  const skippedIds=Array.isArray(data.skippedIds)?data.skippedIds:[];
-  if(skippedIds.some(id=>!validIds.has(id))||new Set(skippedIds).size!==skippedIds.length)throw new Error("Atividades puladas não reconhecidas");
   skipped=new Set(skippedIds);saveSkipped();
   if(data.preferences&&typeof data.preferences==="object"&&["light","dark"].includes(data.preferences.theme)){prefs={theme:data.preferences.theme};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}}
   applyPrefs();render();showToast("Backup restaurado para hoje.");
  }catch(err){showToast("Backup inválido ou incompatível. Nenhum dado foi alterado.");}
 });
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V2.9. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V3.1. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
@@ -254,5 +270,6 @@ $("exportBtn").addEventListener("click",()=>{
  a.href=url;a.download="atividades-trabalho-"+localDate()+".txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Resumo exportado.");
 });
 $("todayLabel").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+updateActivityCounts();
 applyPrefs();
 render();
