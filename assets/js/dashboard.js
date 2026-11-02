@@ -1,4 +1,4 @@
-/* V3.7 — interface, filtros, relatórios e interação do painel. */
+/* V3.8 — interface, filtros, relatórios e interação do painel. */
 function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tags(t){
@@ -74,6 +74,19 @@ $("weeklyReportBtn").addEventListener("click",()=>{
 });
 $("closeWeeklyReport").addEventListener("click",()=>{$("weeklyReport").hidden=true;});
 
+
+function getStreakStats(){
+ const activeDates=new Set();
+ try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||!/^atividades-jhon:\\d{4}-\\d{2}-\\d{2}$/.test(k))continue;const value=JSON.parse(localStorage.getItem(k)||"[]");if(Array.isArray(value)&&value.length)activeDates.add(k.slice("atividades-jhon:".length));}}catch{}
+ const sorted=[...activeDates].sort();let best=0,run=0,previous=null;
+ for(const date of sorted){const current=new Date(date+"T12:00:00");const gap=previous?Math.round((current-previous)/86400000):null;run=gap===1?run+1:1;best=Math.max(best,run);previous=current;}
+ const today=localDate(),yesterday=dateKeyOffset(1);let current=0,cursor=activeDates.has(today)?0:activeDates.has(yesterday)?1:null;
+ if(cursor!==null){while(activeDates.has(dateKeyOffset(cursor))){current++;cursor++;}}
+ const week=Array.from({length:7},(_,i)=>{const date=dateKeyOffset(6-i);return {date,active:activeDates.has(date),label:new Date(date+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short"}).replace(".","")}});
+ return {current,best,week};
+}
+function renderStreak(){const panel=document.getElementById("currentStreak");if(!panel)return;const stats=getStreakStats();panel.textContent=stats.current;$("bestStreak").textContent=stats.best+" "+(stats.best===1?"dia":"dias");$("streakMessage").textContent=stats.current===0?"Comece sua sequência hoje!":stats.current===1?"Você começou uma nova sequência. Continue amanhã!":"Muito bem! Continue mantendo o ritmo.";$("streakWeek").innerHTML=stats.week.map(d=>'<div class="streak-day '+(d.active?"active":"")+'"><span>'+escapeHtml(d.label)+'</span><i aria-label="'+(d.active?"Dia com atividade":"Sem atividade")+'">'+(d.active?"✓":"·")+'</i></div>').join("");}
+
 function render(){
  const list=filtered(), grid=$("taskGrid");
  const scope=tasks.filter(t=>currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true);
@@ -91,6 +104,7 @@ function render(){
  const eligible=scope.length-skippedCount;
  const pct=eligible?Math.round(completed/eligible*100):100;
  $("progressText").textContent=pct+"%"; $("progressBar").style.width=pct+"%";
+ renderStreak();
  $("resultCount").textContent=list.length+" "+(list.length===1?"atividade":"atividades");
  grid.innerHTML=list.length?list.map(t=>{
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
@@ -108,7 +122,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V3.7. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V3.8. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações e preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
