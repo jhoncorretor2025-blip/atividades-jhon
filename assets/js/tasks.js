@@ -1,4 +1,4 @@
-/* V3.7 — catálogo imutável das atividades e contagens por área. */
+/* V3.9 — catálogo imutável das atividades e contagens por área. */
 const tasks = [
 {id:"whatsapp-focus",title:"Revisar o WhatsApp (Foco Total 08h-10h)",icon:"◷",area:"ADM",period:"Diário",priority:"Alta",attention:true,desc:"Rotina matinal de foco no WhatsApp.",urgent:true},
 {id:"nota-fiscal",title:"Emitir Nota Fiscal",icon:"♧",area:"ADM",period:"Mensal",priority:"Crítica",critical:true,desc:"Dia 15: emitir as notas fiscais para evitar multas e atrasos no faturamento.",attention:true},
