@@ -1,4 +1,4 @@
-# Atividades do Jhon — estrutura V3.4
+# Atividades do Jhon — estrutura V3.5
 
 ## Organização do repositório
 - `index.html`: entrada principal do GitHub Pages; permanece na raiz.
@@ -22,7 +22,7 @@ As marcações diárias e preferências são guardadas no localStorage deste nav
 Os identificadores das atividades, as chaves do localStorage e o formato do backup foram preservados. A reorganização não migra, apaga nem reescreve dados do navegador.
 
 ## Versão atual
-A versão publicada é **V3.4**. Esta versão reorganiza documentação e validação automatizada sem alterar o comportamento da aplicação.
+A versão publicada é **V3.5**. Esta versão reorganiza documentação e validação automatizada sem alterar o comportamento da aplicação.
 
 ## Próxima evolução
 A separação de `app.js` em módulos independentes fica para uma etapa posterior, após ampliar os testes de regressão para proteger a ordem de carregamento e as dependências compartilhadas.
