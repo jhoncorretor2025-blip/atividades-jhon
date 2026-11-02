@@ -1,4 +1,4 @@
-# Atividades do Jhon — arquitetura V3.8
+# Atividades do Jhon — arquitetura V3.9
 
 ## Estrutura do repositório
 - `index.html`: entrada do GitHub Pages.
@@ -26,6 +26,12 @@ Essa ordem mantém as declarações compartilhadas disponíveis para os módulos
 ## Contador de dias consecutivos
 O streak usa os registros diários já existentes no `localStorage`. Um dia é válido quando há pelo menos uma atividade concluída; atividades puladas não contam. A sequência atual considera hoje ou, se ainda não houve atividade hoje, ontem. O recorde é calculado sobre todo o histórico local disponível. Nenhuma chave de armazenamento é alterada.
 
+
+## Indicadores e filtros das estatísticas
+A taxa de conclusão do período mede a cobertura do catálogo: quantidade de atividades diferentes concluídas pelo menos uma vez dividida pelo total de atividades da categoria selecionada. A média diária divide todas as conclusões registradas no período (incluindo repetições em dias distintos) pelo número de dias do período. Em “Todo o histórico”, o divisor vai da primeira conclusão registrada até hoje, inclusive.
+
+Filtros rápidos: Trabalho agrupa ADM, Comercial, Ambos e Trabalho pessoal; Saúde reúne vitaminas/suplementos, academia, higiene do sono e creatina; Estudos reúne Estudos e IA e DroidManiacos; Lazer reúne a área Lazer. “Todas” inclui também as demais atividades do catálogo. Os filtros afetam ranking, histórico e classificação, e podem ser combinados com o período escolhido.
+
 ## Dados e compatibilidade
 Foram preservadas as chaves `atividades-jhon:AAAA-MM-DD`, `atividades-jhon:skipped:AAAA-MM-DD` e `atividades-jhon:preferences`, além dos identificadores das 51 atividades. Não há migração nem limpeza automática de dados locais.
 
@@ -35,4 +41,4 @@ O backup mantém `schema: atividades-jhon-backup` e `schemaVersion: 1`. A export
 Os dados ficam no `localStorage` do navegador e do dispositivo. Não existe sincronização automática nem envio para servidor. O backup JSON é manual e deve ser guardado em local seguro.
 
 ## Versão
-Versão atual: **V3.8**. A mudança modulariza o JavaScript sem alterar o layout ou o fluxo funcional pretendido.
+Versão atual: **V3.9**. A versão adiciona indicadores de aproveitamento por período e filtros por categoria às estatísticas.
