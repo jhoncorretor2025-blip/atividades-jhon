@@ -11,17 +11,18 @@ const css = read('assets/css/app.css');
 const structure = read('docs/estrutura.md');
 const tests = read('docs/testes.md');
 const legacy = read('teste.html');
-const all = [html,js,css,structure,tests,legacy];
+const analytics = read('assets/js/analytics.js');
+const all = [html,js,css,structure,tests,legacy,analytics];
 let appSyntaxValid = true;
 try { new vm.Script(js, { filename: 'assets/js/app.js' }); } catch (error) { appSyntaxValid = false; console.error('Erro de sintaxe em app.js:', error.message); }
 const checks = [
-  ['versão V2.2 consistente nos arquivos ativos', all.every(s => !/V2\.1/.test(s)) && /<meta name="delta-version" content="V2\.2">/.test(html)],
+  ['versão V3.1 consistente nos arquivos ativos', all.every(s => !/V2\.1/.test(s)) && /<meta name="delta-version" content="V2\.2">/.test(html)],
   ['versão visível no cabeçalho', /aria-label="Versão atual V2\.2">V2\.2<\/span>/.test(html)],
-  ['CSS e JavaScript com cache-busting V2.2', /assets\/css\/app\.css\?v=2\.2/.test(html) && /assets\/js\/app\.js\?v=2\.2/.test(html)],
-  ['redirecionamento antigo aponta para V2.2', /url=\.\/index\.html\?v=2\.2/.test(legacy) && /index\.html\?v=2\.2/.test(legacy)],
+  ['CSS e JavaScript com cache-busting V3.1', /assets\/css\/app\.css\?v=2\.2/.test(html) && /assets\/js\/app\.js\?v=2\.2/.test(html)],
+  ['redirecionamento antigo aponta para V3.1', /url=\.\/index\.html\?v=2\.2/.test(legacy) && /index\.html\?v=2\.2/.test(legacy)],
   ['sintaxe JavaScript válida', appSyntaxValid],
   ['50 atividades declaradas', (js.match(/\{id:"/g)||[]).length === 50],
-  ['cards Geral, Trabalho e Vida pessoal', html.includes('50 atividades cadastradas') && html.includes('28 atividades cadastradas') && html.includes('22 atividades cadastradas')],
+  ['contagens dinâmicas nos cards e filtros', html.includes('id="generalCount"') && html.includes('id="workCount"') && html.includes('id="personalCount"') && /function updateActivityCounts/.test(js)],
   ['controles essenciais presentes', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','helpBtn','prefsBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id => html.includes('id="'+id+'"'))],
   ['salvamento local e preferências', /localStorage\.setItem\(key\(\)/.test(js) && /localStorage\.setItem\(PREF_KEY/.test(js)],
   ['importação limitada e valida estrutura', /file\.size>2\*1024\*1024/.test(js) && /data\.schema!=="atividades-jhon-backup"/.test(js) && /new Set\(data\.doneIds\)\.size!==data\.doneIds\.length/.test(js)],
