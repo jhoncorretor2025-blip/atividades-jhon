@@ -1,4 +1,4 @@
-/* V3.7 — armazenamento local e estado compartilhado. Mantém as chaves históricas. */
+/* V3.9 — armazenamento local e estado compartilhado. Mantém as chaves históricas. */
 const $=id=>document.getElementById(id);
 const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const key=()=>"atividades-jhon:"+localDate();
