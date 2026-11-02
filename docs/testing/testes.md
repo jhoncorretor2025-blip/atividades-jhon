@@ -1,17 +1,20 @@
-# Testes — Atividades do Jhon V3.7
+# Testes — Atividades do Jhon V3.8
 
 ## Verificações automatizadas
 O workflow `.github/workflows/validar-atividades.yml` executa `node tests/validar-atividades.js` em push, pull request e execução manual.
 
 - [ ] Estrutura e existência dos cinco módulos.
 - [ ] Ordem de carregamento no HTML.
-- [ ] Versão V3.7 no meta, cabeçalho, rodapé, ajuda e backup.
-- [ ] Cache-busting V3.7 nos arquivos.
+- [ ] Versão V3.8 no meta, cabeçalho, rodapé, ajuda e backup.
+- [ ] Cache-busting V3.8 nos arquivos.
 - [ ] Sintaxe de todos os módulos.
 - [ ] Presença das 51 atividades.
 - [ ] Chaves de armazenamento local preservadas.
 - [ ] Validação do backup e compatibilidade com campos opcionais.
 - [ ] Histórico, ranking e filtro por período preservados.
+- [ ] Streak atual, melhor sequência e últimos sete dias.
+- [ ] Marcar a primeira atividade do dia inicia/continua a sequência; desmarcar atualiza o contador.
+- [ ] Dia sem atividade interrompe a sequência; atividade pulada não conta.
 
 ## Testes manuais de regressão
 - [ ] Abrir a página no desktop e no celular.
