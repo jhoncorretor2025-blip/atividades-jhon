@@ -28,11 +28,11 @@ const syntax = modules.map(([name,source]) => {
 });
 const taskCount = tasks.split('{id:"').length - 1;
 const scriptPaths = [
-  './assets/js/tasks.js?v=3.7',
-  './assets/js/storage.js?v=3.7',
-  './assets/js/backup.js?v=3.7',
-  './assets/js/dashboard.js?v=3.7',
-  './assets/js/analytics.js?v=3.7'
+  './assets/js/tasks.js?v=3.8',
+  './assets/js/storage.js?v=3.8',
+  './assets/js/backup.js?v=3.8',
+  './assets/js/dashboard.js?v=3.8',
+  './assets/js/analytics.js?v=3.8'
 ];
 const scriptPositions = scriptPaths.map(p=>html.indexOf(p));
 const orderedScripts = scriptPositions.every((p,i)=>p>=0&&(i===0||p>scriptPositions[i-1]));
@@ -40,11 +40,11 @@ const checks = [
   ['cinco módulos JavaScript existem', modules.every(([name])=>fs.existsSync(path.join(root,name)))],
   ['app.js antigo removido da estrutura', !fs.existsSync(path.join(root,'assets/js/app.js'))],
   ['scripts carregados na ordem correta', orderedScripts],
-  ['versão V3.7 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.7">') && html.includes('aria-label="Versão atual V3.7">V3.7</span>')],
-  ['cache-busting V3.7 nos cinco módulos e CSS', [...scriptPaths,'./assets/css/app.css?v=3.7'].every(x=>html.includes(x))],
-  ['rodapé informa V3.7', html.includes('V3.7 · Os itens')],
-  ['redirecionamento antigo aponta para V3.7', legacy.includes('index.html?v=3.7') && legacy.includes('V3.7')],
-  ['versão V3.7 na ajuda e no backup', dashboard.includes('Versão: V3.7') && backup.includes('appVersion:"V3.7"')],
+  ['versão V3.8 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.8">') && html.includes('aria-label="Versão atual V3.8">V3.8</span>')],
+  ['cache-busting V3.8 nos cinco módulos e CSS', [...scriptPaths,'./assets/css/app.css?v=3.8'].every(x=>html.includes(x))],
+  ['rodapé informa V3.8', html.includes('V3.8 · Os itens')],
+  ['redirecionamento antigo aponta para V3.8', legacy.includes('index.html?v=3.8') && legacy.includes('V3.8')],
+  ['versão V3.8 na ajuda e no backup', dashboard.includes('Versão: V3.8') && backup.includes('appVersion:"V3.8"')],
   ['sintaxe de todos os módulos válida', syntax.every(Boolean)],
   ['51 atividades cadastradas e IDs preservados', taskCount===51 && tasks.includes('id:"whatsapp-focus"') && tasks.includes('id:"tomar-creatina-20h"')],
   ['contagens dinâmicas por área preservadas', tasks.includes('function updateActivityCounts') && ['generalCount','workCount','personalCount'].every(id=>html.includes('id="'+id+'"'))],
@@ -55,10 +55,12 @@ const checks = [
   ['importação mantém compatibilidade com backup anterior', backup.includes('if(data.occurrences!==undefined)') && backup.includes('if(data.archivedIds!==undefined)')],
   ['controles essenciais do painel preservados', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','helpBtn','prefsBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id=>html.includes('id="'+id+'"'))],
   ['renderização, filtros e relatórios no dashboard', dashboard.includes('function render()') && dashboard.includes('function filtered()') && dashboard.includes('function renderWeeklyReport()')],
+  ['streak atual, recorde e últimos sete dias', html.includes('id="currentStreak"') && html.includes('id="bestStreak"') && dashboard.includes('function getStreakStats()') && dashboard.includes('function renderStreak()') && dashboard.includes('renderStreak();') && css.includes('.streak-panel')],
+  ['streak considera dias com ao menos uma atividade concluída', dashboard.includes('value.length)activeDates.add') && dashboard.includes('activeDates.has(today)') && dashboard.includes('activeDates.has(yesterday)')],
   ['análise por período, histórico e ranking preservados', html.includes('id="analyticsPeriod"') && analytics.includes('const periodStart=') && analytics.includes('Frequência por atividade')],
   ['tema escuro e foco visível preservados', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
-  ['privacidade e ordem dos módulos documentadas', structure.includes('localStorage') && structure.includes('Ordem de carregamento') && structure.includes('V3.7')],
-  ['roteiro manual de regressão V3.7 atualizado', tests.includes('Atividades do Jhon V3.7') && tests.includes('Restaurar backup antigo')]
+  ['privacidade e ordem dos módulos documentadas', structure.includes('localStorage') && structure.includes('Ordem de carregamento') && structure.includes('V3.8')],
+  ['roteiro manual de regressão V3.8 atualizado', tests.includes('Atividades do Jhon V3.8') && tests.includes('Restaurar backup antigo')]
 ];
 let failed=0;
 for(const [name,ok] of checks){console.log((ok?'OK  ':'FALHA  ')+name);if(!ok)failed++;}
