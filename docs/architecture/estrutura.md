@@ -1,4 +1,4 @@
-# Atividades do Jhon — arquitetura V3.7
+# Atividades do Jhon — arquitetura V3.8
 
 ## Estrutura do repositório
 - `index.html`: entrada do GitHub Pages.
@@ -7,7 +7,7 @@
 - `assets/js/tasks.js`: catálogo de atividades e contagens por área.
 - `assets/js/storage.js`: estado diário, preferências e persistência local.
 - `assets/js/backup.js`: exportação e restauração do backup JSON.
-- `assets/js/dashboard.js`: interface, filtros, marcações, relatórios e ações do painel.
+- `assets/js/dashboard.js`: interface, filtros, marcações, relatórios, streak e ações do painel.
 - `assets/js/analytics.js`: ocorrências, ranking, histórico e classificação.
 - `tests/validar-atividades.js`: validação estática e de sintaxe.
 - `.github/workflows/validar-atividades.yml`: execução automática da validação.
@@ -23,6 +23,9 @@ Os scripts usam JavaScript clássico com atributo `defer`, mantendo a ordem no H
 
 Essa ordem mantém as declarações compartilhadas disponíveis para os módulos seguintes. O painel e a análise continuam usando as mesmas entidades globais compatíveis com a estrutura anterior.
 
+## Contador de dias consecutivos
+O streak usa os registros diários já existentes no `localStorage`. Um dia é válido quando há pelo menos uma atividade concluída; atividades puladas não contam. A sequência atual considera hoje ou, se ainda não houve atividade hoje, ontem. O recorde é calculado sobre todo o histórico local disponível. Nenhuma chave de armazenamento é alterada.
+
 ## Dados e compatibilidade
 Foram preservadas as chaves `atividades-jhon:AAAA-MM-DD`, `atividades-jhon:skipped:AAAA-MM-DD` e `atividades-jhon:preferences`, além dos identificadores das 51 atividades. Não há migração nem limpeza automática de dados locais.
 
@@ -32,4 +35,4 @@ O backup mantém `schema: atividades-jhon-backup` e `schemaVersion: 1`. A export
 Os dados ficam no `localStorage` do navegador e do dispositivo. Não existe sincronização automática nem envio para servidor. O backup JSON é manual e deve ser guardado em local seguro.
 
 ## Versão
-Versão atual: **V3.7**. A mudança modulariza o JavaScript sem alterar o layout ou o fluxo funcional pretendido.
+Versão atual: **V3.8**. A mudança modulariza o JavaScript sem alterar o layout ou o fluxo funcional pretendido.
