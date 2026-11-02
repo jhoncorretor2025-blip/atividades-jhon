@@ -19,13 +19,15 @@ const taskCount = js.split('{id:"').length - 1;
 const skippedValidation = js.indexOf('skippedIds.every');
 const doneWrite = js.indexOf('done=new Set(data.doneIds)');
 const checks = [
-  ['versão V3.1 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.1">') && html.includes('aria-label="Versão atual V3.1">V3.1</span>')],
-  ['cache-busting V3.1 nos três arquivos', ['app.css?v=3.1','app.js?v=3.1','analytics.js?v=3.1'].every(x => html.includes(x))],
-  ['rodapé informa V3.1', html.includes('V3.1 · Os itens')],
-  ['redirecionamento antigo aponta para V3.1', legacy.includes('index.html?v=3.1') && legacy.includes('V3.1')],
-  ['versão V3.1 na ajuda e no backup', js.includes('Versão: V3.1') && js.includes('appVersion:"V3.1"')],
-  ['versão V3.1 no backup do banco de atividades', analytics.includes('appVersion:"V3.1"')],
+  ['versão V3.2 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.2">') && html.includes('aria-label="Versão atual V3.2">V3.2</span>')],
+  ['cache-busting V3.2 nos três arquivos', ['app.css?v=3.2','app.js?v=3.2','analytics.js?v=3.2'].every(x => html.includes(x))],
+  ['rodapé informa V3.2', html.includes('V3.2 · Os itens')],
+  ['redirecionamento antigo aponta para V3.2', legacy.includes('index.html?v=3.2') && legacy.includes('V3.2')],
+  ['versão V3.2 na ajuda e no backup', js.includes('Versão: V3.2') && js.includes('appVersion:"V3.2"')],
+  ['versão V3.2 no backup do banco de atividades', analytics.includes('appVersion:"V3.2"')],
   ['sintaxe JavaScript válida', appSyntaxValid],
+  ['sintaxe do banco de atividades válida', (()=>{try{new vm.Script(analytics,{filename:'assets/js/analytics.js'});return true}catch(e){console.error('Erro de sintaxe em analytics.js:',e.message);return false}})()],
+  ['análise por período implementada', html.includes('id="analyticsPeriod"') && analytics.includes('function periodStart') && analytics.includes('Sem registro') && analytics.includes('Frequência por atividade')],
   ['51 atividades cadastradas', taskCount === 51],
   ['contagens dinâmicas nos cards e filtros', ['generalCount','workCount','personalCount'].every(id => html.includes('id="'+id+'"')) && js.includes('function updateActivityCounts')],
   ['controles essenciais presentes', ['resetBtn','exportBtn','themeBtn','backupBtn','importBtn','helpBtn','prefsBtn','searchInput','periodFilter','areaFilter','statusFilter','completeVisibleBtn','clearFiltersBtn'].every(id => html.includes('id="'+id+'"'))],
@@ -36,7 +38,7 @@ const checks = [
   ['tema escuro e foco visível', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
   ['etiqueta visual para tarefas noturnas', js.includes('t.period==="Noturno"') && js.includes('NOTURNO')],
   ['privacidade documenta armazenamento local', structure.includes('localStorage') && structure.includes('Não existe sincronização automática')],
-  ['roteiro de regressão V3.1 atualizado', tests.includes('V3.1 — melhorias e regressão')]
+  ['roteiro de regressão V3.2 atualizado', tests.includes('V3.2 — melhorias e regressão')]
 ];
 let failed = 0;
 for (const [name,ok] of checks) { console.log((ok ? 'OK  ' : 'FALHA  ') + name); if (!ok) failed++; }

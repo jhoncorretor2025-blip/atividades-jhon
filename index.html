@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V3.1">
-<title>Atividades do Jhon · Delta | V3.1</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=3.1">
+<meta name="delta-version" content="V3.2">
+<title>Atividades do Jhon · Delta | V3.2</title>
+<link rel="stylesheet" href="./assets/css/app.css?v=3.2">
 </head>
 <body>
-<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V3.1">V3.1</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V3.2">V3.2</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="stats" aria-label="Resumo das atividades">
@@ -23,6 +23,7 @@
 <section class="analytics-panel" id="analyticsPanel" hidden>
  <div class="analytics-head"><div><span class="workspace-eyebrow">SEU BANCO DE DADOS PESSOAL</span><h3>📊 O que eu realmente faço</h3><p>Estatísticas calculadas a partir das atividades registradas.</p></div><button class="toolbar-action" id="closeAnalytics" type="button">✕ Fechar</button></div>
  <div class="analytics-tabs"><button class="toolbar-action primary" data-view="ranking">🏆 Mais realizadas</button><button class="toolbar-action" data-view="history">📅 Histórico</button><button class="toolbar-action" data-view="status">🧠 Classificação</button></div>
+ <p class="analytics-period-label"><label for="analyticsPeriod">Analisar período</label><select id="analyticsPeriod" class="analytics-select analytics-period"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="all">Todo o histórico</option></select></p>
  <div id="analyticsContent"></div>
 </section>
 <section class="weekly-report" id="weeklyReport" hidden aria-live="polite">
@@ -53,7 +54,7 @@
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V3.1 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V3.2 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>
@@ -85,7 +86,7 @@
 })();
 </script>
 
-<script src="./assets/js/app.js?v=3.1" defer></script>
-<script src="./assets/js/analytics.js?v=3.1" defer></script>
+<script src="./assets/js/app.js?v=3.2" defer></script>
+<script src="./assets/js/analytics.js?v=3.2" defer></script>
 </body>
 </html>
