@@ -21,4 +21,4 @@ jobs:
         with:
           node-version: 20
       - name: Validar versão, recursos e funcionalidades essenciais
-        run: node .github/scripts/validar-atividades.js
+        run: node tests/validar-atividades.js

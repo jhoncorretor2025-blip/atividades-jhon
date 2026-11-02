@@ -3,14 +3,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const root = path.resolve(__dirname, '../..');
+const root = path.resolve(__dirname, '..');
 const read = p => fs.readFileSync(path.join(root,p),'utf8');
 const html = read('index.html');
 const js = read('assets/js/app.js');
 const css = read('assets/css/app.css');
 const analytics = read('assets/js/analytics.js');
-const structure = read('docs/estrutura.md');
-const tests = read('docs/testes.md');
+const structure = read('docs/architecture/estrutura.md');
+const tests = read('docs/testing/testes.md');
 const legacy = read('teste.html');
 let appSyntaxValid = true;
 try { new vm.Script(js, { filename: 'assets/js/app.js' }); }
@@ -19,12 +19,13 @@ const taskCount = js.split('{id:"').length - 1;
 const skippedValidation = js.indexOf('skippedIds.every');
 const doneWrite = js.indexOf('done=new Set(data.doneIds)');
 const checks = [
-  ['versão V3.2 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.2">') && html.includes('aria-label="Versão atual V3.2">V3.2</span>')],
-  ['cache-busting V3.2 nos três arquivos', ['app.css?v=3.2','app.js?v=3.2','analytics.js?v=3.2'].every(x => html.includes(x))],
-  ['rodapé informa V3.2', html.includes('V3.2 · Os itens')],
-  ['redirecionamento antigo aponta para V3.2', legacy.includes('index.html?v=3.2') && legacy.includes('V3.2')],
-  ['versão V3.2 na ajuda e no backup', js.includes('Versão: V3.2') && js.includes('appVersion:"V3.2"')],
-  ['versão V3.2 no backup do banco de atividades', analytics.includes('appVersion:"V3.2"')],
+  ['pastas da Etapa 1 organizadas', fs.existsSync(path.join(root,'docs/architecture/estrutura.md')) && fs.existsSync(path.join(root,'docs/testing/testes.md')) && fs.existsSync(path.join(root,'tests/validar-atividades.js'))],
+  ['versão V3.3 no meta e no cabeçalho', html.includes('<meta name="delta-version" content="V3.3">') && html.includes('aria-label="Versão atual V3.3">V3.3</span>')],
+  ['cache-busting V3.3 nos três arquivos', ['app.css?v=3.2','app.js?v=3.2','analytics.js?v=3.2'].every(x => html.includes(x))],
+  ['rodapé informa V3.3', html.includes('V3.3 · Os itens')],
+  ['redirecionamento antigo aponta para V3.3', legacy.includes('index.html?v=3.2') && legacy.includes('V3.3')],
+  ['versão V3.3 na ajuda e no backup', js.includes('Versão: V3.3') && js.includes('appVersion:"V3.3"')],
+  ['versão V3.3 no backup do banco de atividades', analytics.includes('appVersion:"V3.3"')],
   ['sintaxe JavaScript válida', appSyntaxValid],
   ['sintaxe do banco de atividades válida', (()=>{try{new vm.Script(analytics,{filename:'assets/js/analytics.js'});return true}catch(e){console.error('Erro de sintaxe em analytics.js:',e.message);return false}})()],
   ['análise por período implementada', html.includes('id="analyticsPeriod"') && analytics.includes('const periodStart=') && analytics.includes('Sem registro') && analytics.includes('Frequência por atividade')],
@@ -38,7 +39,7 @@ const checks = [
   ['tema escuro e foco visível', css.includes('body[data-theme="dark"]') && css.includes('button:focus-visible')],
   ['etiqueta visual para tarefas noturnas', js.includes('t.period==="Noturno"') && js.includes('NOTURNO')],
   ['privacidade documenta armazenamento local', structure.includes('localStorage') && structure.includes('Não existe sincronização automática')],
-  ['roteiro de regressão V3.2 atualizado', tests.includes('V3.2 — análise por período')]
+  ['roteiro de regressão V3.3 atualizado', tests.includes('V3.3 — análise por período')]
 ];
 let failed = 0;
 for (const [name,ok] of checks) { console.log((ok ? 'OK  ' : 'FALHA  ') + name); if (!ok) failed++; }
