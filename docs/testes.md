@@ -1,7 +1,7 @@
-# Testes manuais — Atividades do Jhon V2.2
+# Testes manuais — Atividades do Jhon V3.1
 
-- [ ] A página abre e mostra V2.2.
-- [ ] As 28 atividades aparecem.
+- [ ] A página abre e mostra V3.1.
+- [ ] As atividades aparecem com a contagem dinâmica correta.
 - [ ] Busca e filtros funcionam.
 - [ ] Marcar/desmarcar atividade persiste após recarregar.
 - [ ] Tema claro/escuro persiste após recarregar.
@@ -15,22 +15,22 @@
 - [ ] Página publicada no GitHub Pages repete os testes.
 
 
-## Validação automatizada V2.2
+## Validação automatizada V3.1
 O workflow `.github/workflows/validar-atividades.yml` executa `node .github/scripts/validar-atividades.js` em push, pull request e manualmente. Ele confere versão, caminhos CSS/JS, IDs de controles essenciais e os 28 identificadores de atividade. Isso é uma verificação estática, não substitui os testes reais no navegador.
 
 
-## Correção emergencial V2.2
+## Correção emergencial V3.1
 Corrigidos caracteres de quebra de linha literais que interrompiam a execução do JavaScript. A validação estática confirma os trechos e a versão; ainda é necessário validar o site no navegador.
 
 
-## V2.2 — Rotina pessoal integrada
+## V3.1 — Rotina pessoal integrada
 - [ ] Confirmar as 28 atividades de trabalho existentes.
 - [ ] Confirmar a inclusão das 22 rotinas novas sem duplicar Emitir Nota Fiscal.
 - [ ] Testar filtros por categoria e frequência, incluindo tarefas noturnas.
 - [ ] Testar marcações e exportação de resumo.
 
 
-## V2.2 — Escolha inicial de área
+## V3.1 — Escolha inicial de área
 - [ ] Tela inicial mostra dois cards: Trabalho e Vida pessoal.
 - [ ] Card Trabalho filtra as tarefas administrativas e comerciais.
 - [ ] Card Vida pessoal mostra estudos, projetos pessoais, saúde e lazer.
@@ -39,13 +39,13 @@ Corrigidos caracteres de quebra de linha literais que interrompiam a execução 
 - [ ] A lista continua com 50 atividades.
 
 
-## V2.2 — Contagem de atividades
+## V3.1 — Contagem de atividades
 - [ ] Cards iniciais exibem 28 atividades de trabalho e 22 pessoais.
 - [ ] Filtro por área mostra o número de atividades por categoria.
 - [ ] Conferir que as contagens correspondem às tarefas cadastradas.
 
 
-## V2.2 — Card Geral
+## V3.1 — Card Geral
 - [ ] A tela inicial apresenta Geral (50), Trabalho (28) e Vida pessoal (22).
 - [ ] Geral mostra as 50 atividades juntas.
 - [ ] Trabalho mostra somente as 28 tarefas profissionais.
@@ -53,10 +53,18 @@ Corrigidos caracteres de quebra de linha literais que interrompiam a execução 
 - [ ] Trocar área retorna à tela inicial.
 
 
-## V2.2 — regressão de backup, acessibilidade e privacidade
+## V3.1 — regressão de backup, acessibilidade e privacidade
 - [ ] Backup com estrutura incompatível ou IDs desconhecidos é rejeitado sem alterar dados.
 - [ ] Backup com IDs duplicados é rejeitado.
 - [ ] Filtro Noturno apresenta etiqueta visual coerente.
 - [ ] Ajuda informa armazenamento local, ausência de sincronização e integrações.
 - [ ] Foco visível alcança botões, filtros e cards iniciais por teclado.
-- [ ] Confirmar que a versão V2.2 coincide em HTML, título, CSS/JS, rodapé e redirecionamento antigo.
+- [ ] Confirmar que a versão V3.1 coincide em HTML, título, CSS/JS, rodapé e redirecionamento antigo.
+
+
+## V3.1 — melhorias e regressão
+- [ ] Contagens Geral/Trabalho/Pessoal e filtros por área são calculados a partir do cadastro.
+- [ ] Concluídas hoje acompanha a lista filtrada.
+- [ ] Backup com IDs pulados inválidos não altera marcações já salvas.
+- [ ] Controles de tarefa têm alvos confortáveis no celular e foco visível por teclado.
+- [ ] Versão V3.1 coincide no cabeçalho, rodapé, cache-busting, backup, ajuda e redirecionamento antigo.
