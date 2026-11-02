@@ -1,4 +1,4 @@
-# Testes manuais — Atividades do Jhon V3.3
+# Testes manuais — Atividades do Jhon V3.4
 
 ## Verificação da estrutura
 - [ ] A página principal continua em `index.html` na raiz.
@@ -7,7 +7,7 @@
 - [ ] O workflow executa `node tests/validar-atividades.js`.
 
 ## Testes funcionais
-- [ ] A página abre e mostra V3.3.
+- [ ] A página abre e mostra V3.4.
 - [ ] As atividades aparecem com a contagem dinâmica correta.
 - [ ] Busca, filtros e marcações funcionam.
 - [ ] Marcações e tema persistem após recarregar.
@@ -19,7 +19,7 @@
 - [ ] Console sem erros JavaScript.
 - [ ] Página publicada no GitHub Pages repete os testes.
 
-## Validação automatizada V3.3
+## Validação automatizada V3.4
 O workflow `.github/workflows/validar-atividades.yml` executa `node tests/validar-atividades.js` em push, pull request e manualmente. A validação estática não substitui testes reais no navegador.
 
 ## Regressão da análise V3.2
