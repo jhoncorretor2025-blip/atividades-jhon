@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V4.2">
-<title>Atividades do Jhon · Delta | V4.2</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=4.2">
+<meta name="delta-version" content="V4.3">
+<title>Atividades do Jhon · Delta | V4.3</title>
+<link rel="stylesheet" href="./assets/css/app.css?v=4.3">
 </head>
 <body>
-<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V4.2">V4.2</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><div class="brand"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V4.3">V4.3</span></h1></div></div><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="stats" aria-label="Resumo das atividades">
@@ -24,7 +24,27 @@
  <div class="streak-week" id="streakWeek" aria-label="Atividade nos últimos sete dias"></div>
  <p class="streak-note">Um dia conta quando você conclui pelo menos uma atividade. A sequência atual continua válida durante o dia de hoje.</p>
 </section>
-<div class="data-actions" aria-label="Backup e ajuda"><button class="toolbar-action" id="weeklyReportBtn" type="button">📊 Relatório semanal</button><button class="toolbar-action" id="analyticsBtn" type="button">📚 Meu banco de atividades</button><button class="toolbar-action" id="backupBtn" type="button">⬇ Backup JSON</button><button class="toolbar-action" id="importBtn" type="button">⬆ Restaurar backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden><button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda, privacidade e diagnóstico</button><button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button></div>
+<div class="data-actions" aria-label="Backup e ajuda"><button class="toolbar-action" id="weeklyReportBtn" type="button">📊 Relatório semanal</button><button class="toolbar-action" id="scheduleSettingsBtn" type="button">⚙️ Configurar datas</button><button class="toolbar-action" id="analyticsBtn" type="button">📚 Meu banco de atividades</button><button class="toolbar-action" id="backupBtn" type="button">⬇ Backup JSON</button><button class="toolbar-action" id="importBtn" type="button">⬆ Restaurar backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden><button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda, privacidade e diagnóstico</button><button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button></div>
+
+<section class="schedule-settings" id="scheduleSettings" hidden aria-label="Configuração de datas das atividades">
+ <div class="schedule-settings-head">
+  <div><span class="workspace-eyebrow">CONFIGURAÇÃO DA ROTINA</span><h3>📅 Quando cada atividade deve aparecer</h3><p>Configure os dias do mês em que uma atividade fica visível. Atividades sem datas configuradas aparecem todos os dias.</p></div>
+  <button class="toolbar-action" id="closeScheduleSettings" type="button">✕ Fechar</button>
+ </div>
+ <div class="schedule-editor">
+  <label for="scheduleTaskSelect">Atividade</label>
+  <select id="scheduleTaskSelect" class="analytics-select"></select>
+  <label for="scheduleRangesInput">Dias do mês em que aparece</label>
+  <input id="scheduleRangesInput" type="text" placeholder="Ex.: 05-07, 12-13, 21-31" autocomplete="off">
+  <p class="schedule-hint">Use intervalos separados por vírgula. Exemplo: 05-07, 12-13, 21-31. Para remover a regra e mostrar todos os dias, use “Mostrar todos os dias”.</p>
+  <div class="schedule-editor-actions">
+   <button class="toolbar-action primary" id="saveScheduleBtn" type="button">💾 Salvar datas</button>
+   <button class="toolbar-action" id="clearScheduleBtn" type="button">↻ Mostrar todos os dias</button>
+  </div>
+  <p class="schedule-feedback" id="scheduleFeedback" role="status" aria-live="polite"></p>
+ </div>
+ <div class="schedule-presets"><strong>Configurações iniciais</strong><p><b>Verificar sinistros:</b> dias 05–07, 12–13 e 21 até o fim do mês.</p><p><b>Rever planilha:</b> dias 01–19. A partir do dia 20, fica oculta.</p></div>
+</section>
 
 <section class="analytics-panel" id="analyticsPanel" hidden>
  <div class="analytics-head"><div><span class="workspace-eyebrow">SEU BANCO DE DADOS PESSOAL</span><h3>📊 O que eu realmente faço</h3><p>Estatísticas calculadas a partir das atividades registradas.</p></div><button class="toolbar-action" id="closeAnalytics" type="button">✕ Fechar</button></div>
@@ -69,7 +89,7 @@
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V4.2 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V4.3 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>
@@ -101,10 +121,10 @@
 })();
 </script>
 
-<script src="./assets/js/tasks.js?v=4.2" defer></script>
-<script src="./assets/js/storage.js?v=4.2" defer></script>
-<script src="./assets/js/backup.js?v=4.2" defer></script>
-<script src="./assets/js/dashboard.js?v=4.2" defer></script>
-<script src="./assets/js/analytics.js?v=4.2" defer></script>
+<script src="./assets/js/tasks.js?v=4.3" defer></script>
+<script src="./assets/js/storage.js?v=4.3" defer></script>
+<script src="./assets/js/backup.js?v=4.3" defer></script>
+<script src="./assets/js/dashboard.js?v=4.3" defer></script>
+<script src="./assets/js/analytics.js?v=4.3" defer></script>
 </body>
 </html>
