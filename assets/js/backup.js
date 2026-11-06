@@ -1,7 +1,7 @@
 /* V4.1 — backup inclui a fila de atividades adiadas e mantém compatibilidade anterior. */
 $("backupBtn").addEventListener("click",()=>{
  const analytics=window.AtividadesJhonAnalytics;
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V4.3",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V4.6",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,archivedTaskIds:[...archivedTaskIds],subtaskDone:subtaskDone,roundStates:roundStates,taskSequence:taskSequence,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup completo exportado com histórico.");
 });
@@ -27,11 +27,42 @@ $("backupFile").addEventListener("change",async e=>{
     nextTaskSchedules[id]=ranges;
    }
   }
+  let nextArchivedTaskIds=null,nextSubtaskDone=null,nextRoundStates=null,nextTaskSequence=null;
+  if(data.archivedTaskIds!==undefined){
+   if(!Array.isArray(data.archivedTaskIds)||!data.archivedTaskIds.every(id=>typeof id==="string"&&validIds.has(id))||new Set(data.archivedTaskIds).size!==data.archivedTaskIds.length)throw new Error("Lista de atividades arquivadas inválida");
+   nextArchivedTaskIds=data.archivedTaskIds;
+  }
+  if(data.subtaskDone!==undefined){
+   if(!data.subtaskDone||typeof data.subtaskDone!=="object"||Array.isArray(data.subtaskDone))throw new Error("Checklist de suplementos inválido");
+   nextSubtaskDone={};
+   for(const [taskId,checkedIds] of Object.entries(data.subtaskDone)){
+    const task=tasks.find(item=>item.id===taskId);
+    const allowed=new Set(Array.isArray(task&&task.subtasks)?task.subtasks.map(item=>item.id):[]);
+    if(!task||!Array.isArray(checkedIds)||!checkedIds.every(id=>typeof id==="string"&&allowed.has(id))||new Set(checkedIds).size!==checkedIds.length)throw new Error("Itens do checklist inválidos");
+    nextSubtaskDone[taskId]=checkedIds;
+   }
+  }
+  if(data.roundStates!==undefined){
+   if(!data.roundStates||typeof data.roundStates!=="object"||Array.isArray(data.roundStates))throw new Error("Contador de voltas inválido");
+   nextRoundStates={};
+   for(const [mode,state] of Object.entries(data.roundStates)){
+    if(!state||typeof state!=="object"||!Number.isInteger(state.completedLaps)||state.completedLaps<0||!Array.isArray(state.poolIds)||!Array.isArray(state.processedIds)||!state.poolIds.every(id=>typeof id==="string"&&validIds.has(id))||!state.processedIds.every(id=>typeof id==="string"&&validIds.has(id)))throw new Error("Dados de voltas inválidos");
+    nextRoundStates[mode]={completedLaps:state.completedLaps,poolIds:state.poolIds,processedIds:state.processedIds};
+   }
+  }
+  if(data.taskSequence!==undefined){
+   if(!data.taskSequence||typeof data.taskSequence!=="object"||Array.isArray(data.taskSequence))throw new Error("Numeração das atividades inválida");
+   nextTaskSequence={};
+   for(const [id,number] of Object.entries(data.taskSequence)){
+    if(!validIds.has(id)||!Number.isInteger(number)||number<1)throw new Error("Número de atividade inválido");
+    nextTaskSequence[id]=number;
+   }
+  }
   let nextOccurrences=null,nextArchived=null;
   if(data.occurrences!==undefined){if(!Array.isArray(data.occurrences)||data.occurrences.length>100000||!data.occurrences.every(x=>x&&typeof x.id==="string"&&validIds.has(x.id)&&typeof x.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)))throw new Error("Histórico inválido");nextOccurrences=data.occurrences;}
   if(data.archivedIds!==undefined){if(!Array.isArray(data.archivedIds)||!data.archivedIds.every(id=>typeof id==="string"&&validIds.has(id))||new Set(data.archivedIds).size!==data.archivedIds.length)throw new Error("Arquivo de atividades inválido");nextArchived=data.archivedIds;}
   if(!confirm("Restaurar as atividades concluídas, puladas, adiadas, histórico e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
-  done=new Set(data.doneIds);saveDone();skipped=new Set(skippedIds);saveSkipped();deferred=new Set(deferredIds);saveDeferred();if(nextTaskSchedules!==null){taskSchedules=nextTaskSchedules;saveTaskSchedules();}
+  done=new Set(data.doneIds);saveDone();skipped=new Set(skippedIds);saveSkipped();deferred=new Set(deferredIds);saveDeferred();if(nextTaskSchedules!==null){taskSchedules=nextTaskSchedules;saveTaskSchedules();}if(nextArchivedTaskIds!==null){archivedTaskIds=new Set(nextArchivedTaskIds);saveArchivedTaskIds();}if(nextSubtaskDone!==null){subtaskDone=nextSubtaskDone;saveSubtaskDone();}if(nextRoundStates!==null){roundStates=nextRoundStates;saveRoundStates();}if(nextTaskSequence!==null){taskSequence=nextTaskSequence;saveTaskSequence();}
   if(data.preferences&&typeof data.preferences==="object"&&["light","dark"].includes(data.preferences.theme)){prefs={theme:data.preferences.theme};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}}
   if(nextOccurrences!==null&&window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.restore(nextOccurrences,nextArchived===null?undefined:nextArchived);
   applyPrefs();render();showToast("Backup restaurado para hoje.");
