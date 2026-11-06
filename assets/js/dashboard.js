@@ -27,17 +27,23 @@ function filtered(){
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
   (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
  });
+ const fixed=matching.filter(t=>Number.isInteger(t.fixedPosition)).sort((a,b)=>a.fixedPosition-b.fixedPosition);
+ const ordered=matching.filter(t=>!Number.isInteger(t.fixedPosition));
+ fixed.forEach(t=>ordered.splice(Math.max(0,Math.min(ordered.length,t.fixedPosition-1)),0,t));
+ // Atribui o número uma única vez, antes de mover adiadas para o fim.
+ // Assim o cartão mantém seu número original durante toda a volta.
+ assignTaskSequence(ordered);
  const deferredOrder=new Map([...deferred].map((id,index)=>[id,index]));
- matching.sort((a,b)=>{
+ const movable=ordered.filter(t=>!Number.isInteger(t.fixedPosition));
+ movable.sort((a,b)=>{
   const aLater=deferredOrder.has(a.id), bLater=deferredOrder.has(b.id);
   if(aLater!==bLater)return aLater?1:-1;
   if(aLater)return deferredOrder.get(a.id)-deferredOrder.get(b.id);
   return 0;
  });
- const fixed=matching.filter(t=>Number.isInteger(t.fixedPosition)).sort((a,b)=>a.fixedPosition-b.fixedPosition);
- const ordered=matching.filter(t=>!Number.isInteger(t.fixedPosition));
- fixed.forEach(t=>ordered.splice(Math.max(0,Math.min(ordered.length,t.fixedPosition-1)),0,t));
- return ordered;
+ const result=movable;
+ fixed.forEach(t=>result.splice(Math.max(0,Math.min(result.length,t.fixedPosition-1)),0,t));
+ return result;
 }
 
 function dateKeyOffset(offset){
@@ -118,7 +124,7 @@ function render(){
  renderStreak();
  $("resultCount").textContent=list.length+" "+(list.length===1?"atividade":"atividades");
  grid.innerHTML=list.length?list.map((t,index)=>{
-  const number=String(index+1).padStart(2,"0");
+  const number=String(taskSequence[t.id]||index+1);
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id), isDeferred=deferred.has(t.id);
   return '<article class="task '+(isSkipped?' skipped':'')+(t.critical?'critical':t.urgent?'urgent':'')+(isDone?' done':'')+'">'+
    '<span class="task-number" aria-label="Atividade '+number+' de '+list.length+'">'+number+'</span>'+
@@ -146,7 +152,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.4. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.5. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 function formatScheduleRanges(ranges){
  return (ranges||[]).map(r=>String(r.start).padStart(2,"0")+"-"+String(r.end).padStart(2,"0")).join(", ");
@@ -248,7 +254,7 @@ $("clearFiltersBtn").addEventListener("click",()=>{
 });
 $("searchInput").addEventListener("input",render);
 ["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
-$("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
+$("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();resetTaskSequence();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
  const lines=["ATIVIDADES DO JHON — TRABALHO E ROTINA PESSOAL", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
  tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":skipped.has(t.id)?"[PULADA] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+(t.desc?"\n    "+t.desc:"")));
