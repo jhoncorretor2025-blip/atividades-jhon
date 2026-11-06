@@ -23,7 +23,7 @@ function filtered(){
   if(currentMode==="work"&&!workAreas.includes(t.area))return false;
   if(currentMode==="personal"&&workAreas.includes(t.area))return false;
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
-  return isTaskVisibleToday(t)&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
+  return !isTaskArchived(t)&&isTaskVisibleToday(t)&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
   (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
  });
@@ -55,7 +55,7 @@ function historyForDate(date){
  return {done:new Set(read("atividades-jhon:"+date)),skipped:new Set(read("atividades-jhon:skipped:"+date))};
 }
 function reportScope(){
- return tasks.filter(t=>isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
+ return tasks.filter(t=>!isTaskArchived(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
 }
 function renderWeeklyReport(){
  const scope=reportScope(),ids=new Set(scope.map(t=>t.id)),total=scope.length;
@@ -104,9 +104,48 @@ function getStreakStats(){
 }
 function renderStreak(){const panel=document.getElementById("currentStreak");if(!panel)return;const stats=getStreakStats();panel.textContent=stats.current;$("bestStreak").textContent=stats.best+" "+(stats.best===1?"dia":"dias");$("streakMessage").textContent=stats.current===0?"Comece sua sequência hoje!":stats.current===1?"Você começou uma nova sequência. Continue amanhã!":"Muito bem! Continue mantendo o ritmo.";$("streakWeek").innerHTML=stats.week.map(d=>'<div class="streak-day '+(d.active?"active":"")+'"><span>'+escapeHtml(d.label)+'</span><i aria-label="'+(d.active?"Dia com atividade":"Sem atividade")+'">'+(d.active?"✓":"·")+'</i></div>').join("");}
 
+function renderRoundPanel(){
+ const panel=$("roundPanel");
+ if(!panel)return;
+ if(!currentMode){panel.hidden=true;return}
+ panel.hidden=false;
+ const state=getRoundState(currentMode);
+ if(finishRoundIfReady(state,currentMode))saveRoundStates();
+ const total=state.poolIds.length;
+ const processed=state.processedIds.filter(id=>state.poolIds.includes(id)).length;
+ $("roundCount").textContent=String(state.completedLaps||0);
+ $("roundCurrent").textContent=total?String((state.completedLaps||0)+1):"—";
+ $("roundProgress").textContent=processed+" de "+total+" atividades";
+ $("roundProgressBar").style.width=total?Math.round(processed/total*100)+"%":"0%";
+ $("roundMessage").textContent=total
+  ?"Concluir, pular ou adiar cada card conta como uma etapa da volta."
+  :"Não há atividades pendentes nesta fila.";
+}
+function renderVitaminSubtasks(task,isSkipped){
+ if(!Array.isArray(task.subtasks)||!task.subtasks.length)return "";
+ const checked=new Set(Array.isArray(subtaskDone[task.id])?subtaskDone[task.id]:[]);
+ const completed=task.subtasks.filter(item=>checked.has(item.id)).length;
+ return '<div class="subtask-box"><div class="subtask-heading"><strong>Checklist de vitaminas</strong><span>'+completed+'/'+task.subtasks.length+'</span></div><div class="subtask-list">'+
+  task.subtasks.map(item=>'<label class="subtask-item"><input class="subtask-check" type="checkbox" data-task-id="'+escapeHtml(task.id)+'" data-subtask-id="'+escapeHtml(item.id)+'" '+(checked.has(item.id)?'checked':'')+' '+(isSkipped?'disabled':'')+'><span>'+escapeHtml(item.label)+'</span></label>').join("")+
+  '</div></div>';
+}
+function refreshArchiveManager(){
+ const select=$("archiveTaskSelect"),list=$("archivedTaskList");
+ if(!select||!list)return;
+ const active=tasks.filter(task=>!isTaskArchived(task));
+ const selected=select.value;
+ select.innerHTML=active.map(task=>'<option value="'+escapeHtml(task.id)+'">'+escapeHtml(task.title)+'</option>').join("");
+ if(selected&&active.some(task=>task.id===selected))select.value=selected;
+ const archived=tasks.filter(task=>isTaskArchived(task));
+ list.innerHTML=archived.length?archived.map(task=>'<div class="archived-task-row"><span>'+escapeHtml(task.title)+'</span><button class="toolbar-action restore-task-btn" type="button" data-restore-task="'+escapeHtml(task.id)+'">↶ Restaurar</button></div>').join(""):'<p class="archive-empty">Nenhuma atividade arquivada.</p>';
+ list.querySelectorAll(".restore-task-btn").forEach(button=>button.addEventListener("click",()=>{
+  restoreTask(button.dataset.restoreTask);render();refreshArchiveManager();
+  showToast("Atividade restaurada para a rotina. ✅");
+ }));
+}
 function render(){
  const list=filtered(), grid=$("taskGrid");
- const scope=tasks.filter(t=>isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
+ const scope=tasks.filter(t=>!isTaskArchived(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
  const executed=scope.filter(t=>done.has(t.id)).length;
  const skippedCount=scope.filter(t=>skipped.has(t.id)).length;
  const pending=scope.length-executed-skippedCount;
@@ -122,6 +161,8 @@ function render(){
  const pct=eligible?Math.round(completed/eligible*100):100;
  $("progressText").textContent=pct+"%"; $("progressBar").style.width=pct+"%";
  renderStreak();
+ renderRoundPanel();
+ refreshArchiveManager();
  $("resultCount").textContent=list.length+" "+(list.length===1?"atividade":"atividades");
  grid.innerHTML=list.length?list.map((t,index)=>{
   const number=String(taskSequence[t.id]||index+1);
@@ -131,29 +172,82 @@ function render(){
    '<div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
    '<div class="tags">'+tags(t)+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
-   (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+'</div>'+
+   (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+renderVitaminSubtasks(t,isSkipped)+'</div>'+
    '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button>'+(isDone||isSkipped?'':'<button class="defer-btn" type="button" data-defer="'+escapeHtml(t.id)+'" aria-label="Ver mais tarde: '+escapeHtml(t.title)+'">🕒 Ver mais tarde</button>')+'</div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
  grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{
   const id=el.dataset.skip;
-  if(skipped.has(id)){skipped.delete(id);showToast("Atividade voltou para a lista.");}
-  else{skipped.add(id);done.delete(id);showToast("Atividade pulada. Você pode retomá-la depois.");}
+  let roundResult;
+  if(skipped.has(id)){
+   skipped.delete(id);roundResult=registerRoundAction(id,"undo",currentMode);
+   showToast("Atividade voltou para a lista.");
+  }else{
+   skipped.add(id);done.delete(id);roundResult=registerRoundAction(id,"skip",currentMode);
+   showToast("Atividade pulada. Você pode retomá-la depois.");
+  }
   deferred.delete(id);saveDeferred();saveSkipped();saveDone();render();
+  if(roundResult&&roundResult.completed)showToast("Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.");
  }));
  grid.querySelectorAll(".defer-btn").forEach(el=>el.addEventListener("click",()=>{
   const id=el.dataset.defer;
-  deferred.delete(id);deferred.add(id);saveDeferred();render();
-  showToast("Atividade enviada para o final das pendências. 🕒");
+  deferred.delete(id);deferred.add(id);saveDeferred();
+  const roundResult=registerRoundAction(id,"defer",currentMode);
+  render();
+  showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Atividade enviada para o final das pendências. 🕒");
+ }));
+ grid.querySelectorAll(".subtask-check").forEach(el=>el.addEventListener("change",()=>{
+  const taskId=el.dataset.taskId,subtaskId=el.dataset.subtaskId,task=tasks.find(item=>item.id===taskId);
+  if(!task||!Array.isArray(task.subtasks))return;
+  const checked=new Set(Array.isArray(subtaskDone[taskId])?subtaskDone[taskId]:[]);
+  if(el.checked)checked.add(subtaskId);else checked.delete(subtaskId);
+  subtaskDone[taskId]=[...checked];
+  const allComplete=task.subtasks.every(item=>checked.has(item.id));
+  const wasDone=done.has(taskId);
+  let roundResult=null;
+  if(allComplete){
+   done.add(taskId);deferred.delete(taskId);
+   roundResult=registerRoundAction(taskId,"done",currentMode);
+  }else if(wasDone){
+   done.delete(taskId);
+   registerRoundAction(taskId,"undo",currentMode);
+  }
+  saveSubtaskDone();saveDeferred();saveDone();render();
+  if(allComplete)showToast(roundResult&&roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Todas as vitaminas marcadas! Card concluído. ✅");
+  else showToast("Item atualizado no checklist.");
  }));
  grid.querySelectorAll(".check").forEach(el=>el.addEventListener("change",()=>{
-  if(el.checked)done.add(el.dataset.id);else done.delete(el.dataset.id);
-  deferred.delete(el.dataset.id);saveDeferred();saveDone();render();
-  showToast(el.checked?"Atividade concluída! ✅":"Atividade voltou para pendente.");
+  const id=el.dataset.id,task=tasks.find(item=>item.id===id);
+  if(el.checked){
+   done.add(id);
+   if(task&&Array.isArray(task.subtasks))subtaskDone[id]=task.subtasks.map(item=>item.id);
+   deferred.delete(id);
+   const roundResult=registerRoundAction(id,"done",currentMode);
+   saveSubtaskDone();saveDeferred();saveDone();render();
+   showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Atividade concluída! ✅");
+  }else{
+   done.delete(id);
+   if(task&&Array.isArray(task.subtasks))subtaskDone[id]=[];
+   registerRoundAction(id,"undo",currentMode);
+   saveSubtaskDone();saveDeferred();saveDone();render();
+   showToast("Atividade voltou para pendente.");
+  }
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.5. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.6. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
+$("archiveSettingsBtn").addEventListener("click",()=>{
+ const panel=$("archiveSettings");panel.hidden=!panel.hidden;
+ if(!panel.hidden){refreshArchiveManager();panel.scrollIntoView({behavior:"smooth",block:"start"});}
+});
+$("closeArchiveSettings").addEventListener("click",()=>{$("archiveSettings").hidden=true;});
+$("archiveTaskBtn").addEventListener("click",()=>{
+ const id=$("archiveTaskSelect").value;
+ if(!id){showToast("Escolhe uma atividade para arquivar.");return}
+ if(!confirm("Arquivar esta atividade? Ela deixará de aparecer na rotina, mas poderá ser restaurada depois."))return;
+ archiveTask(id);render();refreshArchiveManager();
+ showToast("Atividade arquivada. Ela pode ser restaurada quando precisares.");
+});
 function formatScheduleRanges(ranges){
  return (ranges||[]).map(r=>String(r.start).padStart(2,"0")+"-"+String(r.end).padStart(2,"0")).join(", ");
 }
@@ -213,11 +307,13 @@ function showToast(message){const el=$("toast");el.textContent=message;el.classL
 $("completeVisibleBtn").addEventListener("click",()=>{
  const visible=filtered().filter(t=>!done.has(t.id)&&!skipped.has(t.id));
  if(!visible.length){showToast("Não há atividades pendentes visíveis.");return}
- visible.forEach(t=>{done.add(t.id);skipped.delete(t.id);deferred.delete(t.id)});
- saveSkipped();
- saveDeferred();
- saveDone();render();
- showToast(visible.length+" atividade(s) concluída(s). ✅");
+ visible.forEach(t=>{
+  done.add(t.id);skipped.delete(t.id);deferred.delete(t.id);
+  if(Array.isArray(t.subtasks))subtaskDone[t.id]=t.subtasks.map(item=>item.id);
+ });
+ const roundResult=registerRoundActions(visible.map(t=>t.id),"done",currentMode);
+ saveSubtaskDone();saveSkipped();saveDeferred();saveDone();render();
+ showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":visible.length+" atividade(s) concluída(s). ✅");
 });
 function chooseMode(mode){
  currentMode=mode;
@@ -254,7 +350,7 @@ $("clearFiltersBtn").addEventListener("click",()=>{
 });
 $("searchInput").addEventListener("input",render);
 ["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
-$("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();resetTaskSequence();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
+$("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();subtaskDone={};resetTaskSequence();resetRoundStates();saveSubtaskDone();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
  const lines=["ATIVIDADES DO JHON — TRABALHO E ROTINA PESSOAL", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
  tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":skipped.has(t.id)?"[PULADA] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+(t.desc?"\n    "+t.desc:"")));
