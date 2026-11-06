@@ -16,7 +16,7 @@ const tasks = [
 {id:"responder-facebook",title:"Responder mensagem do Facebook",icon:"f",area:"Comercial",period:"Diário",priority:"Normal",desc:""},
 {id:"cobranca-condominio",title:"Cobrança de inadimplência de condomínio",icon:"$",area:"ADM",period:"Diário",priority:"Normal",desc:""},
 {id:"chaves-mural",title:"Organizar chaves do mural (toda sexta)",icon:"⚿",area:"ADM",period:"Semanal",priority:"Normal",desc:""},
-{id:"sinistros",title:"Verificar sinistros",icon:"♧",area:"ADM",period:"Diário",priority:"Normal",desc:""},
+{id:"sinistros",title:"Verificar sinistros",icon:"♧",area:"ADM",period:"Diário",priority:"Normal",desc:"",link:"https://docs.google.com/spreadsheets/d/1Dk_zuamAKowE18BI5J8XbeUIllJikdT-MZl61-JGItg/edit?usp=sharing",linkLabel:"📊 Clique aqui para abrir a planilha"},
 {id:"inadimplencia-cobrancas",title:"Verificar inadimplência e cobranças",icon:"◷",area:"ADM",period:"Diário",priority:"Alta",attention:true,urgent:true,desc:""},
 {id:"emails",title:"Verificar e-mails",icon:"✉",area:"ADM",period:"Diário",priority:"Normal",desc:""},
 {id:"planilha",title:"Rever planilha",icon:"▤",area:"ADM",period:"Semanal",priority:"Normal",desc:""},
