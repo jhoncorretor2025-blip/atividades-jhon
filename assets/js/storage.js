@@ -116,6 +116,20 @@ function registerRoundAction(id,action,mode){
  saveRoundStates();
  return {completed,state};
 }
+function registerRoundActions(ids,action,mode){
+ const key=mode||"general";
+ const state=getRoundState(key);
+ const eligible=roundScopeIds(key);
+ ids.forEach(id=>{
+  if(!eligible.includes(id))return;
+  if(!state.poolIds.includes(id))state.poolIds.push(id);
+  if(action==="undo")state.processedIds=state.processedIds.filter(item=>item!==id);
+  else if(!state.processedIds.includes(id))state.processedIds.push(id);
+ });
+ const completed=finishRoundIfReady(state,key);
+ saveRoundStates();
+ return {completed,state};
+}
 const TASK_SCHEDULE_KEY="atividades-jhon:visibility-schedules";
 const DEFAULT_TASK_SCHEDULES={
  "sinistros":[{"start":5,"end":7},{"start":12,"end":13},{"start":21,"end":31}],
