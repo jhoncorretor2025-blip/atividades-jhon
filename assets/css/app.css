@@ -216,3 +216,24 @@ body[data-theme="dark"] .deferred-tag{background:#203b68;color:#dbeafe;border-co
 .schedule-presets p{margin:6px 0 0}
 body[data-theme="dark"] .schedule-editor input{background:var(--card);border-color:var(--line);color:var(--ink)}
 @media(max-width:600px){.schedule-settings{padding:15px}.schedule-settings-head{flex-direction:column}.schedule-editor-actions{display:grid;grid-template-columns:1fr}.schedule-editor-actions button{width:100%}}
+
+
+/* V4.4 — numeração sequencial dos cartões pela ordem atual da lista. */
+.task-number{
+ position:absolute;left:-10px;top:14px;z-index:3;
+ width:27px;height:27px;border-radius:50%;
+ display:grid;place-items:center;
+ background:#245eea;color:#fff;
+ border:3px solid var(--card);
+ box-shadow:0 3px 9px rgba(37,94,234,.24);
+ font-size:10px;font-weight:950;line-height:1;
+ font-variant-numeric:tabular-nums;
+ pointer-events:none;
+}
+body[data-theme="dark"] .task-number{
+ background:#3b82f6;border-color:var(--card);
+ box-shadow:0 3px 10px rgba(59,130,246,.32);
+}
+@media(max-width:760px){
+ .task-number{left:-8px;top:12px;width:25px;height:25px;font-size:9px}
+}
