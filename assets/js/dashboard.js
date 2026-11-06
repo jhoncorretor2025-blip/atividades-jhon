@@ -23,17 +23,21 @@ function filtered(){
   if(currentMode==="work"&&!workAreas.includes(t.area))return false;
   if(currentMode==="personal"&&workAreas.includes(t.area))return false;
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
-  return (!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
+  return isTaskVisibleToday(t)&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
   (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
  });
  const deferredOrder=new Map([...deferred].map((id,index)=>[id,index]));
- return matching.sort((a,b)=>{
+ matching.sort((a,b)=>{
   const aLater=deferredOrder.has(a.id), bLater=deferredOrder.has(b.id);
   if(aLater!==bLater)return aLater?1:-1;
   if(aLater)return deferredOrder.get(a.id)-deferredOrder.get(b.id);
   return 0;
  });
+ const fixed=matching.filter(t=>Number.isInteger(t.fixedPosition)).sort((a,b)=>a.fixedPosition-b.fixedPosition);
+ const ordered=matching.filter(t=>!Number.isInteger(t.fixedPosition));
+ fixed.forEach(t=>ordered.splice(Math.max(0,Math.min(ordered.length,t.fixedPosition-1)),0,t));
+ return ordered;
 }
 
 function dateKeyOffset(offset){
@@ -45,7 +49,7 @@ function historyForDate(date){
  return {done:new Set(read("atividades-jhon:"+date)),skipped:new Set(read("atividades-jhon:skipped:"+date))};
 }
 function reportScope(){
- return tasks.filter(t=>currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true);
+ return tasks.filter(t=>isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
 }
 function renderWeeklyReport(){
  const scope=reportScope(),ids=new Set(scope.map(t=>t.id)),total=scope.length;
@@ -96,7 +100,7 @@ function renderStreak(){const panel=document.getElementById("currentStreak");if(
 
 function render(){
  const list=filtered(), grid=$("taskGrid");
- const scope=tasks.filter(t=>currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true);
+ const scope=tasks.filter(t=>isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
  const executed=scope.filter(t=>done.has(t.id)).length;
  const skippedCount=scope.filter(t=>skipped.has(t.id)).length;
  const pending=scope.length-executed-skippedCount;
@@ -140,8 +144,62 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.1. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.3. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
+function formatScheduleRanges(ranges){
+ return (ranges||[]).map(r=>String(r.start).padStart(2,"0")+"-"+String(r.end).padStart(2,"0")).join(", ");
+}
+function parseScheduleRanges(value){
+ const raw=value.trim();
+ if(!raw)return [];
+ const parts=raw.split(/[,;]+/).map(part=>part.trim()).filter(Boolean);
+ const parsed=[];
+ for(const part of parts){
+  const match=part.match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
+  if(!match)throw new Error("Use intervalos no formato 05-07, 12-13.");
+  const start=Number(match[1]),end=Number(match[2]);
+  if(start<1||end>31||start>end)throw new Error("Os dias devem estar entre 1 e 31, e o início não pode ser maior que o fim.");
+  parsed.push({start,end});
+ }
+ return parsed;
+}
+function refreshScheduleEditor(){
+ const select=$("scheduleTaskSelect"), input=$("scheduleRangesInput"), feedback=$("scheduleFeedback");
+ if(!select||!input)return;
+ const current=select.value||tasks[0]?.id;
+ select.innerHTML=tasks.map(t=>'<option value="'+escapeHtml(t.id)+'">'+escapeHtml(t.title)+'</option>').join("");
+ if(current&&tasks.some(t=>t.id===current))select.value=current;
+ const ranges=taskSchedules[select.value];
+ input.value=Array.isArray(ranges)?formatScheduleRanges(ranges):"";
+ if(feedback)feedback.textContent=Array.isArray(ranges)&&ranges.length?"Ativa: aparece nos dias "+formatScheduleRanges(ranges)+".":"Sem regra: aparece todos os dias.";
+}
+$("scheduleSettingsBtn").addEventListener("click",()=>{
+ const panel=$("scheduleSettings");panel.hidden=!panel.hidden;
+ if(!panel.hidden){refreshScheduleEditor();panel.scrollIntoView({behavior:"smooth",block:"start"});}
+});
+$("closeScheduleSettings").addEventListener("click",()=>{$("scheduleSettings").hidden=true;});
+$("scheduleTaskSelect").addEventListener("change",refreshScheduleEditor);
+$("saveScheduleBtn").addEventListener("click",()=>{
+ try{
+  const ranges=parseScheduleRanges($("scheduleRangesInput").value);
+  const id=$("scheduleTaskSelect").value;
+  if(!ranges.length){showToast("Informe pelo menos um intervalo de dias.");return}
+  taskSchedules[id]=ranges;
+  if(!saveTaskSchedules())return;
+  refreshScheduleEditor();render();
+  $("scheduleFeedback").textContent="Datas salvas. Esta atividade só aparecerá nos dias configurados.";
+  showToast("Configuração de datas salva. ✅");
+ }catch(error){$("scheduleFeedback").textContent=error.message;showToast(error.message);}
+});
+$("clearScheduleBtn").addEventListener("click",()=>{
+ const id=$("scheduleTaskSelect").value;
+ delete taskSchedules[id];
+ if(!saveTaskSchedules())return;
+ refreshScheduleEditor();render();
+ $("scheduleFeedback").textContent="Regra removida: esta atividade aparecerá todos os dias.";
+ showToast("A atividade voltará a aparecer todos os dias.");
+});
+
 let toastTimer;
 function showToast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200)}
 $("completeVisibleBtn").addEventListener("click",()=>{
