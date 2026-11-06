@@ -36,6 +36,86 @@ function assignTaskSequence(items){
  if(changed)saveTaskSequence();
 }
 function resetTaskSequence(){taskSequence={};saveTaskSequence()}
+
+const VITAMIN_TASK_ID="tomar-vitaminas";
+const DEFAULT_VITAMIN_SUBTASKS={
+ "tomar-vitaminas":[
+  {id:"creatina",label:"Creatina"},
+  {id:"nac",label:"NAC — pela manhã"},
+  {id:"colageno",label:"Colágeno"}
+ ]
+};
+const subtaskKey=()=>"atividades-jhon:subtasks:"+localDate();
+function loadSubtaskDone(){
+ try{
+  const value=JSON.parse(localStorage.getItem(subtaskKey())||"{}");
+  return value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+ }catch{return{}}
+}
+let subtaskDone=loadSubtaskDone();
+function saveSubtaskDone(){
+ try{localStorage.setItem(subtaskKey(),JSON.stringify(subtaskDone));return true}
+ catch{showToast("Não foi possível salvar o checklist de vitaminas.");return false}
+}
+
+const roundKey=()=>"atividades-jhon:rounds:"+localDate();
+function loadRoundStates(){
+ try{
+  const value=JSON.parse(localStorage.getItem(roundKey())||"{}");
+  return value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+ }catch{return{}}
+}
+let roundStates=loadRoundStates();
+function saveRoundStates(){
+ try{localStorage.setItem(roundKey(),JSON.stringify(roundStates));return true}
+ catch{showToast("Não foi possível salvar o contador de voltas.");return false}
+}
+function resetRoundStates(){roundStates={};saveRoundStates()}
+function roundScopeIds(mode){
+ const workAreas=["ADM","Comercial","Ambos"];
+ return tasks.filter(t=>isTaskVisibleToday(t)&&(mode==="work"?workAreas.includes(t.area):mode==="personal"?!workAreas.includes(t.area):true)).map(t=>t.id);
+}
+function getRoundState(mode){
+ const key=mode||"general";
+ const eligible=roundScopeIds(key);
+ let state=roundStates[key];
+ if(!state||typeof state!=="object"||!Array.isArray(state.poolIds)||!Array.isArray(state.processedIds)){
+  state={completedLaps:0,poolIds:[...eligible],processedIds:eligible.filter(id=>done.has(id)||skipped.has(id))};
+  roundStates[key]=state;
+ }else{
+  state.poolIds=state.poolIds.filter(id=>eligible.includes(id));
+  state.processedIds=state.processedIds.filter(id=>state.poolIds.includes(id));
+  eligible.forEach(id=>{
+   if(!state.poolIds.includes(id))state.poolIds.push(id);
+   if((done.has(id)||skipped.has(id))&&!state.processedIds.includes(id))state.processedIds.push(id);
+  });
+ }
+ return state;
+}
+function finishRoundIfReady(state,mode){
+ const pool=state.poolIds;
+ if(!pool.length||!pool.every(id=>state.processedIds.includes(id)))return false;
+ state.completedLaps=(Number(state.completedLaps)||0)+1;
+ const eligible=roundScopeIds(mode);
+ state.poolIds=eligible.filter(id=>!done.has(id)&&!skipped.has(id));
+ state.processedIds=[];
+ return true;
+}
+function registerRoundAction(id,action,mode){
+ const key=mode||"general";
+ const state=getRoundState(key);
+ const eligible=roundScopeIds(key);
+ if(!eligible.includes(id))return {completed:false,state};
+ if(!state.poolIds.includes(id))state.poolIds.push(id);
+ if(action==="undo"){
+  state.processedIds=state.processedIds.filter(item=>item!==id);
+ }else if(!state.processedIds.includes(id)){
+  state.processedIds.push(id);
+ }
+ const completed=finishRoundIfReady(state,key);
+ saveRoundStates();
+ return {completed,state};
+}
 const TASK_SCHEDULE_KEY="atividades-jhon:visibility-schedules";
 const DEFAULT_TASK_SCHEDULES={
  "sinistros":[{"start":5,"end":7},{"start":12,"end":13},{"start":21,"end":31}],
