@@ -73,7 +73,7 @@ function saveRoundStates(){
 function resetRoundStates(){roundStates={};saveRoundStates()}
 function roundScopeIds(mode){
  const workAreas=["ADM","Comercial","Ambos"];
- return tasks.filter(t=>isTaskVisibleToday(t)&&(mode==="work"?workAreas.includes(t.area):mode==="personal"?!workAreas.includes(t.area):true)).map(t=>t.id);
+ return tasks.filter(t=>!isTaskArchived(t)&&isTaskVisibleToday(t)&&(mode==="work"?workAreas.includes(t.area):mode==="personal"?!workAreas.includes(t.area):true)).map(t=>t.id);
 }
 function getRoundState(mode){
  const key=mode||"general";
@@ -86,8 +86,8 @@ function getRoundState(mode){
   state.poolIds=state.poolIds.filter(id=>eligible.includes(id));
   state.processedIds=state.processedIds.filter(id=>state.poolIds.includes(id));
   eligible.forEach(id=>{
-   if(!state.poolIds.includes(id))state.poolIds.push(id);
-   if((done.has(id)||skipped.has(id))&&!state.processedIds.includes(id))state.processedIds.push(id);
+   if(!state.poolIds.includes(id)&&!done.has(id)&&!skipped.has(id))state.poolIds.push(id);
+   if(state.poolIds.includes(id)&&(done.has(id)||skipped.has(id))&&!state.processedIds.includes(id))state.processedIds.push(id);
   });
  }
  return state;
@@ -130,6 +130,39 @@ function registerRoundActions(ids,action,mode){
  saveRoundStates();
  return {completed,state};
 }
+const ARCHIVED_TASK_KEY="atividades-jhon:archived-tasks";
+const DEFAULT_ARCHIVED_TASK_IDS=["etiquetas-interessados","etiquetas-whatsapp"];
+function loadArchivedTaskIds(){
+ try{
+  const raw=localStorage.getItem(ARCHIVED_TASK_KEY);
+  if(raw===null)return [...DEFAULT_ARCHIVED_TASK_IDS];
+  const value=JSON.parse(raw);
+  return Array.isArray(value)?[...new Set(value.filter(id=>typeof id==="string"))]:[];
+ }catch{return [...DEFAULT_ARCHIVED_TASK_IDS]}
+}
+let archivedTaskIds=new Set(loadArchivedTaskIds());
+function saveArchivedTaskIds(){
+ try{localStorage.setItem(ARCHIVED_TASK_KEY,JSON.stringify([...archivedTaskIds]));return true}
+ catch{showToast("Não foi possível salvar as atividades arquivadas.");return false}
+}
+function isTaskArchived(taskOrId){
+ const id=typeof taskOrId==="string"?taskOrId:taskOrId&&taskOrId.id;
+ return !!id&&archivedTaskIds.has(id);
+}
+function archiveTask(id){
+ if(!tasks.some(task=>task.id===id))return false;
+ archivedTaskIds.add(id);
+ saveArchivedTaskIds();
+ deferred.delete(id);
+ saveDeferred();
+ return true;
+}
+function restoreTask(id){
+ archivedTaskIds.delete(id);
+ saveArchivedTaskIds();
+ return true;
+}
+
 const TASK_SCHEDULE_KEY="atividades-jhon:visibility-schedules";
 const DEFAULT_TASK_SCHEDULES={
  "sinistros":[{"start":5,"end":7},{"start":12,"end":13},{"start":21,"end":31}],
