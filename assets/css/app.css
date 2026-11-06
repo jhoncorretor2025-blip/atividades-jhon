@@ -237,3 +237,45 @@ body[data-theme="dark"] .task-number{
 @media(max-width:760px){
  .task-number{left:-8px;top:12px;width:25px;height:25px;font-size:9px}
 }
+
+
+/* V4.6 — contador de voltas, checklist de suplementos e arquivo de atividades. */
+.round-panel{display:grid;grid-template-columns:145px minmax(0,1fr);gap:18px;align-items:center;margin:14px 0 18px;padding:17px 20px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.round-kpi{display:grid;gap:3px;padding-right:15px;border-right:1px solid var(--line)}
+.round-label{font-size:10px;font-weight:900;letter-spacing:.06em;color:var(--muted)}
+.round-kpi strong{font-size:32px;line-height:1.1;color:var(--blue)}
+.round-detail{min-width:0}
+.round-detail-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px}
+.round-detail-head span{color:var(--muted)}
+.round-progress-track{height:9px;background:var(--bg);border-radius:99px;overflow:hidden;margin:9px 0 7px}
+.round-progress-bar{height:100%;width:0;background:var(--blue);border-radius:99px;transition:width .2s}
+.round-detail p{margin:0;color:var(--muted);font-size:11px}
+.subtask-box{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.subtask-heading{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:8px}
+.subtask-heading span{color:var(--muted);font-weight:850;font-variant-numeric:tabular-nums}
+.subtask-list{display:grid;gap:7px}
+.subtask-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.4;color:var(--ink);cursor:pointer}
+.subtask-item input{width:16px;height:16px;flex:0 0 16px;margin:0;accent-color:var(--green)}
+.subtask-item input:checked+span{text-decoration:line-through;color:var(--muted)}
+.archive-settings{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin:18px 0;box-shadow:var(--shadow)}
+.archive-settings-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.archive-settings-head h3{font-size:22px;margin:5px 0}
+.archive-settings-head p{color:var(--muted);font-size:13px;line-height:1.55}
+.archive-editor{display:grid;gap:8px;max-width:720px;margin-top:16px}
+.archive-editor label{font-size:13px;font-weight:850;color:var(--ink)}
+.archive-editor-controls{display:flex;gap:9px;align-items:center}
+.archive-editor-controls .analytics-select{flex:1;max-width:none;margin:0}
+.archive-list-wrap{margin-top:20px;padding-top:14px;border-top:1px solid var(--line)}
+.archive-list-wrap>strong{font-size:13px}
+.archived-task-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.archive-empty{font-size:12px;color:var(--muted)}
+@media(max-width:600px){
+ .round-panel{grid-template-columns:1fr;gap:10px;padding:14px}
+ .round-kpi{grid-template-columns:1fr auto;align-items:center;border-right:0;border-bottom:1px solid var(--line);padding:0 0 9px}
+ .round-kpi strong{font-size:26px}
+ .archive-settings{padding:15px}
+ .archive-settings-head{flex-direction:column}
+ .archive-editor-controls{flex-direction:column;align-items:stretch}
+ .archive-editor-controls>*{width:100%}
+ .archived-task-row{align-items:flex-start}
+}
