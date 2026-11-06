@@ -23,7 +23,7 @@ function filtered(){
   if(currentMode==="work"&&!workAreas.includes(t.area))return false;
   if(currentMode==="personal"&&workAreas.includes(t.area))return false;
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
-  return !isTaskArchived(t)&&isTaskVisibleToday(t)&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
+  return !isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
   (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
  });
@@ -55,7 +55,7 @@ function historyForDate(date){
  return {done:new Set(read("atividades-jhon:"+date)),skipped:new Set(read("atividades-jhon:skipped:"+date))};
 }
 function reportScope(){
- return tasks.filter(t=>!isTaskArchived(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
+ return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
 }
 function renderWeeklyReport(){
  const scope=reportScope(),ids=new Set(scope.map(t=>t.id)),total=scope.length;
@@ -118,7 +118,7 @@ function renderRoundPanel(){
  $("roundProgress").textContent=processed+" de "+total+" atividades";
  $("roundProgressBar").style.width=total?Math.round(processed/total*100)+"%":"0%";
  $("roundMessage").textContent=total
-  ?"Concluir, pular ou adiar cada card conta como uma etapa da volta."
+  ?"Concluir, pular ou adiar conta como etapa. Cards em pausa ficam fora da volta até retornarem."
   :"Não há atividades pendentes nesta fila.";
 }
 function renderVitaminSubtasks(task,isSkipped){
@@ -145,7 +145,7 @@ function refreshArchiveManager(){
 }
 function render(){
  const list=filtered(), grid=$("taskGrid");
- const scope=tasks.filter(t=>!isTaskArchived(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
+ const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
  const executed=scope.filter(t=>done.has(t.id)).length;
  const skippedCount=scope.filter(t=>skipped.has(t.id)).length;
  const pending=scope.length-executed-skippedCount;
@@ -173,7 +173,7 @@ function render(){
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
    '<div class="tags">'+tags(t)+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
    (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+renderVitaminSubtasks(t,isSkipped)+'</div>'+
-   '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button>'+(isDone||isSkipped?'':'<button class="defer-btn" type="button" data-defer="'+escapeHtml(t.id)+'" aria-label="Ver mais tarde: '+escapeHtml(t.title)+'">🕒 Ver mais tarde</button>')+'</div></article>';
+   '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button>'+(isDone||isSkipped?'':'<button class="defer-btn" type="button" data-defer="'+escapeHtml(t.id)+'" aria-label="Ver mais tarde: '+escapeHtml(t.title)+'">🕒 Ver mais tarde</button><button class="pause-btn" type="button" data-pause="'+escapeHtml(t.id)+'" aria-label="Dar uma pausa de 15 dias em '+escapeHtml(t.title)+'" title="Suspender esta atividade por 15 dias">⏸ Dar uma pausa</button>')+'</div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
  grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{
   const id=el.dataset.skip;
@@ -187,6 +187,16 @@ function render(){
   }
   deferred.delete(id);saveDeferred();saveSkipped();saveDone();render();
   if(roundResult&&roundResult.completed)showToast("Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.");
+ }));
+ grid.querySelectorAll(".pause-btn").forEach(el=>el.addEventListener("click",()=>{
+  const id=el.dataset.pause,task=tasks.find(item=>item.id===id);
+  if(!task)return;
+  if(!confirm('Dar uma pausa de 15 dias em "'+task.title+'"? A atividade ficará oculta e voltará automaticamente depois desse período.'))return;
+  const resumeDate=pauseTask(id);
+  if(!resumeDate){showToast("Não foi possível salvar a pausa. Tente novamente.");return}
+  render();
+  const formattedDate=new Date(resumeDate+"T12:00:00").toLocaleDateString("pt-BR");
+  showToast("Pausa de 15 dias ativada. A atividade volta em "+formattedDate+". ⏸");
  }));
  grid.querySelectorAll(".defer-btn").forEach(el=>el.addEventListener("click",()=>{
   const id=el.dataset.defer;
@@ -234,7 +244,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.6. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.7. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 $("archiveSettingsBtn").addEventListener("click",()=>{
  const panel=$("archiveSettings");panel.hidden=!panel.hidden;
