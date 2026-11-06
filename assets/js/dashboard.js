@@ -244,7 +244,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.7. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.8. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 $("archiveSettingsBtn").addEventListener("click",()=>{
  const panel=$("archiveSettings");panel.hidden=!panel.hidden;
@@ -344,13 +344,22 @@ function chooseMode(mode){
 $("chooseGeneral").addEventListener("click",()=>chooseMode("general"));
 $("chooseWork").addEventListener("click",()=>chooseMode("work"));
 $("choosePersonal").addEventListener("click",()=>chooseMode("personal"));
-$("changeModeBtn").addEventListener("click",()=>{
+function goHome(){
  currentMode=null;
  $("activityWorkspace").hidden=true;
  $("modeChooser").hidden=false;
+ $("searchInput").value="";
+ $("periodFilter").value="all";
+ $("areaFilter").value="all";
+ $("statusFilter").value="all";
  render();
  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("homeLink").addEventListener("click",event=>{
+ event.preventDefault();
+ goHome();
 });
+$("changeModeBtn").addEventListener("click",goHome);
 $("clearFiltersBtn").addEventListener("click",()=>{
  $("searchInput").value="";
  $("periodFilter").value="all";
