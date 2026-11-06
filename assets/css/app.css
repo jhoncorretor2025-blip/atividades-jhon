@@ -178,3 +178,22 @@ body[data-theme="dark"] select:focus-visible{outline-color:#93c5fd}
 .analytics-category-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 16px}.analytics-category-filter>span{font-size:12px;font-weight:850;color:var(--muted);margin-right:4px}.analytics-category-filter .toolbar-action{min-height:38px}.analytics-category-filter .toolbar-action.primary{background:#eaf1ff;color:#2059d6;border-color:#c8d8ff}body[data-theme="dark"] .analytics-category-filter .toolbar-action.primary{background:#243b64;color:#dbeafe;border-color:#42639a}
 .analytics-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 12px}.analytics-metric{padding:15px;border:1px solid var(--line);border-radius:14px;background:var(--bg);min-width:0}.analytics-metric span,.analytics-metric small{display:block;color:var(--muted)}.analytics-metric span{font-size:12px;font-weight:800}.analytics-metric strong{display:block;font-size:27px;font-weight:900;color:var(--ink);margin:5px 0}.analytics-metric:first-child strong{color:#07834a}.analytics-metric small{font-size:11px;line-height:1.45}.analytics-method{margin:0 0 16px;color:var(--muted);font-size:11px;line-height:1.5}body[data-theme="dark"] .analytics-metric{background:var(--card)}
 @media(max-width:600px){.analytics-metrics{grid-template-columns:1fr}.analytics-metric{padding:12px}.analytics-metric strong{font-size:24px}.analytics-category-filter{gap:6px}.analytics-category-filter>span{flex-basis:100%}.analytics-category-filter .toolbar-action{flex:1 1 calc(33.333% - 6px);padding:8px 7px;font-size:11px}}
+
+
+/* V4.1 — botão para adiar uma atividade e enviá-la ao fim das pendências. */
+.task{grid-template-columns:56px minmax(0,1fr) 108px}
+.task-actions{align-items:stretch;min-width:108px;gap:8px}
+.task-actions .check{align-self:flex-end}
+.task-actions .skip-btn,.task-actions .defer-btn{width:100%;white-space:normal;text-align:center;line-height:1.2}
+.defer-btn{border:1px solid #c8d8ff;background:#edf4ff;color:#2457a7;border-radius:9px;padding:8px 7px;font-size:10px;font-weight:850;cursor:pointer}
+.defer-btn:hover{background:#dceaff;border-color:#9dbcf5}
+.defer-btn:focus-visible{outline:3px solid #2563eb55;outline-offset:2px}
+.deferred-tag{background:#eaf1ff;color:#2457a7;border:1px solid #c8d8ff}
+body[data-theme="dark"] .defer-btn{background:#203b68;color:#dbeafe;border-color:#365b91}
+body[data-theme="dark"] .defer-btn:hover{background:#294d82}
+body[data-theme="dark"] .deferred-tag{background:#203b68;color:#dbeafe;border-color:#365b91}
+@media(max-width:760px){
+ .task{grid-template-columns:46px minmax(0,1fr) 96px}
+ .task-actions{min-width:96px}
+ .task-actions .skip-btn,.task-actions .defer-btn{font-size:10px;padding:8px 6px}
+}
