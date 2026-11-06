@@ -12,6 +12,30 @@ const deferredKey=()=>"atividades-jhon:later:"+localDate();
 function loadDeferred(){try{const value=JSON.parse(localStorage.getItem(deferredKey())||"[]");return Array.isArray(value)?[...new Set(value.filter(id=>typeof id==="string"))]:[]}catch{return[]}}
 let deferred=new Set(loadDeferred());
 function saveDeferred(){try{localStorage.setItem(deferredKey(),JSON.stringify([...deferred]))}catch{showToast("Não foi possível salvar a ordem das pendências.")}}
+const taskSequenceKey=()=>"atividades-jhon:sequence:"+localDate();
+function loadTaskSequence(){
+ try{
+  const value=JSON.parse(localStorage.getItem(taskSequenceKey())||"{}");
+  return value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+ }catch{return{}}
+}
+let taskSequence=loadTaskSequence();
+function saveTaskSequence(){
+ try{localStorage.setItem(taskSequenceKey(),JSON.stringify(taskSequence));return true}
+ catch{showToast("Não foi possível salvar a numeração das atividades.");return false}
+}
+function assignTaskSequence(items){
+ let next=Math.max(0,...Object.values(taskSequence).filter(Number.isInteger))+1;
+ let changed=false;
+ items.forEach(task=>{
+  if(!Number.isInteger(taskSequence[task.id])){
+   taskSequence[task.id]=next++;
+   changed=true;
+  }
+ });
+ if(changed)saveTaskSequence();
+}
+function resetTaskSequence(){taskSequence={};saveTaskSequence()}
 const TASK_SCHEDULE_KEY="atividades-jhon:visibility-schedules";
 const DEFAULT_TASK_SCHEDULES={
  "sinistros":[{"start":5,"end":7},{"start":12,"end":13},{"start":21,"end":31}],
