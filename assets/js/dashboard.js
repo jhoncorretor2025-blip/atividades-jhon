@@ -4,7 +4,7 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 function tags(t){
  let a=[];
  if(t.critical)a.push('<span class="tag criticaltag">🚨 CRÍTICA</span>');
- if(t.attention)a.push('<span class="tag pending">◷ ATENÇÃO 11H (PENDENTE)</span>');
+ if(t.attention)a.push('<span class="tag pending">◷ ATENÇÃO (PENDENTE)</span>');
  if(t.period==="Diário")a.push('<span class="tag daily">▤ DIÁRIO</span>');
  if(t.period==="Semanal")a.push('<span class="tag weekly">▤ SEMANAL</span>');
  if(t.period==="Mensal")a.push('<span class="tag weekly">▤ MENSAL</span>');
@@ -77,7 +77,7 @@ $("closeWeeklyReport").addEventListener("click",()=>{$("weeklyReport").hidden=tr
 
 function getStreakStats(){
  const activeDates=new Set();
- try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||!/^atividades-jhon:\\d{4}-\\d{2}-\\d{2}$/.test(k))continue;const value=JSON.parse(localStorage.getItem(k)||"[]");if(Array.isArray(value)&&value.length)activeDates.add(k.slice("atividades-jhon:".length));}}catch{}
+ try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||!/^atividades-jhon:\d{4}-\d{2}-\d{2}$/.test(k))continue;const value=JSON.parse(localStorage.getItem(k)||"[]");if(Array.isArray(value)&&value.length)activeDates.add(k.slice("atividades-jhon:".length));}}catch{}
  const sorted=[...activeDates].sort();let best=0,run=0,previous=null;
  for(const date of sorted){const current=new Date(date+"T12:00:00");const gap=previous?Math.round((current-previous)/86400000):null;run=gap===1?run+1:1;best=Math.max(best,run);previous=current;}
  const today=localDate(),yesterday=dateKeyOffset(1);let current=0,cursor=activeDates.has(today)?0:activeDates.has(yesterday)?1:null;
