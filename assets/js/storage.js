@@ -75,7 +75,7 @@ function saveRoundStates(){
 function resetRoundStates(){roundStates={};saveRoundStates()}
 function roundScopeIds(mode){
  const workAreas=["ADM","Comercial","Ambos"];
- return tasks.filter(t=>!isTaskArchived(t)&&isTaskVisibleToday(t)&&(mode==="work"?workAreas.includes(t.area):mode==="personal"?!workAreas.includes(t.area):true)).map(t=>t.id);
+ return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(mode==="work"?workAreas.includes(t.area):mode==="personal"?!workAreas.includes(t.area):true)).map(t=>t.id);
 }
 function getRoundState(mode){
  const key=mode||"general";
@@ -132,6 +132,52 @@ function registerRoundActions(ids,action,mode){
  saveRoundStates();
  return {completed,state};
 }
+
+const PAUSED_TASK_KEY="atividades-jhon:paused-tasks";
+function validPauseDate(value){
+ if(typeof value!=="string"||!/^\\d{4}-\\d{2}-\\d{2}$/.test(value))return false;
+ const d=new Date(value+"T12:00:00");
+ return Number.isFinite(d.getTime())&&d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")===value;
+}
+function loadPausedTaskUntil(){
+ try{
+  const value=JSON.parse(localStorage.getItem(PAUSED_TASK_KEY)||"{}");
+  if(!value||typeof value!=="object"||Array.isArray(value))return {};
+  const cleaned={};
+  for(const [id,date] of Object.entries(value)){
+   if(tasks.some(task=>task.id===id)&&validPauseDate(date)&&date>localDate())cleaned[id]=date;
+  }
+  return cleaned;
+ }catch{return {}}
+}
+let pausedTaskUntil=loadPausedTaskUntil();
+function savePausedTaskUntil(){
+ try{localStorage.setItem(PAUSED_TASK_KEY,JSON.stringify(pausedTaskUntil));return true}
+ catch{showToast("Não foi possível salvar as atividades em pausa.");return false}
+}
+function isTaskPaused(taskOrId){
+ const id=typeof taskOrId==="string"?taskOrId:taskOrId&&taskOrId.id;
+ if(!id||!pausedTaskUntil[id])return false;
+ if(pausedTaskUntil[id]<=localDate()){
+  delete pausedTaskUntil[id];
+  savePausedTaskUntil();
+  return false;
+ }
+ return true;
+}
+function pauseTask(id){
+ if(!tasks.some(task=>task.id===id))return null;
+ const resume=new Date();
+ resume.setHours(12,0,0,0);
+ resume.setDate(resume.getDate()+15);
+ const resumeDate=resume.getFullYear()+"-"+String(resume.getMonth()+1).padStart(2,"0")+"-"+String(resume.getDate()).padStart(2,"0");
+ pausedTaskUntil[id]=resumeDate;
+ deferred.delete(id);
+ saveDeferred();
+ if(!savePausedTaskUntil())return null;
+ return resumeDate;
+}
+
 const ARCHIVED_TASK_KEY="atividades-jhon:archived-tasks";
 const DEFAULT_ARCHIVED_TASK_IDS=["etiquetas-interessados","etiquetas-whatsapp"];
 function loadArchivedTaskIds(){
