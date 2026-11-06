@@ -1,4 +1,4 @@
-/* V4.1 — armazenamento local, estado compartilhado e fila de atividades adiadas. */
+/* V4.7 — armazenamento local, pausas temporárias e fila de atividades. */
 const $=id=>document.getElementById(id);
 const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const key=()=>"atividades-jhon:"+localDate();
@@ -171,10 +171,14 @@ function pauseTask(id){
  resume.setHours(12,0,0,0);
  resume.setDate(resume.getDate()+15);
  const resumeDate=resume.getFullYear()+"-"+String(resume.getMonth()+1).padStart(2,"0")+"-"+String(resume.getDate()).padStart(2,"0");
+ const previous=pausedTaskUntil[id];
  pausedTaskUntil[id]=resumeDate;
  deferred.delete(id);
  saveDeferred();
- if(!savePausedTaskUntil())return null;
+ if(!savePausedTaskUntil()){
+  if(previous)pausedTaskUntil[id]=previous;else delete pausedTaskUntil[id];
+  return null;
+ }
  return resumeDate;
 }
 
