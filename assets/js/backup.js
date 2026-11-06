@@ -1,7 +1,7 @@
 /* V4.1 — backup inclui a fila de atividades adiadas e mantém compatibilidade anterior. */
 $("backupBtn").addEventListener("click",()=>{
  const analytics=window.AtividadesJhonAnalytics;
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V4.6",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,archivedTaskIds:[...archivedTaskIds],subtaskDone:subtaskDone,roundStates:roundStates,taskSequence:taskSequence,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V4.7",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,archivedTaskIds:[...archivedTaskIds],subtaskDone:subtaskDone,roundStates:roundStates,taskSequence:taskSequence,pausedTaskUntil:pausedTaskUntil,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup completo exportado com histórico.");
 });
@@ -27,7 +27,7 @@ $("backupFile").addEventListener("change",async e=>{
     nextTaskSchedules[id]=ranges;
    }
   }
-  let nextArchivedTaskIds=null,nextSubtaskDone=null,nextRoundStates=null,nextTaskSequence=null;
+  let nextArchivedTaskIds=null,nextSubtaskDone=null,nextRoundStates=null,nextTaskSequence=null,nextPausedTaskUntil=null;
   if(data.archivedTaskIds!==undefined){
    if(!Array.isArray(data.archivedTaskIds)||!data.archivedTaskIds.every(id=>typeof id==="string"&&validIds.has(id))||new Set(data.archivedTaskIds).size!==data.archivedTaskIds.length)throw new Error("Lista de atividades arquivadas inválida");
    nextArchivedTaskIds=data.archivedTaskIds;
@@ -58,11 +58,19 @@ $("backupFile").addEventListener("change",async e=>{
     nextTaskSequence[id]=number;
    }
   }
+  if(data.pausedTaskUntil!==undefined){
+   if(!data.pausedTaskUntil||typeof data.pausedTaskUntil!=="object"||Array.isArray(data.pausedTaskUntil))throw new Error("Lista de atividades em pausa inválida");
+   nextPausedTaskUntil={};
+   for(const [id,resumeDate] of Object.entries(data.pausedTaskUntil)){
+    if(!validIds.has(id)||!validPauseDate(resumeDate))throw new Error("Data de retorno de atividade inválida");
+    nextPausedTaskUntil[id]=resumeDate;
+   }
+  }
   let nextOccurrences=null,nextArchived=null;
   if(data.occurrences!==undefined){if(!Array.isArray(data.occurrences)||data.occurrences.length>100000||!data.occurrences.every(x=>x&&typeof x.id==="string"&&validIds.has(x.id)&&typeof x.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)))throw new Error("Histórico inválido");nextOccurrences=data.occurrences;}
   if(data.archivedIds!==undefined){if(!Array.isArray(data.archivedIds)||!data.archivedIds.every(id=>typeof id==="string"&&validIds.has(id))||new Set(data.archivedIds).size!==data.archivedIds.length)throw new Error("Arquivo de atividades inválido");nextArchived=data.archivedIds;}
-  if(!confirm("Restaurar as atividades concluídas, puladas, adiadas, histórico e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
-  done=new Set(data.doneIds);saveDone();skipped=new Set(skippedIds);saveSkipped();deferred=new Set(deferredIds);saveDeferred();if(nextTaskSchedules!==null){taskSchedules=nextTaskSchedules;saveTaskSchedules();}if(nextArchivedTaskIds!==null){archivedTaskIds=new Set(nextArchivedTaskIds);saveArchivedTaskIds();}if(nextSubtaskDone!==null){subtaskDone=nextSubtaskDone;saveSubtaskDone();}if(nextRoundStates!==null){roundStates=nextRoundStates;saveRoundStates();}if(nextTaskSequence!==null){taskSequence=nextTaskSequence;saveTaskSequence();}
+  if(!confirm("Restaurar as atividades concluídas, puladas, adiadas, pausas temporárias, histórico e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
+  done=new Set(data.doneIds);saveDone();skipped=new Set(skippedIds);saveSkipped();deferred=new Set(deferredIds);saveDeferred();if(nextTaskSchedules!==null){taskSchedules=nextTaskSchedules;saveTaskSchedules();}if(nextArchivedTaskIds!==null){archivedTaskIds=new Set(nextArchivedTaskIds);saveArchivedTaskIds();}if(nextSubtaskDone!==null){subtaskDone=nextSubtaskDone;saveSubtaskDone();}if(nextRoundStates!==null){roundStates=nextRoundStates;saveRoundStates();}if(nextTaskSequence!==null){taskSequence=nextTaskSequence;saveTaskSequence();}if(nextPausedTaskUntil!==null){pausedTaskUntil=nextPausedTaskUntil;savePausedTaskUntil();}
   if(data.preferences&&typeof data.preferences==="object"&&["light","dark"].includes(data.preferences.theme)){prefs={theme:data.preferences.theme};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}}
   if(nextOccurrences!==null&&window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.restore(nextOccurrences,nextArchived===null?undefined:nextArchived);
   applyPrefs();render();showToast("Backup restaurado para hoje.");
