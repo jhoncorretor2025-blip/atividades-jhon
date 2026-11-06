@@ -31,7 +31,7 @@ const tasks = [
 ,{id:"estudar-20-min",title:"Estudar 20 minutos — novidades de jogos e IA",icon:"🧠",area:"Estudos",period:"Diário",priority:"Crítica",critical:true,desc:"Reservar 20 minutos para ver o chat de atualização de jogos e novidades de inteligência artificial."}
 ,{id:"criar-peca-3d",title:"Criar peça 3D",icon:"🧩",area:"Trabalho pessoal",period:"Diário",priority:"Crítica",critical:true,desc:"Avançar no projeto de criação da peça 3D."}
 ,{id:"pendencia-whats",title:"Resolver pendências do WhatsApp",icon:"💬",area:"Trabalho pessoal",period:"Diário",priority:"Alta",attention:true,desc:"Revisar e resolver as pendências registradas no WhatsApp."}
-,{id:"google-tarefa",title:"Revisar Google Tarefas",icon:"☑️",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Conferir tarefas e compromissos registrados no Google Tarefas.",link:"https://keep.google.com/u/0/#home",linkLabel:"↗ Abrir Google Tarefas"}
+,{id:"google-tarefa",title:"Revisar Google Tarefas",icon:"☑️",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Conferir tarefas e compromissos registrados no Google Tarefas.",link:"https://tasks.google.com/",linkLabel:"↗ Abrir Google Tarefas"}
 ,{id:"usar-codex",title:"Usar Codex",icon:"💻",area:"Trabalho pessoal",period:"Diário",priority:"Alta",desc:"Reservar um tempo para utilizar o Codex, desenvolver projetos, revisar código e avançar nas tarefas de programação."}
 ,{id:"explorar-ias",title:"Explorar novas IAs",icon:"🤖",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Projetos: sistema Biobel (perfil corretor); análise de WhatsApp (perfil corretor); sistema Delta para o canal Mente Aberto."}
 ,{id:"rever-projetos-google-studio",title:"Rever projetos de IA no Google AI Studio",icon:"🛠️",area:"IA e DroidManiacos",period:"Diário",priority:"Crítica",critical:true,desc:"Revisar os projetos do Sistema Biobel e do sistema de leitura de WhatsApp."}
@@ -64,7 +64,7 @@ function updateActivityCounts(){
  if(area)Array.from(area.options).forEach(option=>{
   if(option.value==="all")option.textContent="Todas as áreas ("+tasks.length+")";
   else if(counts.has(option.value)){
-   const label=option.textContent.replace(/\\s*\\(\\d+\\)$/, "");
+   const label=option.textContent.replace(/\s*\(\d+\)$/, "");
    option.textContent=label+" ("+counts.get(option.value)+")";
   }
  });
