@@ -42,7 +42,9 @@ const DEFAULT_VITAMIN_SUBTASKS={
  "tomar-vitaminas":[
   {id:"creatina",label:"Creatina"},
   {id:"nac",label:"NAC — pela manhã"},
-  {id:"colageno",label:"Colágeno"}
+  {id:"colageno",label:"Colágeno"},
+  {id:"vitamina-d",label:"Vitamina D"},
+  {id:"ashwagandha-moringa-maca",label:"Ashwagandha + Moringa + maca negra"}
  ]
 };
 const subtaskKey=()=>"atividades-jhon:subtasks:"+localDate();
