@@ -1,4 +1,4 @@
-/* V4.1 — interface, filtros, relatórios e fila de atividades adiadas. */
+/* V4.9 — interface, filtros, relatórios e fila de atividades adiadas. */
 function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tags(t){
@@ -216,7 +216,8 @@ function render(){
   let roundResult=null;
   if(allComplete){
    done.add(taskId);deferred.delete(taskId);
-   roundResult=registerRoundAction(taskId,"done",currentMode);
+   if(!wasDone && window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.recordOccurrence(taskId,"subtask");
+   if(!wasDone)roundResult=registerRoundAction(taskId,"done",currentMode);
   }else if(wasDone){
    done.delete(taskId);
    registerRoundAction(taskId,"undo",currentMode);
@@ -231,6 +232,7 @@ function render(){
    done.add(id);
    if(task&&Array.isArray(task.subtasks))subtaskDone[id]=task.subtasks.map(item=>item.id);
    deferred.delete(id);
+   if(window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.recordOccurrence(id,"card");
    const roundResult=registerRoundAction(id,"done",currentMode);
    saveSubtaskDone();saveDeferred();saveDone();render();
    showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Atividade concluída! ✅");
@@ -320,6 +322,7 @@ $("completeVisibleBtn").addEventListener("click",()=>{
  visible.forEach(t=>{
   done.add(t.id);skipped.delete(t.id);deferred.delete(t.id);
   if(Array.isArray(t.subtasks))subtaskDone[t.id]=t.subtasks.map(item=>item.id);
+  if(window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.recordOccurrence(t.id,"bulk");
  });
  const roundResult=registerRoundActions(visible.map(t=>t.id),"done",currentMode);
  saveSubtaskDone();saveSkipped();saveDeferred();saveDone();render();
