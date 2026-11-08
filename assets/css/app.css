@@ -312,3 +312,8 @@ body[data-theme="dark"] .pause-btn:hover{background:#574426}
  .task-side .pause-btn{width:64px;font-size:9px;}
  .task-actions{min-width:88px;}
 }
+
+
+/* V5.1 — indicador visível da quantidade histórica de conclusões por atividade. */
+.occurrence-count-tag{background:#ecfdf5;color:#087443;border:1px solid #b9efd3;font-variant-numeric:tabular-nums}
+body[data-theme="dark"] .occurrence-count-tag{background:#153b2c;color:#bbf7d0;border-color:#286b4b}
