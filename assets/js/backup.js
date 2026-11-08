@@ -1,7 +1,7 @@
 /* V4.1 — backup inclui a fila de atividades adiadas e mantém compatibilidade anterior. */
 $("backupBtn").addEventListener("click",()=>{
  const analytics=window.AtividadesJhonAnalytics;
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V5.1",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,archivedTaskIds:[...archivedTaskIds],subtaskDone:subtaskDone,roundStates:roundStates,taskSequence:taskSequence,pausedTaskUntil:pausedTaskUntil,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V5.2",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,archivedTaskIds:[...archivedTaskIds],subtaskDone:subtaskDone,roundStates:roundStates,taskSequence:taskSequence,pausedTaskUntil:pausedTaskUntil,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup completo exportado com histórico.");
 });
