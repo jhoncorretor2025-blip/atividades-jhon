@@ -1,4 +1,4 @@
-/* V5.1 — histórico de conclusões, contagem por card e estatísticas. */
+/* V5.2 — histórico de conclusões, contagem por card e estatísticas. */
 (()=>{
  const LOG_KEY="atividades-jhon:occurrences:v1", ARCHIVE_KEY="atividades-jhon:archived:v1";
  const read=(k,fallback)=>{try{const v=JSON.parse(localStorage.getItem(k)||"null");return v??fallback}catch{return fallback}};
