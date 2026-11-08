@@ -1,4 +1,4 @@
-/* V3.9 — estatísticas, taxa de conclusão, média diária e filtros por categoria */
+/* V4.9 — estatísticas, taxa de conclusão, média diária e filtros por categoria */
 (()=>{
  const LOG_KEY="atividades-jhon:occurrences:v1", ARCHIVE_KEY="atividades-jhon:archived:v1";
  const read=(k,fallback)=>{try{const v=JSON.parse(localStorage.getItem(k)||"null");return v??fallback}catch{return fallback}};
@@ -54,15 +54,25 @@
   if(view==="history"){root.innerHTML=metricsMarkup(data)+'<h4>Histórico por atividade</h4><p class="analytics-muted">Mostra todas as ocorrências registradas, sem limitar pelo período do ranking.</p><select id="historyActivity" class="analytics-select"><option value="">Selecione uma atividade</option>'+data.map(x=>'<option value="'+safe(x.task.id)+'">'+safe(x.task.title)+'</option>').join("")+'</select><div id="historyDetail" class="history-detail"><p class="analytics-muted">O histórico aparecerá aqui.</p></div>';document.getElementById("historyActivity").addEventListener("change",e=>historyDetail(e.target.value));}
   if(view==="status"){const order=["Frequente","Ocasional","Pouco utilizada","Esquecida","Nunca realizada","Arquivada"];root.innerHTML=metricsMarkup(data)+'<h4>Como estão suas atividades</h4><p class="analytics-muted">Classificação geral pelo histórico completo. “Esquecida” significa mais de 30 dias sem registro; arquivar é uma decisão manual.</p>'+order.map(s=>{const items=data.filter(x=>x.status===s);return '<div class="status-group"><h5>'+s+' <span>'+items.length+'</span></h5>'+(items.length?items.map(x=>'<div class="status-item"><span>'+safe(x.task.title)+'</span><small>'+(x.last?x.rows.length+' registro(s) · última vez '+fmt(x.last):"Sem registros")+'</small><button class="toolbar-action" data-archive="'+safe(x.task.id)+'">'+(archived.has(x.task.id)?"↶ Reativar":"📦 Arquivar")+'</button></div>').join(""):'<p class="analytics-muted">Nenhuma atividade nesta classificação.</p>')+'</div>'}).join("")}
  }
- function historyDetail(id){const el=document.getElementById("historyDetail");if(!el)return;const t=byId(id);if(!t){el.innerHTML="";return}const rows=logs.filter(x=>x.id===id).sort((a,b)=>b.date.localeCompare(a.date));el.innerHTML='<h5>'+safe(t.title)+'</h5><p><strong>'+rows.length+'</strong> realização(ões) registrada(s) · última vez: '+(rows[0]?fmt(rows[0].date):"nunca")+'</p>'+(rows.length?'<ol class="history-list">'+rows.map(x=>'<li>'+fmt(x.date)+(x.source==="legacy"?' <small>(registro migrado)</small>':'')+'</li>').join("")+'</ol>':'<p class="analytics-muted">Ainda não há realizações registradas.</p>');}
+ function historyDetail(id){const el=document.getElementById("historyDetail");if(!el)return;const t=byId(id);if(!t){el.innerHTML="";return}const rows=logs.filter(x=>x.id===id).sort((a,b)=>b.date.localeCompare(a.date));el.innerHTML='<h5>'+safe(t.title)+'</h5><p><strong>'+rows.length+'</strong> realização(ões) registrada(s) · última vez: '+(rows[0]?fmt(rows[0].date):"nunca")+'</p>'+(rows.length?'<ol class="history-list">'+rows.map(x=>'<li>'+fmt(x.date)+(x.createdAt?' · '+new Date(x.createdAt).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):'')+(x.source==="legacy"?' <small>(registro migrado)</small>':'')+'</li>').join("")+'</ol>':'<p class="analytics-muted">Ainda não há realizações registradas.</p>');}
  document.getElementById("analyticsBtn").addEventListener("click",()=>{document.getElementById("analyticsPanel").hidden=false;render("ranking");document.getElementById("analyticsPanel").scrollIntoView({behavior:"smooth",block:"start"})});
  document.getElementById("closeAnalytics").addEventListener("click",()=>document.getElementById("analyticsPanel").hidden=true);
  document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>render(b.dataset.view)));
  document.getElementById("analyticsPeriod").addEventListener("change",()=>render(currentView));
  document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>{currentCategory=b.dataset.category;document.querySelectorAll("[data-category]").forEach(btn=>{const active=btn.dataset.category===currentCategory;btn.classList.toggle("primary",active);btn.setAttribute("aria-pressed",String(active));});render(currentView);}));
  root.addEventListener("click",e=>{const h=e.target.closest("[data-open-history]");if(h){render("history");const sel=document.getElementById("historyActivity");sel.value=h.dataset.openHistory;historyDetail(sel.value);return}const a=e.target.closest("[data-archive]");if(a){const id=a.dataset.archive;if(archived.has(id))archived.delete(id);else archived.add(id);save();render("status");showToast(archived.has(id)?"Atividade arquivada. Histórico preservado.":"Atividade reativada.");}});
- document.addEventListener("change",e=>{const el=e.target;if(!el.matches(".check")||!el.checked)return;logs.push({id:el.dataset.id,date:dateNow(),createdAt:new Date().toISOString(),source:"manual"});save();},true);
- document.addEventListener("change",e=>{const el=e.target;if(!el.matches(".check")||el.checked)return;const idx=logs.map((x,i)=>({x,i})).reverse().find(v=>v.x.id===el.dataset.id&&v.x.date===dateNow()&&v.x.source==="manual");if(idx){logs.splice(idx.i,1);save();}},true);
- document.getElementById("completeVisibleBtn").addEventListener("click",()=>{setTimeout(()=>{const ids=[...done];ids.forEach(id=>{if(!logs.some(x=>x.id===id&&x.date===dateNow()))logs.push({id,date:dateNow(),createdAt:new Date().toISOString(),source:"bulk"})});save()},0)});
+ // Cada conclusão gera uma ocorrência independente, inclusive várias no mesmo dia.
+ const recordOccurrence=(id,source="manual")=>{
+  if(!byId(id))return false;
+  logs.push({id,date:dateNow(),createdAt:new Date().toISOString(),source});
+  save();
+  return true;
+ };
+ window.AtividadesJhonAnalytics={
+  recordOccurrence,
+  getLogs:()=>logs.slice(),
+  getArchived:()=>[...archived],
+  restore:(nextLogs,nextArchived)=>{if(Array.isArray(nextLogs))logs=nextLogs;if(Array.isArray(nextArchived))archived=new Set(nextArchived);save();}
+ };
  window.AtividadesJhonAnalytics={getLogs:()=>logs.slice(),getArchived:()=>[...archived],restore:(nextLogs,nextArchived)=>{if(Array.isArray(nextLogs))logs=nextLogs;if(Array.isArray(nextArchived))archived=new Set(nextArchived);save();}};
 })();
