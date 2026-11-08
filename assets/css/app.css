@@ -294,3 +294,21 @@ body[data-theme="dark"] .pause-btn:hover{background:#574426}
 .home-brand:hover{opacity:.88;transform:translateY(-1px)}
 .home-brand:focus-visible{outline:3px solid #2563eb88;outline-offset:5px}
 .home-brand h1{color:inherit}
+
+
+/* V5.0 — pausa temporária separada dos comandos de uso frequente. */
+.task{grid-template-columns:96px minmax(0,1fr) 108px}
+.task-side{display:flex;flex-direction:column;align-items:center;gap:18px;min-width:0;grid-column:1;grid-row:1;}
+.task-side .task-icon{flex:0 0 auto}
+.task-side .pause-btn{width:88px;max-width:100%;font-size:10px;padding:8px 5px;}
+.task-actions{grid-column:3;grid-row:1;}
+@media(max-width:760px){
+ .task{grid-template-columns:76px minmax(0,1fr) 96px;}
+ .task-side{gap:15px;}
+ .task-side .pause-btn{width:72px;font-size:9px;padding:8px 4px;line-height:1.25;}
+}
+@media(max-width:390px){
+ .task{grid-template-columns:68px minmax(0,1fr) 88px;gap:8px;}
+ .task-side .pause-btn{width:64px;font-size:9px;}
+ .task-actions{min-width:88px;}
+}
