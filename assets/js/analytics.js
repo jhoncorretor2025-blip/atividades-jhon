@@ -1,9 +1,11 @@
-/* V4.9 — estatísticas, taxa de conclusão, média diária e filtros por categoria */
+/* V5.1 — histórico de conclusões, contagem por card e estatísticas. */
 (()=>{
  const LOG_KEY="atividades-jhon:occurrences:v1", ARCHIVE_KEY="atividades-jhon:archived:v1";
  const read=(k,fallback)=>{try{const v=JSON.parse(localStorage.getItem(k)||"null");return v??fallback}catch{return fallback}};
- let logs=read(LOG_KEY,[]), archived=new Set(read(ARCHIVE_KEY,[])), currentView="ranking", currentCategory="all";
- const save=()=>{try{localStorage.setItem(LOG_KEY,JSON.stringify(logs));localStorage.setItem(ARCHIVE_KEY,JSON.stringify([...archived]));}catch{showToast("Não foi possível salvar o histórico neste navegador.")}};
+ const storedLogs=read(LOG_KEY,[]), storedArchived=read(ARCHIVE_KEY,[]);
+ let logs=Array.isArray(storedLogs)?storedLogs.filter(x=>x&&typeof x.id==="string"&&typeof x.date==="string"):[];
+ let archived=new Set(Array.isArray(storedArchived)?storedArchived.filter(x=>typeof x==="string"):[]), currentView="ranking", currentCategory="all";
+ const save=()=>{try{localStorage.setItem(LOG_KEY,JSON.stringify(logs));localStorage.setItem(ARCHIVE_KEY,JSON.stringify([...archived]));return true}catch{showToast("Não foi possível salvar o histórico neste navegador. Verifique o espaço disponível no navegador.");return false}};
  const dateNow=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
  const fmt=d=>new Date(d+"T12:00:00").toLocaleDateString("pt-BR");
  const periodDays=()=>{const v=document.getElementById("analyticsPeriod")?.value||"30";return v==="all"?null:Number(v)};
@@ -64,15 +66,17 @@
  // Cada conclusão gera uma ocorrência independente, inclusive várias no mesmo dia.
  const recordOccurrence=(id,source="manual")=>{
   if(!byId(id))return false;
-  logs.push({id,date:dateNow(),createdAt:new Date().toISOString(),source});
-  save();
+  const entry={id,date:dateNow(),createdAt:new Date().toISOString(),source};
+  logs.push(entry);
+  if(!save()){logs.pop();return false;}
   return true;
  };
+ const countOccurrences=id=>logs.reduce((total,item)=>total+(item.id===id?1:0),0);
  window.AtividadesJhonAnalytics={
   recordOccurrence,
+  countOccurrences,
   getLogs:()=>logs.slice(),
   getArchived:()=>[...archived],
   restore:(nextLogs,nextArchived)=>{if(Array.isArray(nextLogs))logs=nextLogs;if(Array.isArray(nextArchived))archived=new Set(nextArchived);save();}
  };
- window.AtividadesJhonAnalytics={getLogs:()=>logs.slice(),getArchived:()=>[...archived],restore:(nextLogs,nextArchived)=>{if(Array.isArray(nextLogs))logs=nextLogs;if(Array.isArray(nextArchived))archived=new Set(nextArchived);save();}};
 })();
