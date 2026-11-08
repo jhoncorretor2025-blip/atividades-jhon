@@ -1,4 +1,4 @@
-/* V4.9 — interface, filtros, relatórios e fila de atividades adiadas. */
+/* V5.1 — interface, contagem por card, filtros e relatórios. */
 function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tags(t){
@@ -167,11 +167,12 @@ function render(){
  grid.innerHTML=list.length?list.map((t,index)=>{
   const number=String(taskSequence[t.id]||index+1);
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id), isDeferred=deferred.has(t.id);
+  const occurrenceCount=window.AtividadesJhonAnalytics&&typeof window.AtividadesJhonAnalytics.countOccurrences==="function"?window.AtividadesJhonAnalytics.countOccurrences(t.id):0;
   return '<article class="task '+(isSkipped?' skipped':'')+(t.critical?'critical':t.urgent?'urgent':'')+(isDone?' done':'')+'">'+
    '<span class="task-number" aria-label="Atividade '+number+' de '+list.length+'">'+number+'</span>'+
    '<div class="task-side"><div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+(isDone||isSkipped?'':'<button class="pause-btn" type="button" data-pause="'+escapeHtml(t.id)+'" aria-label="Dar uma pausa de 15 dias em '+escapeHtml(t.title)+'" title="Suspender esta atividade por 15 dias">⏸ Dar uma pausa</button>')+'</div>'+
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
-   '<div class="tags">'+tags(t)+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
+   '<div class="tags">'+tags(t)+'<span class="tag occurrence-count-tag" title="Total de conclusões registradas, incluindo repetições">🔁 '+occurrenceCount+'x</span>'+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
    (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+renderVitaminSubtasks(t,isSkipped)+'</div>'+
    '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button>'+(isDone||isSkipped?'':'<button class="defer-btn" type="button" data-defer="'+escapeHtml(t.id)+'" aria-label="Ver mais tarde: '+escapeHtml(t.title)+'">🕒 Ver mais tarde</button>')+'</div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
@@ -232,7 +233,7 @@ function render(){
    done.add(id);
    if(task&&Array.isArray(task.subtasks))subtaskDone[id]=task.subtasks.map(item=>item.id);
    deferred.delete(id);
-   if(window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.recordOccurrence(id,"card");
+   if(window.AtividadesJhonAnalytics&&typeof window.AtividadesJhonAnalytics.recordOccurrence==="function")window.AtividadesJhonAnalytics.recordOccurrence(id,"card");
    const roundResult=registerRoundAction(id,"done",currentMode);
    saveSubtaskDone();saveDeferred();saveDone();render();
    showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Atividade concluída! ✅");
@@ -322,7 +323,7 @@ $("completeVisibleBtn").addEventListener("click",()=>{
  visible.forEach(t=>{
   done.add(t.id);skipped.delete(t.id);deferred.delete(t.id);
   if(Array.isArray(t.subtasks))subtaskDone[t.id]=t.subtasks.map(item=>item.id);
-  if(window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.recordOccurrence(t.id,"bulk");
+  if(window.AtividadesJhonAnalytics&&typeof window.AtividadesJhonAnalytics.recordOccurrence==="function")window.AtividadesJhonAnalytics.recordOccurrence(t.id,"bulk");
  });
  const roundResult=registerRoundActions(visible.map(t=>t.id),"done",currentMode);
  saveSubtaskDone();saveSkipped();saveDeferred();saveDone();render();
