@@ -1,4 +1,4 @@
-/* V5.1 — interface, contagem por card, filtros e relatórios. */
+/* V5.2 — interface, histórico confiável e contagem por card. */
 function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tags(t){
@@ -214,17 +214,20 @@ function render(){
   subtaskDone[taskId]=[...checked];
   const allComplete=task.subtasks.every(item=>checked.has(item.id));
   const wasDone=done.has(taskId);
-  let roundResult=null;
+  let roundResult=null,occurrenceSaved=true;
   if(allComplete){
    done.add(taskId);deferred.delete(taskId);
-   if(!wasDone && window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.recordOccurrence(taskId,"subtask");
+   if(!wasDone){
+    const analytics=window.AtividadesJhonAnalytics;
+    occurrenceSaved=!!(analytics&&typeof analytics.recordOccurrence==="function"&&analytics.recordOccurrence(taskId,"subtask"));
+   }
    if(!wasDone)roundResult=registerRoundAction(taskId,"done",currentMode);
   }else if(wasDone){
    done.delete(taskId);
    registerRoundAction(taskId,"undo",currentMode);
   }
   saveSubtaskDone();saveDeferred();saveDone();render();
-  if(allComplete)showToast(roundResult&&roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Todas as vitaminas marcadas! Card concluído. ✅");
+  if(allComplete)showToast(!occurrenceSaved?"Checklist concluído, mas não foi possível salvar a contagem no histórico. Verifique o armazenamento do navegador.":(roundResult&&roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Todas as vitaminas marcadas! Card concluído. ✅"));
   else showToast("Item atualizado no checklist.");
  }));
  grid.querySelectorAll(".check").forEach(el=>el.addEventListener("change",()=>{
@@ -233,10 +236,11 @@ function render(){
    done.add(id);
    if(task&&Array.isArray(task.subtasks))subtaskDone[id]=task.subtasks.map(item=>item.id);
    deferred.delete(id);
-   if(window.AtividadesJhonAnalytics&&typeof window.AtividadesJhonAnalytics.recordOccurrence==="function")window.AtividadesJhonAnalytics.recordOccurrence(id,"card");
+   const analytics=window.AtividadesJhonAnalytics;
+   const occurrenceSaved=!!(analytics&&typeof analytics.recordOccurrence==="function"&&analytics.recordOccurrence(id,"card"));
    const roundResult=registerRoundAction(id,"done",currentMode);
    saveSubtaskDone();saveDeferred();saveDone();render();
-   showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Atividade concluída! ✅");
+   showToast(!occurrenceSaved?"Atividade concluída, mas não foi possível salvar a contagem no histórico. Verifique o armazenamento do navegador.":(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Atividade concluída! ✅"));
   }else{
    done.delete(id);
    if(task&&Array.isArray(task.subtasks))subtaskDone[id]=[];
@@ -247,7 +251,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V4.8. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no localStorage deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V5.2. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a contagem e o histórico de conclusões, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no armazenamento local deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 $("archiveSettingsBtn").addEventListener("click",()=>{
  const panel=$("archiveSettings");panel.hidden=!panel.hidden;
@@ -320,14 +324,16 @@ function showToast(message){const el=$("toast");el.textContent=message;el.classL
 $("completeVisibleBtn").addEventListener("click",()=>{
  const visible=filtered().filter(t=>!done.has(t.id)&&!skipped.has(t.id));
  if(!visible.length){showToast("Não há atividades pendentes visíveis.");return}
+ let historySaved=true;
  visible.forEach(t=>{
   done.add(t.id);skipped.delete(t.id);deferred.delete(t.id);
   if(Array.isArray(t.subtasks))subtaskDone[t.id]=t.subtasks.map(item=>item.id);
-  if(window.AtividadesJhonAnalytics&&typeof window.AtividadesJhonAnalytics.recordOccurrence==="function")window.AtividadesJhonAnalytics.recordOccurrence(t.id,"bulk");
+  const analytics=window.AtividadesJhonAnalytics;
+  if(!(analytics&&typeof analytics.recordOccurrence==="function"&&analytics.recordOccurrence(t.id,"bulk")))historySaved=false;
  });
  const roundResult=registerRoundActions(visible.map(t=>t.id),"done",currentMode);
  saveSubtaskDone();saveSkipped();saveDeferred();saveDone();render();
- showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":visible.length+" atividade(s) concluída(s). ✅");
+ showToast(!historySaved?"Atividades concluídas, mas não foi possível salvar todo o histórico. Verifique o armazenamento do navegador.":(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":visible.length+" atividade(s) concluída(s). ✅"));
 });
 function chooseMode(mode){
  currentMode=mode;
