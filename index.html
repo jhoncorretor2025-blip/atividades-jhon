@@ -4,14 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V5.3">
-<title>Atividades do Jhon · Delta | V5.3</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=13">
+<meta name="delta-version" content="V5.4">
+<title>Atividades do Jhon · Delta | V5.4</title>
+<link rel="stylesheet" href="./assets/css/app.css?v=14">
 </head>
 <body>
-<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V5.3">V5.3</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V5.4">V5.4</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
+<details class="mobile-collapsible mobile-progress" id="progressDetails" open>
+ <summary class="mobile-collapsible-summary"><span>📈 Meu progresso</span><span class="collapse-hint">Ver indicadores e constância</span></summary>
+ <div class="mobile-collapsible-content">
 <section class="stats" aria-label="Resumo das atividades">
  <div class="stat"><div class="label">Atividades visíveis</div><div class="num" id="totalCount">0</div><div class="sub">Na lista atual</div></div>
  <div class="stat"><div class="label">Concluídas hoje</div><div class="num" id="doneCount">0</div><div class="sub">Tarefas marcadas</div></div>
@@ -24,6 +27,11 @@
  <div class="streak-week" id="streakWeek" aria-label="Atividade nos últimos sete dias"></div>
  <p class="streak-note">Um dia conta quando você conclui pelo menos uma atividade. A sequência atual continua válida durante o dia de hoje.</p>
 </section>
+ </div>
+</details>
+<details class="mobile-collapsible mobile-tools" id="toolsDetails" open>
+ <summary class="mobile-collapsible-summary"><span>🧰 Ferramentas e dados</span><span class="collapse-hint">Relatórios, backup e configurações</span></summary>
+ <div class="mobile-collapsible-content">
 <section class="data-actions" aria-label="Menus de acompanhamento e configurações">
  <div class="data-actions-group">
   <div class="data-actions-heading"><span class="data-actions-icon">📊</span><div><strong>Acompanhamento</strong><small>Relatórios e organização da rotina</small></div></div>
@@ -50,6 +58,8 @@
   </div>
  </div>
 </section>
+ </div>
+</details>
 
 <section class="schedule-settings" id="scheduleSettings" hidden aria-label="Configuração de datas das atividades">
  <div class="schedule-settings-head">
@@ -145,7 +155,7 @@
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V5.3 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V5.4 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>
@@ -177,10 +187,10 @@
 })();
 </script>
 
-<script src="./assets/js/tasks.js?v=13" defer></script>
-<script src="./assets/js/storage.js?v=13" defer></script>
-<script src="./assets/js/backup.js?v=13" defer></script>
-<script src="./assets/js/analytics.js?v=13" defer></script>
-<script src="./assets/js/dashboard.js?v=13" defer></script>
+<script src="./assets/js/tasks.js?v=14" defer></script>
+<script src="./assets/js/storage.js?v=14" defer></script>
+<script src="./assets/js/backup.js?v=14" defer></script>
+<script src="./assets/js/analytics.js?v=14" defer></script>
+<script src="./assets/js/dashboard.js?v=14" defer></script>
 </body>
 </html>
