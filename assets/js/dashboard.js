@@ -1,4 +1,4 @@
-/* V5.5 — cards sem overflow horizontal em telas pequenas. */
+/* V5.8 — painel Meu Dia e cards compactos com descrições expansíveis. */
 function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tags(t){
@@ -146,6 +146,21 @@ function refreshArchiveManager(){
 function render(){
  const list=filtered(), grid=$("taskGrid");
  const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
+ const dayScope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
+ const dayDone=dayScope.filter(t=>done.has(t.id)).length;
+ const daySkipped=dayScope.filter(t=>skipped.has(t.id)).length;
+ const dayPending=dayScope.length-dayDone-daySkipped;
+ const dayCritical=dayScope.filter(t=>(t.critical||t.priority==="Crítica")&&!done.has(t.id)&&!skipped.has(t.id)).length;
+ const dayEligible=dayScope.length-daySkipped;
+ const dayPct=dayEligible?Math.round(dayDone/dayEligible*100):100;
+ $("myDayTotal").textContent=dayScope.length;
+ $("myDayDone").textContent=dayDone;
+ $("myDayPending").textContent=dayPending;
+ $("myDayCritical").textContent=dayCritical;
+ $("myDayProgressText").textContent=dayPct+"%";
+ $("myDayProgressBar").style.width=dayPct+"%";
+ $("myDayMessage").textContent=dayPending===0?"Parabéns! Você concluiu tudo que estava disponível hoje.":dayCritical>0?dayPending+" atividades pendentes, incluindo "+dayCritical+" críticas.":"Você tem "+dayPending+" atividades pendentes. Vamos avançar!";
+
  const executed=scope.filter(t=>done.has(t.id)).length;
  const skippedCount=scope.filter(t=>skipped.has(t.id)).length;
  const pending=scope.length-executed-skippedCount;
@@ -177,7 +192,7 @@ function render(){
    '<div class="task-side"><div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+(isDone||isSkipped?'':'<button class="pause-btn" type="button" data-pause="'+escapeHtml(t.id)+'" aria-label="Dar uma pausa de 15 dias em '+escapeHtml(t.title)+'" title="Suspender esta atividade por 15 dias">⏸ Dar uma pausa</button>')+'</div>'+
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
    '<div class="tags">'+tags(t)+'<span class="tag occurrence-count-tag" title="Total de conclusões registradas, incluindo repetições">🔁 '+occurrenceCount+'x</span>'+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
-   (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<p class="task-desc">'+escapeHtml(t.desc)+'</p>':'')+renderVitaminSubtasks(t,isSkipped)+'</div>'+
+   (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<details class="task-description"><summary>Ver descrição</summary><p class="task-desc">'+escapeHtml(t.desc)+'</p></details>':'')+renderVitaminSubtasks(t,isSkipped)+'</div>'+
    '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button>'+(isDone||isSkipped?'':'<button class="defer-btn" type="button" data-defer="'+escapeHtml(t.id)+'" aria-label="Ver mais tarde: '+escapeHtml(t.title)+'">🕒 Ver mais tarde</button>')+'</div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
  grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{
@@ -255,7 +270,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V5.7. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a contagem e o histórico de conclusões, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no armazenamento local deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V5.8. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a contagem e o histórico de conclusões, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no armazenamento local deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 $("archiveSettingsBtn").addEventListener("click",()=>{
  const panel=$("archiveSettings");panel.hidden=!panel.hidden;
