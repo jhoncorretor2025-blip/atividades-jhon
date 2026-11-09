@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V5.9">
+<meta name="delta-version" content="V6.0">
 <title>Atividades do Jhon · Delta | V5.9</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=19">
+<link rel="stylesheet" href="./assets/css/app.css?v=20">
 </head>
 <body>
-<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V5.9">V5.9</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V6.0">V6.0</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
-<section class="my-day-panel" aria-label="Painel Meu Dia">
+<section class="smart-home-panel" id="smartHomePanel" aria-label="Resumo inteligente"><div><span class="workspace-eyebrow">VISÃO INTELIGENTE</span><h3>🎯 Seu próximo passo</h3><p id="smartHomeMessage">Organizando suas prioridades de hoje...</p><strong id="smartNextTask">Carregando atividades...</strong></div><div class="smart-home-stats"><span><b id="smartPending">0</b><small>Pendentes</small></span><span><b id="smartCritical">0</b><small>Críticas</small></span><span><b id="smartProjects">0</b><small>Projetos</small></span></div><button class="toolbar-action primary" id="smartStartBtn" type="button">Começar pela próxima →</button></section>\n<section class="my-day-panel" aria-label="Painel Meu Dia">
  <div class="my-day-heading">
   <div><span class="workspace-eyebrow">PAINEL DIÁRIO</span><h3>☀️ Meu dia</h3><p id="myDayMessage">Veja como está sua rotina hoje.</p></div>
   <span class="my-day-total"><strong id="myDayTotal">0</strong><small>atividades</small></span>
@@ -68,15 +68,37 @@
  <div class="data-actions-group">
   <div class="data-actions-heading"><span class="data-actions-icon">⚙️</span><div><strong>Preferências e ajuda</strong><small>Orientações e aparência do sistema</small></div></div>
   <div class="data-actions-buttons">
-   <button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda e diagnóstico</button>
-   <button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button>
+   <button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda e diagnóstico</button>\n   <button class="toolbar-action" id="openSyncSettings" type="button">☁️ Nuvem e sincronização</button>
+   <button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button>\n   <button class="toolbar-action" id="openCentralSettings" type="button">⚙️ Configurações</button>
   </div>
  </div>
 </section>
  </div>
 </details>
 
-<section class="schedule-settings" id="scheduleSettings" hidden aria-label="Configuração de datas das atividades">
+<section class="sync-settings" id="syncSettings" hidden aria-label="Sincronização na nuvem">
+ <div class="settings-head"><div><span class="workspace-eyebrow">SINCRONIZAÇÃO SEGURA</span><h3>☁️ Sincronização na nuvem</h3><p>Conecte sua conta Supabase para levar seus dados entre celular e computador. O armazenamento local continua ativo.</p></div><button class="toolbar-action" id="closeSyncSettings" type="button">✕ Fechar</button></div>
+ <div class="sync-status" id="syncStatus" role="status" aria-live="polite">Ainda não configurada. Seus dados continuam salvos neste dispositivo.</div>
+ <div class="sync-form">
+  <label for="supabaseUrl">URL do projeto Supabase</label><input id="supabaseUrl" type="url" placeholder="https://seu-projeto.supabase.co" autocomplete="url">
+  <label for="supabaseKey">Chave publishable / anon</label><input id="supabaseKey" type="password" placeholder="sb_publishable_... ou anon key" autocomplete="off">
+  <div class="sync-form-actions"><button class="toolbar-action primary" id="saveSupabaseConfig" type="button">💾 Salvar conexão</button><button class="toolbar-action" id="clearSupabaseConfig" type="button">Limpar configuração</button></div>
+  <div class="sync-auth-grid"><div><label for="syncEmail">E-mail</label><input id="syncEmail" type="email" autocomplete="email" placeholder="seu@email.com"></div><div><label for="syncPassword">Senha</label><input id="syncPassword" type="password" autocomplete="current-password" placeholder="Senha da conta"></div></div>
+  <div class="sync-form-actions"><button class="toolbar-action" id="syncSignUp" type="button">Criar conta</button><button class="toolbar-action" id="syncSignIn" type="button">Entrar</button><button class="toolbar-action" id="syncSignOut" type="button">Sair</button></div>
+  <div class="sync-form-actions"><button class="toolbar-action primary" id="syncUpload" type="button">⬆ Enviar dados para nuvem</button><button class="toolbar-action" id="syncDownload" type="button">⬇ Restaurar da nuvem</button></div>
+  <details class="sync-help"><summary>Como ativar o banco Supabase (uma única vez)</summary><p>Crie um projeto gratuito em Supabase e abra SQL Editor. Execute o SQL abaixo para criar a tabela privada e as regras de acesso. Depois informe a URL e a chave publishable/anon do projeto.</p><pre>create table if not exists public.activity_sync (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  payload jsonb not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.activity_sync enable row level security;
+create policy "Users manage own activity data"
+on public.activity_sync for all
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+grant select, insert, update, delete on public.activity_sync to authenticated;</pre><p>Use uma senha forte. Nunca coloque a service_role key no navegador. O primeiro envio e a primeira restauração são manuais para evitar sobrescrever dados sem sua autorização.</p><p><a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer">Abrir Supabase Dashboard ↗</a></p></details>
+ </div>
+</section>\n<section class="schedule-settings" id="scheduleSettings" hidden aria-label="Configuração de datas das atividades">
  <div class="schedule-settings-head">
   <div><span class="workspace-eyebrow">CONFIGURAÇÃO DA ROTINA</span><h3>📅 Quando cada atividade deve aparecer</h3><p>Configure os dias do mês em que uma atividade fica visível. Atividades sem datas configuradas aparecem todos os dias.</p></div>
   <button class="toolbar-action" id="closeScheduleSettings" type="button">✕ Fechar</button>
@@ -157,7 +179,7 @@
   <p id="roundMessage">Concluir, pular ou adiar cada card conta como uma etapa da volta.</p>
  </div>
 </section>
-<div class="toolbar">
+<div class="quick-filters" role="group" aria-label="Filtros rápidos"><button type="button" class="quick-filter active" data-quick="all">Tudo</button><button type="button" class="quick-filter" data-quick="pending">Pendentes</button><button type="button" class="quick-filter" data-quick="attention">Atenção</button><button type="button" class="quick-filter" data-quick="critical">Críticas</button><button type="button" class="quick-filter" data-quick="done">Concluídas</button><button type="button" class="quick-filter" data-quick="projects">Projetos</button></div>\n<div class="toolbar">
  <div class="search"><input type="search" id="searchInput" placeholder="🔎 Buscar uma atividade..." aria-label="Buscar atividades"></div>
  <select id="periodFilter" aria-label="Filtrar frequência"><option value="all">Todas as frequências</option><option value="Diário">Diárias</option><option value="Semanal">Semanais</option><option value="Mensal">Mensais</option><option value="Noturno">Noturnas</option></select>
  <select id="areaFilter" aria-label="Filtrar área"><option value="all">Todas as áreas (50)</option><option value="ADM">Administrativo (13)</option><option value="Comercial">Comercial (12)</option><option value="Ambos">ADM e Comercial (3)</option><option value="Estudos">Estudos (1)</option><option value="Trabalho pessoal">Trabalho pessoal (4)</option><option value="IA e DroidManiacos">IA e DroidManiacos (4)</option><option value="Favoritos pessoais">Favoritos pessoais (4)</option><option value="Redes sociais">Redes sociais (2)</option><option value="Lazer">Lazer (3)</option><option value="Atividades secundárias">Atividades secundárias (3)</option><option value="Outros">Outros (1)</option><option value="Saúde">Saúde (1)</option><option value="Projetos">Projetos (1)</option></select>
@@ -170,7 +192,7 @@
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V5.9 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V6.0 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>
@@ -202,10 +224,10 @@
 })();
 </script>
 
-<script src="./assets/js/tasks.js?v=19" defer></script>
-<script src="./assets/js/storage.js?v=19" defer></script>
-<script src="./assets/js/backup.js?v=19" defer></script>
-<script src="./assets/js/analytics.js?v=19" defer></script>
-<script src="./assets/js/dashboard.js?v=19" defer></script>
+<script src="./assets/js/tasks.js?v=20" defer></script>
+<script src="./assets/js/storage.js?v=20" defer></script>
+<script src="./assets/js/backup.js?v=20" defer></script>
+<script src="./assets/js/analytics.js?v=20" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>\n<script src="./assets/js/sync.js?v=20" defer></script>\n<script src="./assets/js/dashboard.js?v=20" defer></script>
 </body>
 </html>
