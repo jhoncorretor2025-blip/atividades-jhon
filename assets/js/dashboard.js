@@ -1,4 +1,4 @@
-/* V5.2 — interface, histórico confiável e contagem por card. */
+/* V5.3 — menu organizado e indicadores visuais da rotina. */
 function applyPrefs(){document.body.dataset.theme=prefs.theme==="dark"?"dark":"light";$("themeBtn").textContent=prefs.theme==="dark"?"☀️ Tema claro":"🌙 Tema escuro";$("themeBtn").setAttribute("aria-pressed",String(prefs.theme==="dark"))}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tags(t){
@@ -153,6 +153,10 @@ function render(){
  $("summaryDone").textContent=executed;
  $("summarySkipped").textContent=skippedCount;
  $("summaryPending").textContent=pending;
+ const summaryPct=scope.length?Math.round(executed/scope.length*100):0;
+ const summaryPctLabel=$("summaryDonePct"),summaryPctBar=$("summaryProgressBar");
+ if(summaryPctLabel)summaryPctLabel.textContent=summaryPct+"% da área concluída";
+ if(summaryPctBar)summaryPctBar.style.width=summaryPct+"%";
  $("totalCount").textContent=list.length;
  const completed=list.filter(t=>done.has(t.id)).length;
  $("doneCount").textContent=completed;
@@ -251,7 +255,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V5.2. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a contagem e o histórico de conclusões, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no armazenamento local deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V5.3. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a contagem e o histórico de conclusões, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no armazenamento local deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 $("archiveSettingsBtn").addEventListener("click",()=>{
  const panel=$("archiveSettings");panel.hidden=!panel.hidden;
