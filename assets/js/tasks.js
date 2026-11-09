@@ -52,6 +52,15 @@ const tasks = [
 ,{id:"manutencao-moto",title:"Manutenção da moto",icon:"🏍️",area:"Outros",period:"Semanal",priority:"Baixa",desc:"Conferir necessidades de manutenção da moto."}
 ,{id:"tomar-creatina-20h",title:"Tomar creatina — 20h",icon:"💊",area:"Saúde",period:"Noturno",priority:"Alta",attention:true,desc:"Lembrete noturno conforme a rotina pessoal informada."}
 
+ ,{id:"projetos-pessoais",title:"Projetos",icon:"🚀",area:"Projetos",period:"Semanal",priority:"Alta",desc:"Acesse e acompanhe seus projetos pessoais. Marque cada projeto no checklist quando concluir uma etapa.",subtaskTitle:"Meus projetos",subtasks:[
+ {id:"delta-prompts",label:"Delta Prompts",link:"https://jhoncorretor2025-blip.github.io/delta-prompts/"},
+ {id:"minha-saude-ia",label:"Minha Saúde IA",link:"https://jhoncorretor2025-blip.github.io/minha-saude-ia/"},
+ {id:"ativflow",label:"AtivFlow",link:"https://ativ-flow-xi.vercel.app/"},
+ {id:"canivete",label:"Canivete",link:"https://jhoncorretor2025-blip.github.io/delta-prompts/canivete.html"},
+ {id:"editor-video",label:"Editor de Vídeo",link:"https://jhoncorretor2025-blip.github.io/delta-prompts/edicao-videos.html"},
+ {id:"filmes",label:"Filmes",link:"https://jhoncorretor2025-blip.github.io/filmes/"},
+ {id:"clonar-voz",label:"Clonar voz",link:"https://jhoncorretor2025-blip.github.io/delta-prompts/canivete/clonagem-de-voz-master.html"}
+]}
 ];
 function updateActivityCounts(){
  const workAreas=["ADM","Comercial","Ambos"];
