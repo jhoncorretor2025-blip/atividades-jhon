@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V6.2">
+<meta name="delta-version" content="V6.3">
 <title>Atividades do Jhon · Delta | V5.9</title>
 <link rel="stylesheet" href="./assets/css/app.css?v=20">
 </head>
 <body>
-<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V6.2">V6.2</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V6.3">V6.3</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="smart-home-panel" id="smartHomePanel" aria-label="Resumo inteligente"><div><span class="workspace-eyebrow">VISÃO INTELIGENTE</span><h3>🎯 Seu próximo passo</h3><p id="smartHomeMessage">Organizando suas prioridades de hoje...</p><strong id="smartNextTask">Carregando atividades...</strong></div><div class="smart-home-stats"><span><b id="smartPending">0</b><small>Pendentes</small></span><span><b id="smartCritical">0</b><small>Críticas</small></span><span><b id="smartProjects">0</b><small>Projetos</small></span></div><button class="toolbar-action primary" id="smartStartBtn" type="button">Começar pela próxima →</button></section>\n<section class="my-day-panel" aria-label="Painel Meu Dia">
@@ -192,7 +192,7 @@ grant select, insert, update, delete on public.activity_sync to authenticated;</
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V6.2 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V6.3 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>
@@ -228,6 +228,6 @@ grant select, insert, update, delete on public.activity_sync to authenticated;</
 <script src="./assets/js/storage.js?v=21" defer></script>
 <script src="./assets/js/backup.js?v=20" defer></script>
 <script src="./assets/js/analytics.js?v=20" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>\n<script src="./assets/js/sync.js?v=20" defer></script>\n<script src="./assets/js/dashboard.js?v=20" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>\n<script src="./assets/js/sync.js?v=20" defer></script>\n<script src="./assets/js/dashboard.js?v=21" defer></script>
 </body>
 </html>
