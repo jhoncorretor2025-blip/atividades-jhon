@@ -16,10 +16,9 @@ const taskSequenceKey=()=>"atividades-jhon:sequence:"+localDate();
 function loadTaskSequence(){
  try{
   const value=JSON.parse(localStorage.getItem(taskSequenceKey())||"{}");
-  if(!value||typeof value!=="object"||Array.isArray(value))return cloneDefaultTaskSchedules();
-  // Migração segura: adiciona o calendário da nota fiscal sem sobrescrever regras personalizadas já salvas.
-  if(!Array.isArray(value["nota-fiscal"]))value["nota-fiscal"]=cloneDefaultTaskSchedules()["nota-fiscal"];
-  return value;
+  if(!value||typeof value!=="object"||Array.isArray(value))return {};
+  // A numeração contém somente pares atividade:número; remove resíduos de versões anteriores.
+  return Object.fromEntries(Object.entries(value).filter(([,sequence])=>Number.isInteger(sequence)));
  }catch{return{}}
 }
 let taskSequence=loadTaskSequence();
@@ -230,7 +229,10 @@ function loadTaskSchedules(){
   const raw=localStorage.getItem(TASK_SCHEDULE_KEY);
   if(raw===null)return cloneDefaultTaskSchedules();
   const value=JSON.parse(raw);
-  return value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+  if(!value||typeof value!=="object"||Array.isArray(value))return cloneDefaultTaskSchedules();
+  // Migração: acrescenta a regra da nota fiscal sem sobrescrever calendários personalizados.
+  if(!Array.isArray(value["nota-fiscal"]))value["nota-fiscal"]=cloneDefaultTaskSchedules()["nota-fiscal"];
+  return value;
  }catch{return cloneDefaultTaskSchedules()}
 }
 let taskSchedules=loadTaskSchedules();
@@ -239,6 +241,8 @@ function saveTaskSchedules(){
  catch{showToast("Não foi possível salvar as configurações de datas.");return false}
 }
 function isTaskVisibleToday(task){
+ // Dias da semana: 0=domingo, 1=segunda, ... 5=sexta, 6=sábado.
+ if(Array.isArray(task.weekdays)&&task.weekdays.length>0&&!task.weekdays.includes(new Date().getDay()))return false;
  const ranges=taskSchedules[task.id];
  if(!Array.isArray(ranges)||ranges.length===0)return true;
  const day=new Date().getDate();
