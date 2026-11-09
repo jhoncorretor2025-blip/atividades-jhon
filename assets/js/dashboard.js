@@ -157,7 +157,8 @@ function renderSmartHome(){
 }
 function render(){
  const list=filtered(), grid=$("taskGrid");
- renderSmartHome();\n renderSmartHome();
+ renderSmartHome();
+ renderSmartHome();
  const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
  const dayScope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
  const dayDone=dayScope.filter(t=>done.has(t.id)).length;
@@ -409,7 +410,13 @@ $("clearFiltersBtn").addEventListener("click",()=>{
  $("statusFilter").value="all";
  render();showToast("Filtros limpos.");
 });
-window.quickActivityFilter="all";\ndocument.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>{window.quickActivityFilter=button.dataset.quick;document.querySelectorAll("[data-quick]").forEach(item=>{item.classList.toggle("active",item===button);item.setAttribute("aria-pressed",String(item===button));});$("statusFilter").value="all";render();}));\n$("smartStartBtn").addEventListener("click",()=>{const id=$("smartStartBtn").dataset.next;if(!id)return;window.quickActivityFilter="all";document.querySelectorAll("[data-quick]").forEach(item=>item.classList.toggle("active",item.dataset.quick==="all"));$("searchInput").value=tasks.find(t=>t.id===id)?.title||"";render();$("taskGrid").scrollIntoView({behavior:"smooth",block:"start"});});\n$("openSyncSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=!p.hidden;if(!p.hidden)p.scrollIntoView({behavior:"smooth",block:"start"});});\n$("closeSyncSettings").addEventListener("click",()=>{$("syncSettings").hidden=true;});\n$("openCentralSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=false;p.scrollIntoView({behavior:"smooth",block:"start"});});\n$("searchInput").addEventListener("input",render);
+window.quickActivityFilter="all";
+document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>{window.quickActivityFilter=button.dataset.quick;document.querySelectorAll("[data-quick]").forEach(item=>{item.classList.toggle("active",item===button);item.setAttribute("aria-pressed",String(item===button));});$("statusFilter").value="all";render();}));
+$("smartStartBtn").addEventListener("click",()=>{const id=$("smartStartBtn").dataset.next;if(!id)return;window.quickActivityFilter="all";document.querySelectorAll("[data-quick]").forEach(item=>item.classList.toggle("active",item.dataset.quick==="all"));$("searchInput").value=tasks.find(t=>t.id===id)?.title||"";render();$("taskGrid").scrollIntoView({behavior:"smooth",block:"start"});});
+$("openSyncSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=!p.hidden;if(!p.hidden)p.scrollIntoView({behavior:"smooth",block:"start"});});
+$("closeSyncSettings").addEventListener("click",()=>{$("syncSettings").hidden=true;});
+$("openCentralSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=false;p.scrollIntoView({behavior:"smooth",block:"start"});});
+$("searchInput").addEventListener("input",render);
 ["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
 $("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();subtaskDone={};resetTaskSequence();resetRoundStates();saveSubtaskDone();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
