@@ -143,8 +143,20 @@ function refreshArchiveManager(){
   showToast("Atividade restaurada para a rotina. ✅");
  }));
 }
+function renderSmartHome(){
+ const available=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
+ const pending=available.filter(t=>!done.has(t.id)&&!skipped.has(t.id));
+ const critical=pending.filter(t=>t.critical||t.priority==="Crítica");
+ const next=critical[0]||pending.find(t=>t.attention)||pending[0];
+ const set=(id,value)=>{const el=$(id);if(el)el.textContent=String(value)};
+ set("smartPending",pending.length);set("smartCritical",critical.length);set("smartProjects",available.filter(t=>t.area==="Projetos").length);
+ set("smartNextTask",next?next.title:"Tudo em dia! Nenhuma pendência disponível.");
+ set("smartHomeMessage",next?"Sugestão baseada em prioridade e atenção.":"Você concluiu todas as atividades disponíveis.");
+ const btn=$("smartStartBtn");if(btn){btn.disabled=!next;btn.dataset.next=next?next.id:"";}
+}
 function render(){
- const list=filtered(), grid=$("taskGrid");\n renderSmartHome();
+ const list=filtered(), grid=$("taskGrid");
+ renderSmartHome();\n renderSmartHome();
  const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
  const dayScope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
  const dayDone=dayScope.filter(t=>done.has(t.id)).length;
