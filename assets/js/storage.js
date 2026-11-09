@@ -16,7 +16,10 @@ const taskSequenceKey=()=>"atividades-jhon:sequence:"+localDate();
 function loadTaskSequence(){
  try{
   const value=JSON.parse(localStorage.getItem(taskSequenceKey())||"{}");
-  return value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+  if(!value||typeof value!=="object"||Array.isArray(value))return cloneDefaultTaskSchedules();
+  // Migração segura: adiciona o calendário da nota fiscal sem sobrescrever regras personalizadas já salvas.
+  if(!Array.isArray(value["nota-fiscal"]))value["nota-fiscal"]=cloneDefaultTaskSchedules()["nota-fiscal"];
+  return value;
  }catch{return{}}
 }
 let taskSequence=loadTaskSequence();
@@ -217,6 +220,7 @@ function restoreTask(id){
 
 const TASK_SCHEDULE_KEY="atividades-jhon:visibility-schedules";
 const DEFAULT_TASK_SCHEDULES={
+ "nota-fiscal":[{"start":13,"end":15},{"start":27,"end":30}],
  "sinistros":[{"start":5,"end":7},{"start":12,"end":13},{"start":21,"end":31}],
  "planilha":[{"start":1,"end":19}]
 };
