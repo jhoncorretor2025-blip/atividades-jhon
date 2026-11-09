@@ -144,7 +144,7 @@ function refreshArchiveManager(){
  }));
 }
 function render(){
- const list=filtered(), grid=$("taskGrid");
+ const list=filtered(), grid=$("taskGrid");\n renderSmartHome();
  const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
  const dayScope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
  const dayDone=dayScope.filter(t=>done.has(t.id)).length;
