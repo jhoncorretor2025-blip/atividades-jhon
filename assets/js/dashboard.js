@@ -17,7 +17,7 @@ function tags(t){
 }
 function iconStyle(t){if(t.critical)return "background:#fff0f1;color:#ff3045";if(t.attention)return "background:#fff5d9;color:#bf6b1e";if(t.area==="Comercial")return "background:#dcebff;color:#2475ff";if(!["ADM","Ambos"].includes(t.area))return "background:#e7f8ee;color:#177245";const colors={"status-social":"background:#ffe3f2;color:#e92b8e","pastas-entrada-saida":"background:#fff6be;color:#ad7200","conversa-prestador":"background:#f2e2ff;color:#a52aff","avalyst":"background:#dcebff;color:#3280ff","cobranca-condominio":"background:#ffead4;color:#ff6500","chaves-mural":"background:#fff6be;color:#bd8000","emails":"background:#dcebff;color:#3585ff","planilha":"background:#e2e8f0;color:#53657b","conversas-antigas":"background:#eae6ff;color:#7356ff","etiquetas-interessados":"background:#fff2bd;color:#b47a00","imoveis-antigos":"background:#f4e6ff;color:#a52cff","fotos-vilson":"background:#d0faf1;color:#00a99b","etiquetas-whatsapp":"background:#d1fae5;color:#059669"};return colors[t.id]||"background:#e2eaff;color:#3574ff"}
 function filtered(){
- const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value;
+ const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value, quick=window.quickActivityFilter||"all";
  const matching=tasks.filter(t=>{
   const workAreas=["ADM","Comercial","Ambos"];
   if(currentMode==="work"&&!workAreas.includes(t.area))return false;
@@ -25,7 +25,7 @@ function filtered(){
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
   return !isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
-  (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped));
+  (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped))&&\n  (quick==="all"||(quick==="critical"&&(t.critical||t.priority==="Crítica")&&!isDone&&!isSkipped)||(quick==="projects"&&t.area==="Projetos")||(quick==="pending"&&!isDone&&!isSkipped)||(quick==="attention"&&t.attention&&!isDone&&!isSkipped)||(quick==="done"&&isDone);
  });
  const fixed=matching.filter(t=>Number.isInteger(t.fixedPosition)).sort((a,b)=>a.fixedPosition-b.fixedPosition);
  const ordered=matching.filter(t=>!Number.isInteger(t.fixedPosition));
@@ -396,7 +396,7 @@ $("clearFiltersBtn").addEventListener("click",()=>{
  $("statusFilter").value="all";
  render();showToast("Filtros limpos.");
 });
-$("searchInput").addEventListener("input",render);
+window.quickActivityFilter="all";\ndocument.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>{window.quickActivityFilter=button.dataset.quick;document.querySelectorAll("[data-quick]").forEach(item=>{item.classList.toggle("active",item===button);item.setAttribute("aria-pressed",String(item===button));});$("statusFilter").value="all";render();}));\n$("smartStartBtn").addEventListener("click",()=>{const id=$("smartStartBtn").dataset.next;if(!id)return;window.quickActivityFilter="all";document.querySelectorAll("[data-quick]").forEach(item=>item.classList.toggle("active",item.dataset.quick==="all"));$("searchInput").value=tasks.find(t=>t.id===id)?.title||"";render();$("taskGrid").scrollIntoView({behavior:"smooth",block:"start"});});\n$("openSyncSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=!p.hidden;if(!p.hidden)p.scrollIntoView({behavior:"smooth",block:"start"});});\n$("closeSyncSettings").addEventListener("click",()=>{$("syncSettings").hidden=true;});\n$("openCentralSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=false;p.scrollIntoView({behavior:"smooth",block:"start"});});\n$("searchInput").addEventListener("input",render);
 ["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
 $("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();subtaskDone={};resetTaskSequence();resetRoundStates();saveSubtaskDone();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
