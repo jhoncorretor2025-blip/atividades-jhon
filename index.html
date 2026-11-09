@@ -4,14 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V5.7">
-<title>Atividades do Jhon · Delta | V5.7</title>
-<link rel="stylesheet" href="./assets/css/app.css?v=17">
+<meta name="delta-version" content="V5.8">
+<title>Atividades do Jhon · Delta | V5.8</title>
+<link rel="stylesheet" href="./assets/css/app.css?v=18">
 </head>
 <body>
-<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V5.7">V5.7</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V5.8">V5.8</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
+<section class="my-day-panel" aria-label="Painel Meu Dia">
+ <div class="my-day-heading">
+  <div><span class="workspace-eyebrow">PAINEL DIÁRIO</span><h3>☀️ Meu dia</h3><p id="myDayMessage">Veja como está sua rotina hoje.</p></div>
+  <span class="my-day-total"><strong id="myDayTotal">0</strong><small>atividades</small></span>
+ </div>
+ <div class="my-day-progress">
+  <div class="my-day-progress-label"><strong>Progresso do dia</strong><strong id="myDayProgressText">0%</strong></div>
+  <div class="my-day-progress-track"><i id="myDayProgressBar"></i></div>
+ </div>
+ <div class="my-day-metrics">
+  <div class="my-day-metric completed"><span>✓</span><div><strong id="myDayDone">0</strong><small>Concluídas</small></div></div>
+  <div class="my-day-metric pending"><span>◷</span><div><strong id="myDayPending">0</strong><small>Pendentes</small></div></div>
+  <div class="my-day-metric critical"><span>!</span><div><strong id="myDayCritical">0</strong><small>Críticas</small></div></div>
+ </div>
+</section>
 <details class="mobile-collapsible mobile-progress" id="progressDetails" open>
  <summary class="mobile-collapsible-summary"><span>📈 Meu progresso</span><span class="collapse-hint">Ver indicadores e constância</span></summary>
  <div class="mobile-collapsible-content">
@@ -155,7 +170,7 @@
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V5.7 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V5.8 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>
@@ -187,10 +202,10 @@
 })();
 </script>
 
-<script src="./assets/js/tasks.js?v=17" defer></script>
-<script src="./assets/js/storage.js?v=17" defer></script>
-<script src="./assets/js/backup.js?v=17" defer></script>
-<script src="./assets/js/analytics.js?v=17" defer></script>
-<script src="./assets/js/dashboard.js?v=17" defer></script>
+<script src="./assets/js/tasks.js?v=18" defer></script>
+<script src="./assets/js/storage.js?v=18" defer></script>
+<script src="./assets/js/backup.js?v=18" defer></script>
+<script src="./assets/js/analytics.js?v=18" defer></script>
+<script src="./assets/js/dashboard.js?v=18" defer></script>
 </body>
 </html>
