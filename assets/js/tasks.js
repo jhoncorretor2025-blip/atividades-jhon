@@ -1,6 +1,6 @@
 /* V3.9 — catálogo imutável das atividades e contagens por área. */
 const tasks = [
-{id:"whatsapp-focus",title:"Revisar o WhatsApp (Foco Total 08h-10h)",icon:"◷",area:"ADM",period:"Diário",priority:"Alta",attention:true,desc:"Rotina matinal de foco no WhatsApp.",urgent:true,link:"https://web.whatsapp.com/",linkLabel:"↗ Abrir WhatsApp"},
+{id:"whatsapp-focus",title:"Revisar o WhatsApp (Foco Total 08h-10h)",icon:"◷",area:"ADM",period:"Diário",priority:"Alta",attention:true,fixedPosition:8,desc:"Rotina matinal de foco no WhatsApp.",urgent:true,link:"https://web.whatsapp.com/",linkLabel:"↗ Abrir WhatsApp"},
 {id:"nota-fiscal",title:"Emitir Nota Fiscal",icon:"♧",area:"ADM",period:"Mensal",priority:"Crítica",critical:true,desc:"Dia 15: emitir as notas fiscais para evitar multas e atrasos no faturamento.",attention:true},
 {id:"status-social",title:"Colocar foto no Status do WhatsApp e Instagram (Deixar Nota)",icon:"◎",area:"Comercial",period:"Diário",priority:"Normal",desc:"Atualizar os stories e status com fotos de imóveis, anúncios ou comunicados relevantes e deixar uma nota explicativa.",link:"https://web.whatsapp.com/",linkLabel:"↗ Abrir WhatsApp"},
 {id:"pastas-entrada-saida",title:"Verificar pastas de entrada e saída",icon:"▱",area:"ADM",period:"Diário",priority:"Normal",desc:""},
