@@ -4,7 +4,12 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
-## Estado funcional conhecido — V7.0
+## Estado funcional conhecido — V7.1
+
+### Contador do card Pendências (variáveis)
+- O card inicial usa o identificador exclusivo `pendingAreaCount`, separado do indicador de pendências do painel diário.
+- `updateActivityCounts()` atualiza o contador com a quantidade de atividades cadastradas na área `Pendências (variáveis)`; atualmente são 23.
+- O catálogo e as 23 atividades existentes foram preservados.
 
 ### Pendências variáveis
 - Novo modo independente `pending`, com a área `Pendências (variáveis)`.
