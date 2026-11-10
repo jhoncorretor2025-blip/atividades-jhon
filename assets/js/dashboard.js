@@ -56,7 +56,7 @@ function historyForDate(date){
  return {done:new Set(read("atividades-jhon:"+date)),skipped:new Set(read("atividades-jhon:skipped:"+date))};
 }
 function reportScope(){
- return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos"].includes(t.area)||t.area==="Ambos"):true));
+ return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos","Pendências (variáveis)"].includes(t.area)||t.area==="Ambos"):currentMode==="pending"?t.area==="Pendências (variáveis)":true));
 }
 function renderWeeklyReport(){
  const scope=reportScope(),ids=new Set(scope.map(t=>t.id)),total=scope.length;
@@ -159,7 +159,7 @@ function render(){
  const list=filtered(), grid=$("taskGrid");
  renderSmartHome();
  renderSmartHome();
- const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos"].includes(t.area)||t.area==="Ambos"):true));
+ const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos","Pendências (variáveis)"].includes(t.area)||t.area==="Ambos"):currentMode==="pending"?t.area==="Pendências (variáveis)":true));
  const dayScope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
  const dayDone=dayScope.filter(t=>done.has(t.id)).length;
  const daySkipped=dayScope.filter(t=>skipped.has(t.id)).length;
@@ -374,9 +374,10 @@ function chooseMode(mode){
  $("activityWorkspace").hidden=false;
  const isWork=mode==="work";
  const isGeneral=mode==="general";
- $("workspaceEyebrow").textContent=isGeneral?"ROTINA COMPLETA":isWork?"ROTINA PROFISSIONAL":"ROTINA PESSOAL";
- $("workspaceTitle").textContent=isGeneral?"Todas as atividades":isWork?"Atividades de trabalho":"Vida pessoal";
- $("taskListTitle").textContent=isGeneral?"🌐 Todas as atividades":isWork?"💼 Atividades de trabalho":"🌱 Atividades da vida pessoal";
+ const isPending=mode==="pending";
+ $("workspaceEyebrow").textContent=isGeneral?"ROTINA COMPLETA":isWork?"ROTINA PROFISSIONAL":isPending?"PENDÊNCIAS VARIÁVEIS":"ROTINA PESSOAL";
+ $("workspaceTitle").textContent=isGeneral?"Todas as atividades":isWork?"Atividades de trabalho":isPending?"Pendências (variáveis)":"Vida pessoal";
+ $("taskListTitle").textContent=isGeneral?"🌐 Todas as atividades":isWork?"💼 Atividades de trabalho":isPending?"📋 Pendências variáveis":"🌱 Atividades da vida pessoal";
  $("areaFilter").value="all";
  $("periodFilter").value="all";
  $("statusFilter").value="all";
@@ -387,6 +388,7 @@ function chooseMode(mode){
 $("chooseGeneral").addEventListener("click",()=>chooseMode("general"));
 $("chooseWork").addEventListener("click",()=>chooseMode("work"));
 $("choosePersonal").addEventListener("click",()=>chooseMode("personal"));
+ $("choosePending").addEventListener("click",()=>chooseMode("pending"));
 function goHome(){
  currentMode=null;
  $("activityWorkspace").hidden=true;
