@@ -2,6 +2,10 @@
 (()=>{
  const $=id=>document.getElementById(id);
  const CONFIG_KEY="atividades-jhon:google-sheets-config";
+ const openPanel=$("openGoogleSyncSettings"),closePanel=$("closeGoogleSyncSettings"),panel=$("googleSyncSettings");
+ if(openPanel)openPanel.addEventListener("click",()=>{panel.hidden=!panel.hidden;if(!panel.hidden)panel.scrollIntoView({behavior:"smooth",block:"start"});});
+ if(closePanel)closePanel.addEventListener("click",()=>{panel.hidden=true;});
+
  const META_KEY="atividades-jhon:google-sync-meta";
  let config=readConfig(), dirty=false, applyingRemote=false, pushTimer=null, pollTimer=null, lastApplied="";
  const status=(msg)=>{const el=$("googleSyncStatus");if(el)el.textContent=msg;};
