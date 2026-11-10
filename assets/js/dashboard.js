@@ -21,7 +21,7 @@ function filtered(){
  const matching=tasks.filter(t=>{
   const workAreas=["ADM","Comercial","Ambos"];
   if(currentMode==="work"&&!workAreas.includes(t.area))return false;
-  if(currentMode==="personal"&&workAreas.includes(t.area))return false;
+  if(currentMode==="personal"&&workAreas.includes(t.area)&&t.area!=="Ambos")return false;
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
   return !isTaskArchived(t)&&!isTaskPaused(t)&&(!!q||isTaskVisibleToday(t))&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
@@ -56,7 +56,7 @@ function historyForDate(date){
  return {done:new Set(read("atividades-jhon:"+date)),skipped:new Set(read("atividades-jhon:skipped:"+date))};
 }
 function reportScope(){
- return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
+ return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos"].includes(t.area)||t.area==="Ambos"):true));
 }
 function renderWeeklyReport(){
  const scope=reportScope(),ids=new Set(scope.map(t=>t.id)),total=scope.length;
@@ -159,7 +159,7 @@ function render(){
  const list=filtered(), grid=$("taskGrid");
  renderSmartHome();
  renderSmartHome();
- const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?!["ADM","Comercial","Ambos"].includes(t.area):true));
+ const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos"].includes(t.area)||t.area==="Ambos"):true));
  const dayScope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
  const dayDone=dayScope.filter(t=>done.has(t.id)).length;
  const daySkipped=dayScope.filter(t=>skipped.has(t.id)).length;
