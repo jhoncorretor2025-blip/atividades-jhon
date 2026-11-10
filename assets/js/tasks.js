@@ -88,10 +88,12 @@ const tasks = [
 function updateActivityCounts(){
  const workAreas=["ADM","Comercial","Ambos"];
  const work=tasks.filter(t=>workAreas.includes(t.area)).length;
+ const pendingArea="Pendências (variáveis)";
+ const personal=tasks.filter(t=>t.area==="Ambos"||(!workAreas.includes(t.area)&&t.area!==pendingArea)).length;
  const counts=new Map();
  tasks.forEach(t=>counts.set(t.area,(counts.get(t.area)||0)+1));
  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
- set("generalCount",tasks.length);set("workCount",work);set("personalCount",tasks.length-work);
+ set("generalCount",tasks.length);set("workCount",work);set("personalCount",personal);
  set("pendingAreaCount",counts.get("Pendências (variáveis)")||0);
  const area=document.getElementById("areaFilter");
  if(area)Array.from(area.options).forEach(option=>{
