@@ -60,7 +60,30 @@ const tasks = [
  {id:"editor-video",label:"Editor de Vídeo",link:"https://jhoncorretor2025-blip.github.io/delta-prompts/edicao-videos.html"},
  {id:"filmes",label:"Filmes",link:"https://jhoncorretor2025-blip.github.io/filmes/"},
  {id:"clonar-voz",label:"Clonar voz",link:"https://jhoncorretor2025-blip.github.io/delta-prompts/canivete/clonagem-de-voz-master.html"}
-]}
+]},
+{id:"pend-fotos-celular",title:"Pegar minhas fotos antigas do celular antigo",icon:"📸",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Recuperar e organizar as fotos antigas."},
+{id:"pend-google-drive",title:"Instalar e configurar o Google Drive no computador",icon:"☁️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Configurar o Google Drive no computador."},
+{id:"pend-editar-videos-chatgpt",title:"Estudar como editar vídeos utilizando o ChatGPT",icon:"🎬",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Aprender o fluxo de edição de vídeos com ChatGPT."},
+{id:"pend-pasta-segura",title:"Pesquisar mais sobre a Pasta Segura do Android",icon:"🔐",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Entender recursos e configurações da Pasta Segura."},
+{id:"pend-notebooklm-prompts",title:"Organizar vídeos de referência no NotebookLM e catálogo de prompts",icon:"📚",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Importar vídeos de referência, extrair conhecimentos das IAs e organizar no catálogo de prompts."},
+{id:"pend-video-viral",title:"Analisar vídeo viral e recriar conteúdo",icon:"🎥",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Baixar um vídeo de referência, solicitar tradução e análise ao Jaiminho/Jamile e criar uma versão original."},
+{id:"pend-app-leitura-filmes",title:"Criar aplicativo de leitura de filmes e séries",icon:"📱",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Desenvolver aplicativo para leitura de filmes e séries."},
+{id:"pend-app-sono",title:"Criar aplicativo para monitorar o sono",icon:"😴",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Planejar e desenvolver aplicativo de monitoramento do sono."},
+{id:"pend-sistema-clinica",title:"Criar um sistema para clínica",icon:"🧠",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Planejar e desenvolver sistema para clínica."},
+{id:"pend-biobel",title:"Recuperar o sistema da Biobel no Google",icon:"🛍️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Recuperar o projeto e restaurar funcionalidades com auxílio do ChatGPT."},
+{id:"pend-divulga-aqui",title:"Reativar o projeto Divulga Aqui",icon:"📢",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Retomar e desenvolver o projeto Divulga Aqui."},
+{id:"pend-planilha-biobel",title:"Criar planilha financeira da Biobel",icon:"📊",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Registrar todos os custos fixos da Biobel."},
+{id:"pend-novos-projetos",title:"Organizar e desenvolver novos projetos pessoais",icon:"📈",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Organizar ideias e avançar em novos projetos."},
+{id:"pend-videos-politica",title:"Começar a produzir vídeos sobre política",icon:"🎥",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Planejar pautas e começar a produzir vídeos sobre política."},
+{id:"pend-estudar-candidatura",title:"Estudar e me preparar para uma possível candidatura",icon:"🗳️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Estudar para uma possível candidatura a vereador e futuramente deputado estadual."},
+{id:"pend-mentalismo",title:"Estudar sobre mentalismo e coisas ocultas",icon:"🕵️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Pesquisar e estudar o tema com senso crítico."},
+{id:"pend-andar-cavalo",title:"Andar a cavalo",icon:"🐎",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Organizar uma oportunidade para andar a cavalo."},
+{id:"pend-treino-carro",title:"Treinar andar no banco de trás e no banco da frente do carro",icon:"🚗",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Praticar gradualmente e registrar sensações e evolução."},
+{id:"pend-pesquisar-ias",title:"Pesquisar novos conhecimentos e ferramentas de inteligência artificial",icon:"📖",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Descobrir ferramentas e conhecimentos novos de IA."},
+{id:"pend-coracao-papel",title:"Fazer um coração de papel",icon:"💌",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Separar materiais e fazer um coração de papel."},
+{id:"pend-advogada",title:"Falar com a advogada",icon:"⚖️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Entrar em contato com a advogada."},
+{id:"pend-agua-poco",title:"Verificar a situação da água do poço e da caixa-d'água",icon:"💧",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Verificar a situação do poço e da caixa-d'água."},
+{id:"pend-coisas-diferentes",title:"Fazer coisas diferentes, aprender e experimentar",icon:"❤️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Reservar espaço para experiências novas e tirar ideias do papel."}
 ];
 function updateActivityCounts(){
  const workAreas=["ADM","Comercial","Ambos"];
