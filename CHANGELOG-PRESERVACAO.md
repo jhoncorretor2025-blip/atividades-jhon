@@ -4,7 +4,14 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
-## Estado funcional conhecido — V7.1
+## Estado funcional conhecido — V7.2
+
+### Separação correta das áreas
+- `Pendências (variáveis)` é um modo independente: a lista, o resumo semanal e a contagem de voltas consideram somente atividades dessa área.
+- O modo `Vida pessoal` exclui as pendências variáveis, mas continua incluindo tarefas compartilhadas (`Ambos`).
+- O modo `Trabalho` mantém apenas `ADM`, `Comercial` e `Ambos`.
+- O contador de Vida pessoal não soma Pendências variáveis e inclui as atividades compartilhadas; o contador de Pendências mostra os itens cadastrados nessa categoria.
+- A visão `Geral` continua reunindo todas as áreas.
 
 ### Contador do card Pendências (variáveis)
 - O card inicial usa o identificador exclusivo `pendingAreaCount`, separado do indicador de pendências do painel diário.
