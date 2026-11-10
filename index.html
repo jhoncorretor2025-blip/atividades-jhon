@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<meta name="delta-version" content="V6.6">
+<meta name="delta-version" content="V6.7">
 <title>Atividades do Jhon · Delta | V5.9</title>
 <link rel="stylesheet" href="./assets/css/app.css?v=20">
 </head>
 <body>
-<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V6.6">V6.6</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
+<header><div class="head"><a class="brand home-brand" id="homeLink" href="#modeChooser" aria-label="Voltar ao início do site"><div class="logo">✅</div><div><div class="eyebrow">Rotina pessoal · Delta</div><h1>Minhas atividades <span class="version-pill" aria-label="Versão atual V6.7">V6.7</span></h1></div></a><div class="head-actions"><button class="btn" id="resetBtn" type="button">↻ Reiniciar dia</button><button class="btn primary" id="exportBtn" type="button">⇩ Exportar resumo</button><button class="btn" id="themeBtn" type="button" aria-pressed="false">🌙 Tema escuro</button></div></div></header>
 <main>
 <div class="intro"><div><h2>Trabalho e rotina pessoal</h2><p>Organize as tarefas da imobiliária, seus projetos, estudos, saúde e lazer em um só lugar.</p></div><div class="date-label" id="todayLabel"></div></div>
 <section class="smart-home-panel" id="smartHomePanel" aria-label="Resumo inteligente"><div><span class="workspace-eyebrow">VISÃO INTELIGENTE</span><h3>🎯 Seu próximo passo</h3><p id="smartHomeMessage">Organizando suas prioridades de hoje...</p><strong id="smartNextTask">Carregando atividades...</strong></div><div class="smart-home-stats"><span><b id="smartPending">0</b><small>Pendentes</small></span><span><b id="smartCritical">0</b><small>Críticas</small></span><span><b id="smartProjects">0</b><small>Projetos</small></span></div><button class="toolbar-action primary" id="smartStartBtn" type="button">Começar pela próxima →</button></section>\n<section class="my-day-panel" aria-label="Painel Meu Dia">
@@ -68,7 +68,7 @@
  <div class="data-actions-group">
   <div class="data-actions-heading"><span class="data-actions-icon">⚙️</span><div><strong>Preferências e ajuda</strong><small>Orientações e aparência do sistema</small></div></div>
   <div class="data-actions-buttons">
-   <button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda e diagnóstico</button>\n   <button class="toolbar-action" id="openSyncSettings" type="button">☁️ Nuvem e sincronização</button>
+   <button class="toolbar-action" id="helpBtn" type="button">ⓘ Ajuda e diagnóstico</button>\n   <button class="toolbar-action" id="openSyncSettings" type="button">☁️ Supabase (opcional)</button>\n   <button class="toolbar-action" id="openGoogleSyncSettings" type="button">📊 Google Planilhas automático</button>
    <button class="toolbar-action" id="prefsBtn" type="button">↺ Restaurar preferências</button>\n   <button class="toolbar-action" id="openCentralSettings" type="button">⚙️ Configurações</button>
   </div>
  </div>
@@ -98,7 +98,28 @@ using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 grant select, insert, update, delete on public.activity_sync to authenticated;</pre><p>Use uma senha forte. Nunca coloque a service_role key no navegador. O primeiro envio e a primeira restauração são manuais para evitar sobrescrever dados sem sua autorização.</p><p><a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer">Abrir Supabase Dashboard ↗</a></p></details>
  </div>
-</section>\n<section class="schedule-settings" id="scheduleSettings" hidden aria-label="Configuração de datas das atividades">
+</section>\n<section class="sync-settings" id="googleSyncSettings" hidden aria-label="Sincronização Google Planilhas">
+ <div class="settings-head"><div><span class="workspace-eyebrow">SINCRONIZAÇÃO AUTOMÁTICA</span><h3>📊 Google Planilhas</h3><p>Use a mesma base de dados no celular e no computador. As alterações são enviadas automaticamente e os outros dispositivos verificam novidades a cada 20 segundos.</p></div><button class="toolbar-action" id="closeGoogleSyncSettings" type="button">✕ Fechar</button></div>
+ <div class="sync-status" id="googleSyncStatus" role="status" aria-live="polite">Ainda não conectado. Seus dados continuam salvos neste dispositivo.</div>
+ <div class="sync-form">
+  <label for="googleScriptUrl">URL do app da Web (termina em /exec)</label><input id="googleScriptUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="url">
+  <label for="googleSyncToken">Token privado de conexão</label><input id="googleSyncToken" type="password" placeholder="Token gerado pelo Google Apps Script" autocomplete="off">
+  <div class="sync-form-actions"><button class="toolbar-action primary" id="saveGoogleSync" type="button">🔗 Conectar e sincronizar</button><button class="toolbar-action" id="clearGoogleSync" type="button">Desconectar</button></div>
+  <details class="sync-help" open><summary>Ativação inicial — necessária uma única vez</summary>
+   <ol>
+    <li>Abra <a href="https://script.google.com/home/start" target="_blank" rel="noopener noreferrer">Google Apps Script</a> e crie um projeto.</li>
+    <li>Abra o arquivo <b>Code.gs</b> e substitua o conteúdo pelo <a href="https://github.com/jhoncorretor2025-blip/atividades-jhon/blob/main/google-apps-script/Code.gs" target="_blank" rel="noopener noreferrer">código preparado para seu sistema</a>.</li>
+    <li>Selecione <b>setupGoogleActivitySync</b> e clique em Executar. Autorize o acesso à sua conta Google. A planilha será criada automaticamente no seu Drive.</li>
+    <li>Em <b>Implantar → Nova implantação → App da Web</b>, escolha executar como <b>você</b> e acesso <b>qualquer pessoa</b>. Conclua a implantação.</li>
+    <li>Copie a URL terminada em <b>/exec</b> e o token exibido no Registro de execução. Cole nos campos acima e conecte.</li>
+    <li>Repita apenas a conexão com a mesma URL e token no outro dispositivo.</li>
+   </ol>
+   <p><b>Privacidade:</b> o token funciona como uma chave secreta. Não compartilhe a URL junto com o token. O script grava apenas os dados do app na planilha criada por ele. O Google pode exibir uma tela de autorização na primeira execução.</p>
+   <p><a href="https://script.google.com/home/start" target="_blank" rel="noopener noreferrer">Abrir Google Apps Script ↗</a></p>
+  </details>
+ </div>
+</section>
+<section class="schedule-settings" id="scheduleSettings" hidden aria-label="Configuração de datas das atividades">
  <div class="schedule-settings-head">
   <div><span class="workspace-eyebrow">CONFIGURAÇÃO DA ROTINA</span><h3>📅 Quando cada atividade deve aparecer</h3><p>Configure os dias do mês em que uma atividade fica visível. Atividades sem datas configuradas aparecem todos os dias.</p></div>
   <button class="toolbar-action" id="closeScheduleSettings" type="button">✕ Fechar</button>
@@ -192,7 +213,7 @@ grant select, insert, update, delete on public.activity_sync to authenticated;</
 <div class="section-head"><h3 id="taskListTitle">📋 Sua lista de atividades</h3><span class="count" id="resultCount">0 atividades</span></div>
 <div class="grid" id="taskGrid" aria-live="polite"></div>
 </main>
-<footer><span>Atividades Jhon · Delta Imóveis</span><span>V6.6 · Os itens marcados ficam salvos neste navegador.</span></footer>
+<footer><span>Atividades Jhon · Delta Imóveis</span><span>V6.7 · Os itens marcados ficam salvos neste navegador.</span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>
@@ -229,5 +250,6 @@ grant select, insert, update, delete on public.activity_sync to authenticated;</
 <script src="./assets/js/backup.js?v=20" defer></script>
 <script src="./assets/js/analytics.js?v=20" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>\n<script src="./assets/js/sync.js?v=20" defer></script>\n<script src="./assets/js/dashboard.js?v=24" defer></script>
+<script src="./assets/js/google-sync.js?v=1" defer></script>
 </body>
 </html>
