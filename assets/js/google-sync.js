@@ -48,7 +48,7 @@
   if(!validConfig(config))return;
   const result=await jsonp();
   if(!result||!result.ok)throw new Error(result?.error||"Resposta inválida do Google.");
-  if(!result.payload){status("Google conectado. Aguardando o primeiro backup.");return;}
+  if(!result.payload){status("Google conectado. Aguardando o primeiro backup.");return false;}
   const remoteTime=String(result.updatedAt||result.payload.exportedAt||"");
   if(remoteTime&&remoteTime!==lastApplied&&!dirty){
    const meta=JSON.parse(localStorage.getItem(META_KEY)||"{}");
@@ -58,10 +58,12 @@
     localStorage.setItem(META_KEY,JSON.stringify({lastRemote:remoteTime}));
     status("Atualizado pelo Google em "+new Date(remoteTime).toLocaleString("pt-BR")+".");
     setTimeout(()=>location.reload(),250);
+   return true;
    }
   }else if(!dirty){
    status("Sincronização ativa. Última verificação: "+new Date().toLocaleTimeString("pt-BR")+".");
   }
+  return false;
  }
  async function push(){
   if(!validConfig(config)||applyingRemote)return;
@@ -93,8 +95,8 @@
   if(!validConfig(next)){status("Confira a URL /exec do Apps Script e o token gerado na configuração.");return;}
   config=next;
   localStorage.setItem(CONFIG_KEY,JSON.stringify(config));
-  dirty=true;
-  push().then(()=>{start();});
+  dirty=false;
+  pull().then(hasCloudData=>{if(!hasCloudData){dirty=true;return push();}}).then(()=>start()).catch(e=>status("Não foi possível conectar: "+e.message));
  });
  $("clearGoogleSync").addEventListener("click",()=>{
   if(!confirm("Desconectar o Google neste dispositivo? Os dados da planilha e os dados locais não serão apagados."))return;
