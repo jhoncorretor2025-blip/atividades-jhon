@@ -77,7 +77,14 @@ function saveRoundStates(){
 function resetRoundStates(){roundStates={};saveRoundStates()}
 function roundScopeIds(mode){
  const workAreas=["ADM","Comercial","Ambos"];
- return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(mode==="work"?workAreas.includes(t.area):mode==="personal"?!workAreas.includes(t.area):true)).map(t=>t.id);
+ const pendingArea="Pendências (variáveis)";
+ return tasks.filter(t=>{
+  if(isTaskArchived(t)||isTaskPaused(t)||!isTaskVisibleToday(t))return false;
+  if(mode==="work")return workAreas.includes(t.area);
+  if(mode==="personal")return t.area==="Ambos"||(!workAreas.includes(t.area)&&t.area!==pendingArea);
+  if(mode==="pending")return t.area===pendingArea;
+  return true;
+ }).map(t=>t.id);
 }
 function getRoundState(mode){
  const key=mode||"general";
