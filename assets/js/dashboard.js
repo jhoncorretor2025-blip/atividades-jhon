@@ -16,12 +16,18 @@ function tags(t){
  return a.join("");
 }
 function iconStyle(t){if(t.critical)return "background:#fff0f1;color:#ff3045";if(t.attention)return "background:#fff5d9;color:#bf6b1e";if(t.area==="Comercial")return "background:#dcebff;color:#2475ff";if(!["ADM","Ambos"].includes(t.area))return "background:#e7f8ee;color:#177245";const colors={"status-social":"background:#ffe3f2;color:#e92b8e","pastas-entrada-saida":"background:#fff6be;color:#ad7200","conversa-prestador":"background:#f2e2ff;color:#a52aff","avalyst":"background:#dcebff;color:#3280ff","cobranca-condominio":"background:#ffead4;color:#ff6500","chaves-mural":"background:#fff6be;color:#bd8000","emails":"background:#dcebff;color:#3585ff","planilha":"background:#e2e8f0;color:#53657b","conversas-antigas":"background:#eae6ff;color:#7356ff","etiquetas-interessados":"background:#fff2bd;color:#b47a00","imoveis-antigos":"background:#f4e6ff;color:#a52cff","fotos-vilson":"background:#d0faf1;color:#00a99b","etiquetas-whatsapp":"background:#d1fae5;color:#059669"};return colors[t.id]||"background:#e2eaff;color:#3574ff"}
+function isTaskInMode(task,mode){
+ const workAreas=["ADM","Comercial","Ambos"];
+ const pendingArea="Pendências (variáveis)";
+ if(mode==="work")return workAreas.includes(task.area);
+ if(mode==="personal")return task.area==="Ambos"||(!workAreas.includes(task.area)&&task.area!==pendingArea);
+ if(mode==="pending")return task.area===pendingArea;
+ return true;
+}
 function filtered(){
  const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value, quick=window.quickActivityFilter||"all";
  const matching=tasks.filter(t=>{
-  const workAreas=["ADM","Comercial","Ambos"];
-  if(currentMode==="work"&&!workAreas.includes(t.area))return false;
-  if(currentMode==="personal"&&workAreas.includes(t.area)&&t.area!=="Ambos")return false;
+  if(!isTaskInMode(t,currentMode))return false;
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
   return !isTaskArchived(t)&&!isTaskPaused(t)&&(!!q||isTaskVisibleToday(t))&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
@@ -56,7 +62,7 @@ function historyForDate(date){
  return {done:new Set(read("atividades-jhon:"+date)),skipped:new Set(read("atividades-jhon:skipped:"+date))};
 }
 function reportScope(){
- return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos","Pendências (variáveis)"].includes(t.area)||t.area==="Ambos"):currentMode==="pending"?t.area==="Pendências (variáveis)":true));
+ return tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&isTaskInMode(t,currentMode));
 }
 function renderWeeklyReport(){
  const scope=reportScope(),ids=new Set(scope.map(t=>t.id)),total=scope.length;
@@ -75,7 +81,7 @@ function renderWeeklyReport(){
  const rate=total?Math.round(doneTotal/(total*7)*100):0;
  const prevRate=total?Math.round(previous.reduce((s,n)=>s+n,0)/(total*7)*100):0;
  const best=days.reduce((a,b)=>b.completed>a.completed?b:a,days[0]);
- $("weeklyRange").textContent=days[0].label+" a "+days[6].label+" · "+(currentMode==="work"?"Trabalho":currentMode==="personal"?"Vida pessoal":"Todas as áreas");
+ $("weeklyRange").textContent=days[0].label+" a "+days[6].label+" · "+(currentMode==="work"?"Trabalho":currentMode==="personal"?"Vida pessoal":currentMode==="pending"?"Pendências (variáveis)":"Todas as áreas");
  $("weekDone").textContent=doneTotal;
  $("weekSkipped").textContent=skipTotal;
  $("weekRate").textContent=rate+"%";
@@ -159,7 +165,7 @@ function render(){
  const list=filtered(), grid=$("taskGrid");
  renderSmartHome();
  renderSmartHome();
- const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&(currentMode==="work"?["ADM","Comercial","Ambos"].includes(t.area):currentMode==="personal"?(!["ADM","Comercial","Ambos","Pendências (variáveis)"].includes(t.area)||t.area==="Ambos"):currentMode==="pending"?t.area==="Pendências (variáveis)":true));
+ const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&isTaskInMode(t,currentMode));
  const dayScope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t));
  const dayDone=dayScope.filter(t=>done.has(t.id)).length;
  const daySkipped=dayScope.filter(t=>skipped.has(t.id)).length;
@@ -284,7 +290,7 @@ function render(){
  }));
 }
 $("themeBtn").addEventListener("click",()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Tema atualizado.")});
-$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V6.0. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a contagem e o histórico de conclusões, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no armazenamento local deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
+$("helpBtn").addEventListener("click",()=>alert("AJUDA, PRIVACIDADE E DIAGNÓSTICO — ATIVIDADES DO JHON\n\nVersão: V7.2. Aplicação estática em HTML, CSS e JavaScript, publicada no GitHub Pages. Não há integração externa nem sincronização automática.\n\nAs marcações, a contagem e o histórico de conclusões, a fila de atividades adiadas, as pausas temporárias de 15 dias, as configurações de datas e as preferências ficam no armazenamento local deste navegador, dispositivo e perfil. Use Backup JSON para guardar uma cópia manual; o arquivo inclui marcações de hoje, identificadores/títulos das atividades e tema, mas não senhas, tokens ou chaves.\n\nO restaurador aceita apenas JSON compatível, limita o arquivo a 2 MB e valida a estrutura e os IDs antes de alterar dados. A substituição pede confirmação. Limpar os dados do navegador pode apagar as marcações locais.\n\nSe algo não funcionar: recarregue a página, confirme que está online, teste marcar uma atividade e recarregar; se o problema continuar, exporte um backup antes de limpar os dados."));
 $("prefsBtn").addEventListener("click",()=>{if(!confirm("Restaurar apenas as preferências visuais para o padrão claro? As atividades concluídas não serão alteradas."))return;prefs={theme:"light"};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}applyPrefs();showToast("Preferências restauradas.")});
 $("archiveSettingsBtn").addEventListener("click",()=>{
  const panel=$("archiveSettings");panel.hidden=!panel.hidden;
