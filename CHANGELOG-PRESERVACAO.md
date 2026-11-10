@@ -4,7 +4,7 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
-## Estado funcional conhecido — V6.4
+## Estado funcional conhecido — V6.5
 
 ### Rotina e cards
 - A atividade "Emitir Nota Fiscal" (id: nota-fiscal) deve aparecer somente nos dias 13–15 e 27–30 de cada mês.
@@ -17,6 +17,7 @@ Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a altera
 
 ### Busca
 - Quando o usuário digitar uma busca, atividades fora do calendário também devem ser encontradas.
+- Sem texto de busca, o filtro principal deve aplicar `isTaskVisibleToday(t)`; a condição correta é `!!q || isTaskVisibleToday(t)`.
 - Sem texto de busca, respeitar normalmente os calendários de visibilidade.
 - A agenda semanal (`task.weekdays`) é combinada com a agenda mensal (`taskSchedules`) quando as duas existem.
 - Atividades arquivadas ou pausadas continuam excluídas da busca e da lista.
@@ -41,7 +42,8 @@ Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a altera
 7. Verificar que sinistros continua no catálogo e que a busca encontra sinistros mesmo fora do calendário.
 8. Verificar que, sem busca, o calendário continua escondendo cards fora dos dias configurados.
 9. Atualizar cache-busting dos arquivos alterados e a versão do app.
-10. Informar claramente o que foi alterado e o que foi efetivamente testado. Não afirmar teste visual no navegador se ele não foi realizado.
+10. Informar claramente o que foi alterado e o que foi efetivamente testado.
+12. Testar especificamente a condição de visibilidade com busca vazia e com busca preenchida; busca vazia aplica o calendário, busca preenchida permite localizar cards fora da agenda. Não afirmar teste visual no navegador se ele não foi realizado.
 11. A numeração (`taskSequence`) deve conter somente números inteiros por ID; regras de calendário pertencem a `taskSchedules`, nunca à numeração.
 
 ## Observação sobre dados locais
