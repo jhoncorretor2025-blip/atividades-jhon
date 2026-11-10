@@ -640,3 +640,5 @@ body[data-theme="dark"] .smart-home-panel{background:linear-gradient(120deg,#1b2
 
 /* V6.7 Google Planilhas */
 #googleSyncSettings .sync-help ol{padding-left:22px;line-height:1.7}#googleSyncSettings .sync-help li{margin:6px 0}#googleSyncSettings .sync-help a{overflow-wrap:anywhere}#googleSyncSettings .sync-help p{line-height:1.6}
+
+.pending-mode{border-color:#d6b66b;background:linear-gradient(145deg,var(--card),rgba(245,190,75,.09))}.pending-mode .mode-icon{background:rgba(245,190,75,.16)}
