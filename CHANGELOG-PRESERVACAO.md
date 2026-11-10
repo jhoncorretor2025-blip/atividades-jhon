@@ -4,7 +4,10 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
-## Estado funcional conhecido — V7.2
+## Estado funcional conhecido — V7.3
+
+### Cartões de seleção das quatro áreas
+- O seletor inicial usa grade equilibrada de duas colunas em telas amplas e uma coluna em celulares, para exibir os quatro modos sem deixar o quarto card isolado.
 
 ### Separação correta das áreas
 - `Pendências (variáveis)` é um modo independente: a lista, o resumo semanal e a contagem de voltas consideram somente atividades dessa área.
