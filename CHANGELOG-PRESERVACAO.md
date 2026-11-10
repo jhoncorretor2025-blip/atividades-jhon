@@ -4,9 +4,10 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
-## Estado funcional conhecido — V6.5
+## Estado funcional conhecido — V6.6
 
 ### Rotina e cards
+- As atividades `tomar-vitaminas`, `google-tarefa`, `postar-status-pessoal`, `videos-inscricao-youtube` e `projetos-pessoais` usam a área `Ambos` e devem aparecer tanto no modo pessoal quanto no modo trabalho.
 - A atividade "Emitir Nota Fiscal" (id: nota-fiscal) deve aparecer somente nos dias 13–15 e 27–30 de cada mês.
 - A atividade "Revisar o WhatsApp (Foco Total 08h-10h)" (id: whatsapp-focus) deve ocupar a posição fixa 8.
 - A atividade "Verificar sinistros" (id: sinistros) já existe no catálogo, na área ADM, com link para a planilha.
@@ -14,6 +15,9 @@ Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a altera
 - "Rever planilha" tem calendário padrão nos dias 01–19.
 - "Organizar chaves do mural (toda sexta)" aparece somente às sextas-feiras (weekday 5 no JavaScript).
 - Atividades sem calendário específico aparecem normalmente todos os dias.
+
+### Modos de visualização
+- A área `Ambos` é compartilhada: aparece nos modos pessoal e trabalho. As demais áreas de trabalho continuam fora do modo pessoal.
 
 ### Busca
 - Quando o usuário digitar uma busca, atividades fora do calendário também devem ser encontradas.
@@ -44,6 +48,7 @@ Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a altera
 9. Atualizar cache-busting dos arquivos alterados e a versão do app.
 10. Informar claramente o que foi alterado e o que foi efetivamente testado.
 12. Testar especificamente a condição de visibilidade com busca vazia e com busca preenchida; busca vazia aplica o calendário, busca preenchida permite localizar cards fora da agenda. Não afirmar teste visual no navegador se ele não foi realizado.
+13. Verificar que os cinco cards compartilhados aparecem nos modos pessoal e trabalho e que os demais cards de trabalho não aparecem no modo pessoal.
 11. A numeração (`taskSequence`) deve conter somente números inteiros por ID; regras de calendário pertencem a `taskSchedules`, nunca à numeração.
 
 ## Observação sobre dados locais
