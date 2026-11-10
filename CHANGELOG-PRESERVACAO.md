@@ -4,7 +4,12 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
-## Estado funcional conhecido — V6.9
+## Estado funcional conhecido — V7.0
+
+### Pendências variáveis
+- Novo modo independente `pending`, com a área `Pendências (variáveis)`.
+- 23 cards pontuais criados a partir da lista do usuário; não são recorrências diárias fixas.
+- Pendências ficam fora dos modos Trabalho e Vida pessoal, mas aparecem em Geral e no modo Pendências.
 
 ### Rotina e cards
 - As atividades `tomar-vitaminas`, `google-tarefa`, `postar-status-pessoal`, `videos-inscricao-youtube` e `projetos-pessoais` usam a área `Ambos` e devem aparecer tanto no modo pessoal quanto no modo trabalho.
@@ -54,6 +59,7 @@ Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a altera
 8. Verificar que, sem busca, o calendário continua escondendo cards fora dos dias configurados.
 9. Atualizar cache-busting dos arquivos alterados e a versão do app.
 10. Informar claramente o que foi alterado e o que foi efetivamente testado.
+15. Verificar que Pendências (variáveis) aparece como modo separado, fica fora de Trabalho e Vida pessoal, e seus 23 cards aparecem em Geral e Pendências.
 14. Google: conferir que conectar dispositivo novo faz pull primeiro e só faz upload se a planilha estiver vazia; não sobrescrever dados existentes automaticamente.
 12. Testar especificamente a condição de visibilidade com busca vazia e com busca preenchida; busca vazia aplica o calendário, busca preenchida permite localizar cards fora da agenda. Não afirmar teste visual no navegador se ele não foi realizado.
 13. Verificar que os cinco cards compartilhados aparecem nos modos pessoal e trabalho e que os demais cards de trabalho não aparecem no modo pessoal.
