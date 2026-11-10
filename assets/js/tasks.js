@@ -92,6 +92,7 @@ function updateActivityCounts(){
  tasks.forEach(t=>counts.set(t.area,(counts.get(t.area)||0)+1));
  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
  set("generalCount",tasks.length);set("workCount",work);set("personalCount",tasks.length-work);
+ set("pendingAreaCount",counts.get("Pendências (variáveis)")||0);
  const area=document.getElementById("areaFilter");
  if(area)Array.from(area.options).forEach(option=>{
   if(option.value==="all")option.textContent="Todas as áreas ("+tasks.length+")";
