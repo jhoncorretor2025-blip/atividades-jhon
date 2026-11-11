@@ -4,6 +4,15 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.4
+
+### Pendências variáveis — atualização da lista
+- A categoria agora contém 26 cards.
+- Os dois primeiros cards são: “Arrumar minhas contas bancárias (Caixa e Inter)” e “Configurar os aplicativos do meu celular novo”.
+- O último card é: “Copiar fotos para o HD externo e liberar espaço no PC”, reunindo as duas ações solicitadas em uma única atividade.
+- As 23 atividades anteriores foram mantidas sem remoção ou alteração de IDs.
+- Todos os 26 cards continuam com `area:"Pendências (variáveis)"` e `period:"Variável"`; o contador do card inicial é dinâmico.
+
 ## Estado funcional conhecido — V7.3
 
 ### Cartões de seleção das quatro áreas
@@ -18,7 +27,7 @@ Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a altera
 
 ### Contador do card Pendências (variáveis)
 - O card inicial usa o identificador exclusivo `pendingAreaCount`, separado do indicador de pendências do painel diário.
-- `updateActivityCounts()` atualiza o contador com a quantidade de atividades cadastradas na área `Pendências (variáveis)`; atualmente são 23.
+- `updateActivityCounts()` atualiza o contador com a quantidade de atividades cadastradas na área `Pendências (variáveis)`; atualmente são 26.
 - O catálogo e as 23 atividades existentes foram preservados.
 
 ### Pendências variáveis
@@ -74,7 +83,7 @@ Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a altera
 8. Verificar que, sem busca, o calendário continua escondendo cards fora dos dias configurados.
 9. Atualizar cache-busting dos arquivos alterados e a versão do app.
 10. Informar claramente o que foi alterado e o que foi efetivamente testado.
-15. Verificar que Pendências (variáveis) aparece como modo separado, fica fora de Trabalho e Vida pessoal, e seus 23 cards aparecem em Geral e Pendências.
+15. Verificar que Pendências (variáveis) aparece como modo separado, fica fora de Trabalho e Vida pessoal, e seus 26 cards aparecem em Geral e Pendências.
 14. Google: conferir que conectar dispositivo novo faz pull primeiro e só faz upload se a planilha estiver vazia; não sobrescrever dados existentes automaticamente.
 12. Testar especificamente a condição de visibilidade com busca vazia e com busca preenchida; busca vazia aplica o calendário, busca preenchida permite localizar cards fora da agenda. Não afirmar teste visual no navegador se ele não foi realizado.
 13. Verificar que os cinco cards compartilhados aparecem nos modos pessoal e trabalho e que os demais cards de trabalho não aparecem no modo pessoal.
