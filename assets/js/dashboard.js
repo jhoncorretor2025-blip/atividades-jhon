@@ -25,12 +25,12 @@ function isTaskInMode(task,mode){
  return true;
 }
 function filtered(){
- const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value, quick=window.quickActivityFilter||"all";
+ const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value, difficultyFilter=$("difficultyFilter")?.value||"all", quick=window.quickActivityFilter||"all";
  const matching=tasks.filter(t=>{
   if(!isTaskInMode(t,currentMode))return false;
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
   return !isTaskArchived(t)&&!isTaskPaused(t)&&(!!q||isTaskVisibleToday(t))&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
-  (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&
+  (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&(difficultyFilter==="all"||(difficultyFilter==="unclassified"?!taskDifficulty[t.id]:taskDifficulty[t.id]===difficultyFilter))&&
   (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped))&&
   (quick==="all"||(quick==="critical"&&(t.critical||t.priority==="Crítica")&&!isDone&&!isSkipped)||(quick==="projects"&&t.area==="Projetos")||(quick==="pending"&&!isDone&&!isSkipped)||(quick==="attention"&&t.attention&&!isDone&&!isSkipped)||(quick==="done"&&isDone));
  });
@@ -211,10 +211,11 @@ function render(){
    '<span class="task-number" aria-label="Atividade '+number+' de '+list.length+'">'+number+'</span>'+
    '<div class="task-side"><div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+(isDone||isSkipped?'':'<button class="pause-btn" type="button" data-pause="'+escapeHtml(t.id)+'" aria-label="Dar uma pausa de 15 dias em '+escapeHtml(t.title)+'" title="Suspender esta atividade por 15 dias">⏸ Dar uma pausa</button>')+'</div>'+
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
-   '<div class="tags">'+tags(t)+'<span class="tag occurrence-count-tag" title="Total de conclusões registradas, incluindo repetições">🔁 '+occurrenceCount+'x</span>'+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div>'+
+   '<div class="tags">'+tags(t)+'<span class="tag occurrence-count-tag" title="Total de conclusões registradas, incluindo repetições">🔁 '+occurrenceCount+'x</span>'+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div><label class="task-effort-label" aria-label="Classificar esforço de execução">Esforço <select class="task-effort-select" data-difficulty-id="'+escapeHtml(t.id)+'" aria-label="Esforço para '+escapeHtml(t.title)+'"><option value="" '+(!taskDifficulty[t.id]?"selected":"")+'>Definir</option><option value="easy" '+(taskDifficulty[t.id]==="easy"?"selected":"")+'>🟢 Fácil / rápido</option><option value="hard" '+(taskDifficulty[t.id]==="hard"?"selected":"")+'>🔴 Difícil / demorado</option></select></label>'+
    (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<details class="task-description"><summary>Ver descrição</summary><p class="task-desc">'+escapeHtml(t.desc)+'</p></details>':'')+renderVitaminSubtasks(t,isSkipped)+'</div>'+
    '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button>'+(isDone||isSkipped?'':'<button class="defer-btn" type="button" data-defer="'+escapeHtml(t.id)+'" aria-label="Ver mais tarde: '+escapeHtml(t.title)+'">🕒 Ver mais tarde</button>')+'</div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
+ grid.querySelectorAll(".task-effort-select").forEach(el=>el.addEventListener("change",()=>{const id=el.dataset.difficultyId;if(!id)return;if(el.value)taskDifficulty[id]=el.value;else delete taskDifficulty[id];saveTaskDifficulty();showToast("Classificação de esforço salva. ✅");render();}));
  grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{
   const id=el.dataset.skip;
   let roundResult;
@@ -425,11 +426,11 @@ $("openSyncSettings").addEventListener("click",()=>{const p=$("syncSettings");p.
 $("closeSyncSettings").addEventListener("click",()=>{$("syncSettings").hidden=true;});
 $("openCentralSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=false;p.scrollIntoView({behavior:"smooth",block:"start"});});
 $("searchInput").addEventListener("input",render);
-["periodFilter","areaFilter","statusFilter"].forEach(id=>$(id).addEventListener("change",render));
+["periodFilter","areaFilter","statusFilter","difficultyFilter"].forEach(id=>$(id)?.addEventListener("change",render));
 $("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();subtaskDone={};resetTaskSequence();resetRoundStates();saveSubtaskDone();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
  const lines=["ATIVIDADES DO JHON — TRABALHO E ROTINA PESSOAL", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
- tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":skipped.has(t.id)?"[PULADA] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+(t.desc?"\n    "+t.desc:"")));
+ tasks.forEach(t=>lines.push((done.has(t.id)?"[x] ":skipped.has(t.id)?"[PULADA] ":"[ ] ")+t.title+" | "+t.period+" | "+t.area+" | "+t.priority+" | Esforço: "+(taskDifficulty[t.id]==="easy"?"Fácil / rápido":taskDifficulty[t.id]==="hard"?"Difícil / demorado":"Não classificado")+(t.desc?"\n    "+t.desc:"")));
  const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="atividades-trabalho-"+localDate()+".txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Resumo exportado.");
 });
