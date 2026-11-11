@@ -79,7 +79,6 @@ const tasks = [
 {id:"pend-videos-politica",title:"Começar a produzir vídeos sobre política",icon:"🎥",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Planejar pautas e começar a produzir vídeos sobre política."},
 {id:"pend-estudar-candidatura",title:"Estudar e me preparar para uma possível candidatura",icon:"🗳️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Estudar para uma possível candidatura a vereador e futuramente deputado estadual."},
 {id:"pend-mentalismo",title:"Estudar sobre mentalismo e coisas ocultas",icon:"🕵️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Pesquisar e estudar o tema com senso crítico."},
-{id:"pend-andar-cavalo",title:"Andar a cavalo",icon:"🐎",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Organizar uma oportunidade para andar a cavalo."},
 {id:"pend-treino-carro",title:"Treinar andar no banco de trás e no banco da frente do carro",icon:"🚗",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Praticar gradualmente e registrar sensações e evolução."},
 {id:"pend-pesquisar-ias",title:"Pesquisar novos conhecimentos e ferramentas de inteligência artificial",icon:"📖",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Descobrir ferramentas e conhecimentos novos de IA."},
 {id:"pend-coracao-papel",title:"Fazer um coração de papel",icon:"💌",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Separar materiais e fazer um coração de papel."},
