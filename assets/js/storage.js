@@ -2,6 +2,10 @@
 const $=id=>document.getElementById(id);
 const localDate=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const key=()=>"atividades-jhon:"+localDate();
+const TASK_DIFFICULTY_KEY="atividades-jhon:difficulty";
+function loadTaskDifficulty(){try{const value=JSON.parse(localStorage.getItem(TASK_DIFFICULTY_KEY)||"{}");if(!value||typeof value!=="object"||Array.isArray(value))return {};return Object.fromEntries(Object.entries(value).filter(([id,level])=>typeof id==="string"&&["easy","hard"].includes(level)))}catch{return {}}}
+let taskDifficulty=loadTaskDifficulty();
+function saveTaskDifficulty(){try{localStorage.setItem(TASK_DIFFICULTY_KEY,JSON.stringify(taskDifficulty));return true}catch{showToast("Não foi possível salvar a classificação de esforço.");return false}}
 function loadDone(){try{return JSON.parse(localStorage.getItem(key())||"[]")}catch{return[]}}
 let done=new Set(loadDone());
 const skipKey=()=>"atividades-jhon:skipped:"+localDate();
