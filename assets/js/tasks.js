@@ -61,6 +61,8 @@ const tasks = [
  {id:"filmes",label:"Filmes",link:"https://jhoncorretor2025-blip.github.io/filmes/"},
  {id:"clonar-voz",label:"Clonar voz",link:"https://jhoncorretor2025-blip.github.io/delta-prompts/canivete/clonagem-de-voz-master.html"}
 ]},
+{id:"pend-contas-bancarias",title:"Arrumar minhas contas bancárias (Caixa e Inter)",icon:"💳",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Organizar e revisar minhas contas bancárias da Caixa Econômica Federal e do Inter."},
+{id:"pend-celular-novo",title:"Configurar os aplicativos do meu celular novo",icon:"📱",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Instalar, configurar e organizar os aplicativos no celular novo."},
 {id:"pend-fotos-celular",title:"Pegar minhas fotos antigas do celular antigo",icon:"📸",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Recuperar e organizar as fotos antigas."},
 {id:"pend-google-drive",title:"Instalar e configurar o Google Drive no computador",icon:"☁️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Configurar o Google Drive no computador."},
 {id:"pend-editar-videos-chatgpt",title:"Estudar como editar vídeos utilizando o ChatGPT",icon:"🎬",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Aprender o fluxo de edição de vídeos com ChatGPT."},
@@ -83,7 +85,8 @@ const tasks = [
 {id:"pend-coracao-papel",title:"Fazer um coração de papel",icon:"💌",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Separar materiais e fazer um coração de papel."},
 {id:"pend-advogada",title:"Falar com a advogada",icon:"⚖️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Entrar em contato com a advogada."},
 {id:"pend-agua-poco",title:"Verificar a situação da água do poço e da caixa-d'água",icon:"💧",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Verificar a situação do poço e da caixa-d'água."},
-{id:"pend-coisas-diferentes",title:"Fazer coisas diferentes, aprender e experimentar",icon:"❤️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Reservar espaço para experiências novas e tirar ideias do papel."}
+{id:"pend-coisas-diferentes",title:"Fazer coisas diferentes, aprender e experimentar",icon:"❤️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Reservar espaço para experiências novas e tirar ideias do papel."},
+{id:"pend-organizar-armazenamento",title:"Copiar fotos para o HD externo e liberar espaço no PC",icon:"💽",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Fazer uma cópia de segurança das fotos no HD externo e remover arquivos ou programas desnecessários do computador para liberar espaço."}
 ];
 function updateActivityCounts(){
  const workAreas=["ADM","Comercial","Ambos"];
