@@ -388,6 +388,7 @@ function chooseMode(mode){
  $("areaFilter").value="all";
  $("periodFilter").value="all";
  $("statusFilter").value="all";
+ $("difficultyFilter").value="all";
  $("searchInput").value="";
  render();
  window.scrollTo({top:0,behavior:"smooth"});
@@ -404,6 +405,7 @@ function goHome(){
  $("periodFilter").value="all";
  $("areaFilter").value="all";
  $("statusFilter").value="all";
+ $("difficultyFilter").value="all";
  render();
  window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -417,6 +419,7 @@ $("clearFiltersBtn").addEventListener("click",()=>{
  $("periodFilter").value="all";
  $("areaFilter").value="all";
  $("statusFilter").value="all";
+ $("difficultyFilter").value="all";
  render();showToast("Filtros limpos.");
 });
 window.quickActivityFilter="all";
