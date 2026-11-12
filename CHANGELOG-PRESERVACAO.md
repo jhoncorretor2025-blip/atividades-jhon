@@ -4,6 +4,13 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.6
+
+### Filtro de esforço não pode esconder atividades ao trocar de categoria
+- Ao entrar em Trabalho, Vida pessoal, Geral ou Pendências, o filtro de esforço (difficultyFilter) volta para all.
+- O mesmo filtro é limpo ao voltar para a tela inicial e ao usar “Limpar filtros”.
+- As classificações de esforço individuais permanecem salvas; somente o filtro temporário é redefinido. Isso evita abrir Vida pessoal com “Fáceis / rápidos” selecionado e receber uma lista vazia quando os cards não têm essa classificação.
+
 ## Estado funcional conhecido — V7.4
 
 ### Pendências variáveis — atualização da lista
