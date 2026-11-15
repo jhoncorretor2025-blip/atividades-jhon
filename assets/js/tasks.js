@@ -83,6 +83,13 @@ const tasks = [
 {id:"pend-agua-poco",title:"Verificar a situação da água do poço e da caixa-d'água",icon:"💧",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Verificar a situação do poço e da caixa-d'água."},
 {id:"pend-coisas-diferentes",title:"Fazer coisas diferentes, aprender e experimentar",icon:"❤️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Reservar espaço para experiências novas e tirar ideias do papel."},
 {id:"pend-organizar-armazenamento",title:"Copiar fotos para o HD externo e liberar espaço no PC",icon:"💽",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Fazer uma cópia de segurança das fotos no HD externo e remover arquivos ou programas desnecessários do computador para liberar espaço."}
+,{id:"personal-estudar-gemini",title:"Estudar as habilidades do Gemini",icon:"✨",area:"Estudos",period:"Diário",priority:"Normal",desc:"Explorar e aprender as habilidades e recursos do Gemini."}
+,{id:"personal-funcoes-celular",title:"Estudar as funções do meu celular novo",icon:"📱",area:"Estudos",period:"Diário",priority:"Normal",desc:"Conhecer melhor os recursos, funções e configurações do celular novo."}
+,{id:"personal-dinheiro-imovel-condominio",title:"Conferir o dinheiro do imóvel/condomínio",icon:"💰",area:"Favoritos pessoais",period:"Diário",priority:"Normal",desc:"Verificar os valores e a situação do dinheiro relacionado ao imóvel/condomínio."}
+,{id:"personal-arrumar-biobel",title:"Arrumar o sistema da Biobel",icon:"🛠️",area:"IA e DroidManiacos",period:"Diário",priority:"Normal",desc:"Revisar, corrigir e organizar o sistema da Biobel."}
+,{id:"personal-notebooklm-biobel",title:"Criar um NotebookLM e vincular as planilhas da Biobel",icon:"📚",area:"IA e DroidManiacos",period:"Diário",priority:"Normal",desc:"Criar um notebook no NotebookLM e organizar nele todas as planilhas da Biobel."}
+,{id:"personal-lado-humano-mulher",title:"Estudar mais sobre o lado humano da mulher",icon:"🧠",area:"Estudos",period:"Diário",priority:"Normal",desc:"Estudar aspectos humanos, emocionais e comportamentais das mulheres."}
+,{id:"personal-canal-ia-politica",title:"Criar um canal de IA sobre política",icon:"📢",area:"IA e DroidManiacos",period:"Diário",priority:"Normal",desc:"Planejar e desenvolver um canal de conteúdo sobre política com apoio de inteligência artificial."}
 ];
 function updateActivityCounts(){
  const workAreas=["ADM","Comercial","Ambos"];
