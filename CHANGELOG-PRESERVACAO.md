@@ -4,6 +4,15 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.8
+
+### Novas atividades em Vida pessoal
+- Foram adicionados sete cards pessoais, sem alterar os IDs ou registros existentes.
+- Estudos: habilidades do Gemini; funções do celular novo; lado humano da mulher.
+- Favoritos pessoais: conferir o dinheiro do imóvel/condomínio.
+- IA e DroidManiacos: arrumar o sistema da Biobel; criar NotebookLM e organizar/vincular as planilhas da Biobel; criar canal de IA sobre política.
+- Todos usam áreas pessoais já existentes e permanecem fora de Trabalho e de Pendências (variáveis).
+
 ## Estado funcional conhecido — V7.7
 
 ### Classificação de imóveis antigos
