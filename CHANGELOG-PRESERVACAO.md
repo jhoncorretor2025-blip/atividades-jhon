@@ -4,6 +4,13 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.7
+
+### Classificação de imóveis antigos
+- A atividade `imoveis-antigos` agora pertence somente à área `Comercial`, em vez de `Ambos`.
+- Ela aparece no modo Trabalho e deixa de aparecer em Vida pessoal.
+- O ID, a frequência semanal e a atividade em si foram preservados; apenas a categoria e a descrição foram ajustadas para o contexto comercial.
+
 ## Estado funcional conhecido — V7.6
 
 ### Filtro de esforço não pode esconder atividades ao trocar de categoria
