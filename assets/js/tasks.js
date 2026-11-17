@@ -90,6 +90,11 @@ const tasks = [
 ,{id:"personal-notebooklm-biobel",title:"Criar um NotebookLM e vincular as planilhas da Biobel",icon:"📚",area:"IA e DroidManiacos",period:"Diário",priority:"Normal",desc:"Criar um notebook no NotebookLM e organizar nele todas as planilhas da Biobel."}
 ,{id:"personal-lado-humano-mulher",title:"Estudar mais sobre o lado humano da mulher",icon:"🧠",area:"Estudos",period:"Diário",priority:"Normal",desc:"Estudar aspectos humanos, emocionais e comportamentais das mulheres."}
 ,{id:"personal-canal-ia-politica",title:"Criar um canal de IA sobre política",icon:"📢",area:"IA e DroidManiacos",period:"Diário",priority:"Normal",desc:"Planejar e desenvolver um canal de conteúdo sobre política com apoio de inteligência artificial."}
+,{id:"pend-segunda-conta-celular",title:"Entrar na minha segunda conta do celular",icon:"📲",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Fazer login e acessar minha segunda conta no celular."}
+,{id:"pend-rever-hds-externos",title:"Rever meus HDs externos",icon:"💽",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Conferir o conteúdo e a organização dos meus HDs externos."}
+,{id:"pend-comunicacao-hipnose-vendas",title:"Estudar comunicação, hipnose e técnicas de influência em vendas",icon:"🗣️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Aprofundar os estudos sobre comunicação, hipnose e técnicas de influência aplicadas às vendas."}
+,{id:"pend-melhores-projetos-github",title:"Estudar os melhores projetos do GitHub",icon:"💻",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Pesquisar e analisar projetos interessantes no GitHub para aprender e encontrar ideias."}
+
 ];
 function updateActivityCounts(){
  const workAreas=["ADM","Comercial","Ambos"];
