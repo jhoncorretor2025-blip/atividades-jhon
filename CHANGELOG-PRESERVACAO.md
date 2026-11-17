@@ -4,6 +4,13 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.9
+
+### Novas pendências variáveis
+- Foram adicionados quatro cards à categoria Pendências (variáveis): acessar a segunda conta no celular; revisar HDs externos; estudar comunicação, hipnose e técnicas de influência em vendas; estudar os melhores projetos do GitHub.
+- Os quatro cards usam a área Pendências (variáveis) e frequência Variável.
+- A lista passou de 22 para 26 cards no catálogo atual. Todos os IDs e atividades que já existiam foram preservados.
+
 ## Estado funcional conhecido — V7.8
 
 ### Novas atividades em Vida pessoal
