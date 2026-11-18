@@ -4,6 +4,14 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.10
+
+### Ordem prioritária de Pendências (variáveis)
+- A categoria mantém 26 atividades.
+- Os quatro primeiros cards, nesta ordem, são: copiar fotos para o HD externo e liberar espaço no PC; entrar na segunda conta do celular; rever os HDs externos; estudar os melhores projetos do GitHub.
+- Os outros 22 cards permanecem cadastrados, com IDs e conteúdos preservados.
+- Nenhuma atividade foi duplicada ou removida.
+
 ## Estado funcional conhecido — V7.9
 
 ### Novas pendências variáveis
