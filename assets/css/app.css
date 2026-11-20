@@ -642,3 +642,8 @@ body[data-theme="dark"] .smart-home-panel{background:linear-gradient(120deg,#1b2
 #googleSyncSettings .sync-help ol{padding-left:22px;line-height:1.7}#googleSyncSettings .sync-help li{margin:6px 0}#googleSyncSettings .sync-help a{overflow-wrap:anywhere}#googleSyncSettings .sync-help p{line-height:1.6}
 
 .pending-mode{border-color:#d6b66b;background:linear-gradient(145deg,var(--card),rgba(245,190,75,.09))}.pending-mode .mode-icon{background:rgba(245,190,75,.16)}
+
+
+/* Indicador visível de tarefas realizáveis no celular */
+.mobile-task-tag{display:inline-flex;align-items:center;gap:4px;background:#e8f5ff;color:#1765b3;border:1px solid #c4e2ff;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800}
+body[data-theme="dark"] .mobile-task-tag{background:#18344b;color:#9bd5ff;border-color:#315d7c}
