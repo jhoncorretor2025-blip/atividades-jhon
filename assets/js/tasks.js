@@ -92,7 +92,8 @@ const tasks = [
  {id:"personal-notebooklm-biobel",title:"Criar um NotebookLM e vincular as planilhas da Biobel",icon:"📚",area:"IA e DroidManiacos",period:"Diário",priority:"Normal",desc:"Criar um notebook no NotebookLM e organizar nele todas as planilhas da Biobel."},
  {id:"personal-lado-humano-mulher",title:"Estudar mais sobre o lado humano da mulher",icon:"🧠",area:"Estudos",period:"Diário",priority:"Normal",desc:"Estudar aspectos humanos, emocionais e comportamentais das mulheres."},
  {id:"personal-canal-ia-politica",title:"Criar um canal de IA sobre política",icon:"📢",area:"IA e DroidManiacos",period:"Diário",priority:"Normal",desc:"Planejar e desenvolver um canal de conteúdo sobre política com apoio de inteligência artificial."},
- {id:"pend-comunicacao-hipnose-vendas",title:"Estudar comunicação, hipnose e técnicas de influência em vendas",icon:"🗣️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Aprofundar os estudos sobre comunicação, hipnose e técnicas de influência aplicadas às vendas."}
+ {id:"pend-comunicacao-hipnose-vendas",title:"Estudar comunicação, hipnose e técnicas de influência em vendas",icon:"🗣️",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Aprofundar os estudos sobre comunicação, hipnose e técnicas de influência aplicadas às vendas."},
+ {id:"pend-criar-testar-jogos",title:"Criar e testar novos jogos com prompts do AutoPrompt",icon:"🎮",area:"Pendências (variáveis)",period:"Variável",priority:"Normal",desc:"Explorar os prompts de criação de jogos que tenho no AutoPrompt, criar protótipos de novos jogos, testar ideias e melhorar os projetos. A Minhoquinha foi o primeiro; quero experimentar outros estilos e mecânicas."}
 
 ];
 function updateActivityCounts(){
