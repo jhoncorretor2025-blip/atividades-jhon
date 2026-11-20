@@ -4,6 +4,14 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.14
+
+### Filtro rápido 📱 Celular
+- Adicionado botão "📱 Celular" nos filtros rápidos.
+- O filtro mostra atividades cuja descrição tem indicação mobile (inclui "Pode fazer pelo celular" e "Parte pode ser feita pelo celular").
+- Funciona em conjunto com o modo atual, filtros de frequência/área e situação.
+- Não altera nem remove cards, dados ou registros; é apenas filtro visual.
+
 ## Estado funcional conhecido — V7.13
 
 ### Indicador mobile visível
