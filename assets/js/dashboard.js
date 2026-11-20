@@ -32,7 +32,7 @@ function filtered(){
   return !isTaskArchived(t)&&!isTaskPaused(t)&&(!!q||isTaskVisibleToday(t))&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
   (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&(difficultyFilter==="all"||(difficultyFilter==="unclassified"?!taskDifficulty[t.id]:taskDifficulty[t.id]===difficultyFilter))&&
   (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped))&&
-  (quick==="all"||(quick==="critical"&&(t.critical||t.priority==="Crítica")&&!isDone&&!isSkipped)||(quick==="projects"&&t.area==="Projetos")||(quick==="pending"&&!isDone&&!isSkipped)||(quick==="attention"&&t.attention&&!isDone&&!isSkipped)||(quick==="done"&&isDone));
+  (quick==="all"||(quick==="mobile"&&!!t.desc&&t.desc.includes("📱"))||(quick==="critical"&&(t.critical||t.priority==="Crítica")&&!isDone&&!isSkipped)||(quick==="projects"&&t.area==="Projetos")||(quick==="pending"&&!isDone&&!isSkipped)||(quick==="attention"&&t.attention&&!isDone&&!isSkipped)||(quick==="done"&&isDone));
  });
  const fixed=matching.filter(t=>Number.isInteger(t.fixedPosition)).sort((a,b)=>a.fixedPosition-b.fixedPosition);
  const ordered=matching.filter(t=>!Number.isInteger(t.fixedPosition));
