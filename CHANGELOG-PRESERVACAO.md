@@ -4,6 +4,14 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.15
+
+### Novo card: criar e testar jogos
+- Adicionado em `Pendências (variáveis)`: `pend-criar-testar-jogos`.
+- Objetivo: explorar prompts de jogos no AutoPrompt, criar protótipos, testar ideias e mecânicas.
+- Contexto: Minhoquinha é o primeiro jogo criado; a tarefa incentiva experimentar outros estilos.
+- Nenhuma atividade existente foi removida ou alterada.
+
 ## Estado funcional conhecido — V7.14
 
 ### Filtro rápido 📱 Celular
