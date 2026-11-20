@@ -4,6 +4,13 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.12
+
+### Observações de atividades que podem ser feitas pelo celular
+- Foram acrescentadas observações explícitas indicando que as atividades `postar-status-pessoal`, `rever-redes`, `videos-inscricao-youtube`, `tomar-vitaminas`, `olhar-steam`, `ver-shopee`, `rever-gpts`, `projetos-pessoais` e `personal-estudar-gemini` podem ser realizadas ou acompanhadas pelo celular.
+- Em `projetos-pessoais`, a observação diferencia acompanhamento/planejamento/checklist pelo celular de tarefas que exigem computador.
+- Apenas descrições foram alteradas; IDs, categorias, frequências, links, checklists e demais regras foram preservados.
+
 ## Estado funcional conhecido — V7.11
 
 ### Retirada de duas atividades de Vida pessoal
