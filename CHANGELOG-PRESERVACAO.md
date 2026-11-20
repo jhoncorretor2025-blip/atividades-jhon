@@ -4,6 +4,13 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.11
+
+### Retirada de duas atividades de Vida pessoal
+- `retorno-lead` e `conversas-antigas` foram movidas de `Ambos` para `Comercial`.
+- Elas permanecem em Trabalho e não aparecem mais em Vida pessoal.
+- IDs, frequência, prioridade, descrições e histórico foram preservados; somente a área foi alterada.
+
 ## Estado funcional conhecido — V7.10
 
 ### Ordem prioritária de Pendências (variáveis)
