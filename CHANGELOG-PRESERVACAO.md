@@ -4,6 +4,13 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.13
+
+### Indicador mobile visível
+- Cards com descrição contendo `📱 Pode fazer pelo celular` exibem uma etiqueta azul visível diretamente no card, sem precisar abrir "Ver descrição".
+- Cards cuja descrição contém `📱 Pelo celular` exibem etiqueta "📱 Parte pode ser feita pelo celular".
+- Alteração somente na renderização visual, CSS e cache-busting; dados e regras preservados.
+
 ## Estado funcional conhecido — V7.12
 
 ### Observações de atividades que podem ser feitas pelo celular
