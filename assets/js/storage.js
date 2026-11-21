@@ -6,6 +6,20 @@ const TASK_DIFFICULTY_KEY="atividades-jhon:difficulty";
 function loadTaskDifficulty(){try{const value=JSON.parse(localStorage.getItem(TASK_DIFFICULTY_KEY)||"{}");if(!value||typeof value!=="object"||Array.isArray(value))return {};return Object.fromEntries(Object.entries(value).filter(([id,level])=>typeof id==="string"&&["easy","hard"].includes(level)))}catch{return {}}}
 let taskDifficulty=loadTaskDifficulty();
 function saveTaskDifficulty(){try{localStorage.setItem(TASK_DIFFICULTY_KEY,JSON.stringify(taskDifficulty));return true}catch{showToast("Não foi possível salvar a classificação de esforço.");return false}}
+
+const TASK_TIME_KEY="atividades-jhon:time-estimates";
+function loadTaskTimeEstimates(){try{const value=JSON.parse(localStorage.getItem(TASK_TIME_KEY)||"{}");if(!value||typeof value!=="object"||Array.isArray(value))return {};return Object.fromEntries(Object.entries(value).filter(([id,minutes])=>typeof id==="string"&&[5,15,30,60,120].includes(Number(minutes))).map(([id,minutes])=>[id,Number(minutes)]))}catch{return {}}}
+let taskTimeEstimates=loadTaskTimeEstimates();
+function saveTaskTimeEstimates(){try{localStorage.setItem(TASK_TIME_KEY,JSON.stringify(taskTimeEstimates));return true}catch{showToast("Não foi possível salvar os tempos estimados.");return false}}
+const TASK_ENERGY_KEY="atividades-jhon:energy-levels";
+function loadTaskEnergy(){try{const value=JSON.parse(localStorage.getItem(TASK_ENERGY_KEY)||"{}");if(!value||typeof value!=="object"||Array.isArray(value))return {};return Object.fromEntries(Object.entries(value).filter(([id,level])=>typeof id==="string"&&["low","medium","high"].includes(level)))}catch{return {}}}
+let taskEnergy=loadTaskEnergy();
+function saveTaskEnergy(){try{localStorage.setItem(TASK_ENERGY_KEY,JSON.stringify(taskEnergy));return true}catch{showToast("Não foi possível salvar a classificação de energia.");return false}}
+const TASK_DEFERRAL_KEY="atividades-jhon:deferral-stats";
+function loadTaskDeferralStats(){try{const value=JSON.parse(localStorage.getItem(TASK_DEFERRAL_KEY)||"{}");if(!value||typeof value!=="object"||Array.isArray(value))return {};const result={};for(const [id,item] of Object.entries(value)){if(typeof id==="string"&&item&&Number.isInteger(item.count)&&item.count>0&&typeof item.lastAt==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(item.lastAt))result[id]={count:item.count,lastAt:item.lastAt};}return result}catch{return {}}}
+let taskDeferralStats=loadTaskDeferralStats();
+function saveTaskDeferralStats(){try{localStorage.setItem(TASK_DEFERRAL_KEY,JSON.stringify(taskDeferralStats));return true}catch{showToast("Não foi possível salvar o histórico de adiamentos.");return false}}
+function recordTaskDeferral(id){if(!tasks.some(task=>task.id===id))return false;const previous=taskDeferralStats[id];taskDeferralStats[id]={count:(Number(previous&&previous.count)||0)+1,lastAt:localDate()};return saveTaskDeferralStats()}
 function loadDone(){try{return JSON.parse(localStorage.getItem(key())||"[]")}catch{return[]}}
 let done=new Set(loadDone());
 const skipKey=()=>"atividades-jhon:skipped:"+localDate();
