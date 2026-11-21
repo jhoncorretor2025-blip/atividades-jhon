@@ -4,6 +4,13 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.17
+
+### Prioridade e contagem no modo celular
+- O modo celular exibe a quantidade de atividades compatíveis no aviso.
+- Cards com tempo estimado menor aparecem primeiro; cards sem estimativa ficam depois.
+- A ordem normal das categorias e a numeração original dos cards não são alteradas fora do modo celular.
+
 ## Estado funcional conhecido — V7.16
 
 ### Modo celular, planejamento por tempo/energia e evolução
