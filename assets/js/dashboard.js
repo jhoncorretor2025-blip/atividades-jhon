@@ -49,6 +49,7 @@ function filtered(){
   return 0;
  });
  const result=movable;
+ if(quick==="mobile")result.sort((a,b)=>(Number(taskTimeEstimates[a.id])||Infinity)-(Number(taskTimeEstimates[b.id])||Infinity));
  fixed.forEach(t=>result.splice(Math.max(0,Math.min(result.length,t.fixedPosition-1)),0,t));
  return result;
 }
@@ -208,6 +209,7 @@ function render(){
  const phoneNotice=$("mobileModeNotice");if(phoneNotice)phoneNotice.hidden=window.quickActivityFilter!=="mobile";
  renderAvoidingTasksPanel();
  const list=filtered(), grid=$("taskGrid");
+ const mobileModeCount=$("mobileModeCount");if(mobileModeCount)mobileModeCount.textContent=list.length+" "+(list.length===1?"atividade disponível":"atividades disponíveis");
  renderSmartHome();
  renderSmartHome();
  const scope=tasks.filter(t=>!isTaskArchived(t)&&!isTaskPaused(t)&&isTaskVisibleToday(t)&&isTaskInMode(t,currentMode));
