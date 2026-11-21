@@ -647,3 +647,48 @@ body[data-theme="dark"] .smart-home-panel{background:linear-gradient(120deg,#1b2
 /* Indicador visível de tarefas realizáveis no celular */
 .mobile-task-tag{display:inline-flex;align-items:center;gap:4px;background:#e8f5ff;color:#1765b3;border:1px solid #c4e2ff;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800}
 body[data-theme="dark"] .mobile-task-tag{background:#18344b;color:#9bd5ff;border-color:#315d7c}
+
+
+/* V2.8 — planejamento por tempo/energia, foco mobile e evolução pessoal */
+.task-planning-controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.task-planning-controls .task-effort-label{display:flex;align-items:center;gap:5px;font-size:10px}
+.task-planning-controls select{min-width:104px;max-width:150px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font-size:11px;font-weight:750}
+.time-estimate-tag{background:#e8f5ff;color:#1765b3;border:1px solid #c4e2ff}
+.energy-estimate-tag{background:#eef8e9;color:#397b24;border:1px solid #d1e8c6}
+.avoided-tag{background:#fff2e5;color:#a45a12;border:1px solid #f8d7b1}
+.mobile-mode-notice{margin:10px 0;padding:12px 14px;border:1px solid #b9dfff;border-radius:13px;background:#edf8ff;color:#18598c;font-size:12px;line-height:1.5}
+.avoiding-panel{margin:12px 0 16px;padding:16px;border:1px solid #f2d2b2;border-radius:18px;background:var(--card);box-shadow:var(--shadow)}
+.avoiding-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.avoiding-panel-head h3{margin:4px 0;font-size:18px;color:var(--ink)}
+.avoiding-panel-head p{margin:4px 0;color:var(--muted);font-size:12px;line-height:1.5}
+.avoiding-panel-count{padding:6px 9px;border-radius:999px;background:#fff2e5;color:#a45a12;font-size:10px;font-weight:850;white-space:nowrap}
+.avoiding-tasks-list{display:grid;gap:9px;margin-top:12px}
+.avoiding-task{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.avoiding-task strong{display:block;color:var(--ink);font-size:13px}
+.avoiding-task small,.avoiding-task p{display:block;margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.45}
+.weekly-evolution-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 20px}
+.weekly-evolution-card{min-width:0;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--bg)}
+.weekly-evolution-card span{display:block;color:var(--muted);font-size:11px;font-weight:800}
+.weekly-evolution-card strong{display:block;margin-top:7px;color:var(--ink);font-size:20px;overflow-wrap:anywhere}
+.weekly-evolution-card small{display:block;margin-top:5px;color:var(--muted);font-size:10px;line-height:1.4}
+body.phone-mode-active #taskGrid{grid-template-columns:1fr;gap:13px}
+body.phone-mode-active #taskGrid .task{padding:18px;gap:12px;border-radius:18px}
+body.phone-mode-active #taskGrid .task-actions{min-width:84px;gap:10px}
+body.phone-mode-active #taskGrid .task-actions button{min-height:42px;padding:9px 12px;font-size:12px}
+body.phone-mode-active #taskGrid .task-actions .check{width:26px;height:26px}
+body.phone-mode-active #taskGrid .task-planning-controls select{min-height:40px}
+body.phone-mode-active #taskGrid .task-title{font-size:16px}
+body[data-theme="dark"] .mobile-mode-notice{background:#17354b;color:#b8e4ff;border-color:#315d7c}
+body[data-theme="dark"] .avoiding-panel-count{background:#4a311d;color:#ffd6a7}
+body[data-theme="dark"] .time-estimate-tag{background:#18344b;color:#9bd5ff;border-color:#315d7c}
+body[data-theme="dark"] .energy-estimate-tag{background:#1d3825;color:#b9edb0;border-color:#33593a}
+body[data-theme="dark"] .avoided-tag{background:#49301c;color:#ffd09d;border-color:#684622}
+@media(max-width:760px){
+ .task-planning-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+ .task-planning-controls .task-effort-label{display:grid;gap:4px}
+ .task-planning-controls select{width:100%;max-width:none;min-height:38px}
+ .weekly-evolution-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .avoiding-task{align-items:flex-start;flex-direction:column}
+ .avoiding-task button{width:100%;min-height:42px}
+ .avoiding-panel-head{flex-direction:column}
+}
