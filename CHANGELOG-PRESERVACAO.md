@@ -4,6 +4,17 @@ Este arquivo é a referência obrigatória antes de qualquer alteração futura.
 Regra: não remover, substituir ou alterar uma funcionalidade existente sem solicitação explícita.
 Antes de publicar: ler este arquivo, conferir os arquivos atuais, fazer a alteração mínima e executar o checklist de regressão.
 
+## Estado funcional conhecido — V7.16
+
+### Modo celular, planejamento por tempo/energia e evolução
+- Modo celular: o filtro rápido ativa uma apresentação em uma coluna, com alvos de toque ampliados e aviso de modo.
+- Tempo: cada card permite salvar estimativa de 5, 15, 30, 60 ou mais de 60 minutos; o filtro mostra tarefas que cabem no tempo disponível ou sem estimativa.
+- Energia: cada card permite classificar energia baixa, média ou alta; o filtro de energia mostra tarefas classificadas até aquele nível ou sem classificação.
+- Tarefas adiadas: cada clique em "Ver mais tarde" incrementa um histórico por atividade; após dois adiamentos, aparece o painel "Tarefas que estou adiando", com sugestão de primeiro passo de 5 minutos.
+- Evolução pessoal: o relatório semanal mostra tempo estimado em conclusões, projetos/checklists distintos concluídos, área com mais avanços e área com mais adiamentos; mantém a sequência e a comparação semanal.
+- Tempo, energia e adiamentos entram no backup/restauração e na sincronização Google existente.
+- Nenhuma tarefa cadastrada foi removida ou renomeada.
+
 ## Estado funcional conhecido — V7.15
 
 ### Novo card: criar e testar jogos
