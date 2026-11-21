@@ -1,7 +1,7 @@
 /* V4.1 — backup inclui a fila de atividades adiadas e mantém compatibilidade anterior. */
 $("backupBtn").addEventListener("click",()=>{
  const analytics=window.AtividadesJhonAnalytics;
- const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V5.9",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),taskDifficulty:taskDifficulty,doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,archivedTaskIds:[...archivedTaskIds],subtaskDone:subtaskDone,roundStates:roundStates,taskSequence:taskSequence,pausedTaskUntil:pausedTaskUntil,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
+ const backup={schema:"atividades-jhon-backup",schemaVersion:1,appVersion:"V5.9",exportedAt:new Date().toISOString(),date:localDate(),tasks:tasks.map(t=>({id:t.id,title:t.title,period:t.period,area:t.area})),taskDifficulty:taskDifficulty,taskTimeEstimates:taskTimeEstimates,taskEnergy:taskEnergy,taskDeferralStats:taskDeferralStats,doneIds:[...done],skippedIds:[...skipped],deferredIds:[...deferred],taskSchedules:taskSchedules,archivedTaskIds:[...archivedTaskIds],subtaskDone:subtaskDone,roundStates:roundStates,taskSequence:taskSequence,pausedTaskUntil:pausedTaskUntil,preferences:prefs,occurrences:analytics?analytics.getLogs():[],archivedIds:analytics?analytics.getArchived():[]};
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="backup-atividades-jhon-"+localDate()+".json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast("Backup completo exportado com histórico.");
 });
@@ -20,6 +20,12 @@ $("backupFile").addEventListener("change",async e=>{
   if(!deferredIds.every(id=>typeof id==="string"&&validIds.has(id))||new Set(deferredIds).size!==deferredIds.length)throw new Error("Fila de atividades adiadas inválida");
   let nextTaskDifficulty=null;
   if(data.taskDifficulty!==undefined){if(!data.taskDifficulty||typeof data.taskDifficulty!=="object"||Array.isArray(data.taskDifficulty))throw new Error("Classificação de esforço inválida");nextTaskDifficulty={};for(const [id,level] of Object.entries(data.taskDifficulty)){if(!validIds.has(id)||!["easy","hard"].includes(level))throw new Error("Nível de esforço inválido");nextTaskDifficulty[id]=level;}}
+  let nextTaskTimeEstimates=null;
+  if(data.taskTimeEstimates!==undefined){if(!data.taskTimeEstimates||typeof data.taskTimeEstimates!=="object"||Array.isArray(data.taskTimeEstimates))throw new Error("Tempos estimados inválidos");nextTaskTimeEstimates={};for(const [id,minutes] of Object.entries(data.taskTimeEstimates)){if(!validIds.has(id)||![5,15,30,60,120].includes(Number(minutes)))throw new Error("Tempo estimado inválido");nextTaskTimeEstimates[id]=Number(minutes);}}
+  let nextTaskEnergy=null;
+  if(data.taskEnergy!==undefined){if(!data.taskEnergy||typeof data.taskEnergy!=="object"||Array.isArray(data.taskEnergy))throw new Error("Classificação de energia inválida");nextTaskEnergy={};for(const [id,level] of Object.entries(data.taskEnergy)){if(!validIds.has(id)||!["low","medium","high"].includes(level))throw new Error("Nível de energia inválido");nextTaskEnergy[id]=level;}}
+  let nextTaskDeferralStats=null;
+  if(data.taskDeferralStats!==undefined){if(!data.taskDeferralStats||typeof data.taskDeferralStats!=="object"||Array.isArray(data.taskDeferralStats))throw new Error("Histórico de adiamentos inválido");nextTaskDeferralStats={};for(const [id,item] of Object.entries(data.taskDeferralStats)){if(!validIds.has(id)||!item||!Number.isInteger(item.count)||item.count<1||typeof item.lastAt!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(item.lastAt))throw new Error("Registro de adiamento inválido");nextTaskDeferralStats[id]={count:item.count,lastAt:item.lastAt};}}
   let nextTaskSchedules=null;
   if(data.taskSchedules!==undefined){
    if(!data.taskSchedules||typeof data.taskSchedules!=="object"||Array.isArray(data.taskSchedules))throw new Error("Configurações de datas inválidas");
@@ -73,6 +79,9 @@ $("backupFile").addEventListener("change",async e=>{
   if(data.archivedIds!==undefined){if(!Array.isArray(data.archivedIds)||!data.archivedIds.every(id=>typeof id==="string"&&validIds.has(id))||new Set(data.archivedIds).size!==data.archivedIds.length)throw new Error("Arquivo de atividades inválido");nextArchived=data.archivedIds;}
   if(!confirm("Restaurar as atividades concluídas, puladas, adiadas, pausas temporárias, histórico e preferências deste backup para hoje? Isso substituirá as marcações de hoje. Não é possível desfazer automaticamente."))return;
   if(nextTaskDifficulty!==null){taskDifficulty=nextTaskDifficulty;saveTaskDifficulty();}
+  if(nextTaskTimeEstimates!==null){taskTimeEstimates=nextTaskTimeEstimates;saveTaskTimeEstimates();}
+  if(nextTaskEnergy!==null){taskEnergy=nextTaskEnergy;saveTaskEnergy();}
+  if(nextTaskDeferralStats!==null){taskDeferralStats=nextTaskDeferralStats;saveTaskDeferralStats();}
   done=new Set(data.doneIds);saveDone();skipped=new Set(skippedIds);saveSkipped();deferred=new Set(deferredIds);saveDeferred();if(nextTaskSchedules!==null){taskSchedules=nextTaskSchedules;saveTaskSchedules();}if(nextArchivedTaskIds!==null){archivedTaskIds=new Set(nextArchivedTaskIds);saveArchivedTaskIds();}if(nextSubtaskDone!==null){subtaskDone=nextSubtaskDone;saveSubtaskDone();}if(nextRoundStates!==null){roundStates=nextRoundStates;saveRoundStates();}if(nextTaskSequence!==null){taskSequence=nextTaskSequence;saveTaskSequence();}if(nextPausedTaskUntil!==null){pausedTaskUntil=nextPausedTaskUntil;savePausedTaskUntil();}
   if(data.preferences&&typeof data.preferences==="object"&&["light","dark"].includes(data.preferences.theme)){prefs={theme:data.preferences.theme};try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}}
   if(nextOccurrences!==null&&window.AtividadesJhonAnalytics)window.AtividadesJhonAnalytics.restore(nextOccurrences,nextArchived===null?undefined:nextArchived);
