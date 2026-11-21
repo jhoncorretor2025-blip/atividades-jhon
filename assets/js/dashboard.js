@@ -25,14 +25,14 @@ function isTaskInMode(task,mode){
  return true;
 }
 function filtered(){
- const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value, difficultyFilter=$("difficultyFilter")?.value||"all", quick=window.quickActivityFilter||"all";
+ const q=$("searchInput").value.trim().toLocaleLowerCase("pt-BR"), period=$("periodFilter").value, area=$("areaFilter").value,status=$("statusFilter").value, difficultyFilter=$("difficultyFilter")?.value||"all", timeFilter=$("availableTimeFilter")?.value||"all", energyFilter=$("availableEnergyFilter")?.value||"all", quick=window.quickActivityFilter||"all";
  const matching=tasks.filter(t=>{
   if(!isTaskInMode(t,currentMode))return false;
   const isDone=done.has(t.id), isSkipped=skipped.has(t.id);
   return !isTaskArchived(t)&&!isTaskPaused(t)&&(!!q||isTaskVisibleToday(t))&&(!q||(t.title+" "+t.desc+" "+t.area).toLocaleLowerCase("pt-BR").includes(q))&&
-  (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&(difficultyFilter==="all"||(difficultyFilter==="unclassified"?!taskDifficulty[t.id]:taskDifficulty[t.id]===difficultyFilter))&&
+  (period==="all"||t.period===period)&&(area==="all"||t.area===area)&&(difficultyFilter==="all"||(difficultyFilter==="unclassified"?!taskDifficulty[t.id]:taskDifficulty[t.id]===difficultyFilter))&&(timeFilter==="all"||(timeFilter==="unclassified"?!taskTimeEstimates[t.id]:timeFilter==="over60"?Number(taskTimeEstimates[t.id])>60:!!taskTimeEstimates[t.id]&&Number(taskTimeEstimates[t.id])<=Number(timeFilter)))&&(energyFilter==="all"||(energyFilter==="unclassified"?!taskEnergy[t.id]:!!taskEnergy[t.id]&&({low:1,medium:2,high:3}[taskEnergy[t.id]]||99)<=({low:1,medium:2,high:3}[energyFilter]||0)))&&
   (status==="all"&&!isSkipped&&!isDone||(status==="done"&&isDone)||(status==="pending"&&!isDone&&!isSkipped)||(status==="attention"&&t.attention&&!isDone&&!isSkipped)||(status==="skipped"&&isSkipped))&&
-  (quick==="all"||(quick==="mobile"&&!!t.desc&&t.desc.includes("📱"))||(quick==="critical"&&(t.critical||t.priority==="Crítica")&&!isDone&&!isSkipped)||(quick==="projects"&&t.area==="Projetos")||(quick==="pending"&&!isDone&&!isSkipped)||(quick==="attention"&&t.attention&&!isDone&&!isSkipped)||(quick==="done"&&isDone));
+  (quick==="all"||(quick==="mobile"&&!!t.desc&&t.desc.includes("📱"))||(quick==="avoided"&&(taskDeferralStats[t.id]?.count||0)>=2&&!isDone&&!isSkipped)||(quick==="critical"&&(t.critical||t.priority==="Crítica")&&!isDone&&!isSkipped)||(quick==="projects"&&t.area==="Projetos")||(quick==="pending"&&!isDone&&!isSkipped)||(quick==="attention"&&t.attention&&!isDone&&!isSkipped)||(quick==="done"&&isDone));
  });
  const fixed=matching.filter(t=>Number.isInteger(t.fixedPosition)).sort((a,b)=>a.fixedPosition-b.fixedPosition);
  const ordered=matching.filter(t=>!Number.isInteger(t.fixedPosition));
@@ -89,6 +89,33 @@ function renderWeeklyReport(){
  const diff=rate-prevRate;
  $("weekComparison").textContent=(diff>0?"▲ +":diff<0?"▼ ":"=")+diff+" pontos percentuais · semana anterior: "+prevRate+"%";
  $("weekComparison").className=diff>0?"positive":diff<0?"negative":"";
+ const logs=window.AtividadesJhonAnalytics&&typeof window.AtividadesJhonAnalytics.getLogs==="function"?window.AtividadesJhonAnalytics.getLogs():[];
+ const weeklyLogs=logs.filter(row=>ids.has(row.id)&&row.date>=days[0].date&&row.date<=days[6].date);
+ let estimatedMinutes=0,estimatedEvents=0,withoutEstimate=0;
+ const completionsByArea=new Map(),deferralsByArea=new Map(),projectIds=new Set();
+ const taskById=new Map(tasks.map(task=>[task.id,task]));
+ const progressArea=task=>["ADM","Comercial","Ambos"].includes(task.area)?"Trabalho":task.area==="Pendências (variáveis)"?"Pendências variáveis":"Vida pessoal";
+ weeklyLogs.forEach(row=>{
+  const task=taskById.get(row.id);if(!task)return;
+  if(taskTimeEstimates[row.id]){estimatedMinutes+=Number(taskTimeEstimates[row.id]);estimatedEvents++;}else withoutEstimate++;
+  const area=progressArea(task);completionsByArea.set(area,(completionsByArea.get(area)||0)+1);
+  if(task.area==="Projetos"||task.id==="projetos-pessoais"||(Array.isArray(task.subtasks)&&task.subtasks.length))projectIds.add(task.id);
+ });
+ tasks.forEach(task=>{
+  const count=taskDeferralStats[task.id]?.count||0;
+  if(count>=2&&!isTaskArchived(task)&&!isTaskPaused(task)){const area=progressArea(task);deferralsByArea.set(area,(deferralsByArea.get(area)||0)+count);}
+ });
+ const bestArea=[...completionsByArea.entries()].sort((a,b)=>b[1]-a[1])[0];
+ const stalledArea=[...deferralsByArea.entries()].sort((a,b)=>b[1]-a[1])[0];
+ const timeText=estimatedMinutes>=60?Math.floor(estimatedMinutes/60)+"h "+(estimatedMinutes%60?estimatedMinutes%60+" min":""):estimatedMinutes+" min";
+ $("weekEstimatedTime").textContent=estimatedEvents?timeText:"Sem estimativas";
+ $("weekTimeNote").textContent=estimatedEvents+" conclusão(ões) com tempo definido · "+withoutEstimate+" sem estimativa";
+ $("weekProjectsDone").textContent=String(projectIds.size);
+ $("weekProjectsNote").textContent=projectIds.size+" projeto(s)/checklist(s) distintos concluídos";
+ $("weekTopArea").textContent=bestArea?bestArea[0]:"Sem dados";
+ $("weekTopAreaNote").textContent=bestArea?bestArea[1]+" conclusão(ões) nesta semana":"Ainda não há conclusões nesta semana";
+ $("weekStalledArea").textContent=stalledArea?stalledArea[0]:"Nenhuma";
+ $("weekStalledAreaNote").textContent=stalledArea?stalledArea[1]+" adiamento(s) repetidos registrados":"Nenhuma área com adiamentos repetidos";
  const max=Math.max(1,...days.map(d=>d.completed));
  $("weeklyDays").innerHTML=days.map(d=>'<div class="weekly-day"><div class="weekly-day-label">'+d.label+'</div><div class="weekly-bar-track"><div class="weekly-bar" style="width:'+Math.round(d.completed/max*100)+'%"></div></div><strong>'+d.completed+'</strong><span>'+d.skipped+' puladas · '+d.rate+'%</span></div>').join("");
 }
@@ -161,7 +188,25 @@ function renderSmartHome(){
  set("smartHomeMessage",next?"Sugestão baseada em prioridade e atenção.":"Você concluiu todas as atividades disponíveis.");
  const btn=$("smartStartBtn");if(btn){btn.disabled=!next;btn.dataset.next=next?next.id:"";}
 }
+function renderPlanningControls(task){
+ return '<div class="task-planning-controls">'+
+  '<label class="task-effort-label">⏱ Tempo <select class="task-duration-select" data-duration-id="'+escapeHtml(task.id)+'" aria-label="Tempo estimado para '+escapeHtml(task.title)+'"><option value="" '+(!taskTimeEstimates[task.id]?"selected":"")+'>Definir</option><option value="5" '+(taskTimeEstimates[task.id]===5?"selected":"")+'>5 min</option><option value="15" '+(taskTimeEstimates[task.id]===15?"selected":"")+'>15 min</option><option value="30" '+(taskTimeEstimates[task.id]===30?"selected":"")+'>30 min</option><option value="60" '+(taskTimeEstimates[task.id]===60?"selected":"")+'>1 hora</option><option value="120" '+(taskTimeEstimates[task.id]===120?"selected":"")+'>Mais de 1 hora</option></select></label>'+renderPlanningControls(t)+
+  '<label class="task-effort-label">🔋 Energia <select class="task-energy-select" data-energy-id="'+escapeHtml(task.id)+'" aria-label="Energia necessária para '+escapeHtml(task.title)+'"><option value="" '+(!taskEnergy[task.id]?"selected":"")+'>Definir</option><option value="low" '+(taskEnergy[task.id]==="low"?"selected":"")+'>🪫 Baixa</option><option value="medium" '+(taskEnergy[task.id]==="medium"?"selected":"")+'>⚡ Média</option><option value="high" '+(taskEnergy[task.id]==="high"?"selected":"")+'>🚀 Alta</option></select></label>'+
+ '</div>';
+}
+function renderAvoidingTasksPanel(){
+ const panel=$("avoidingTasksPanel"),list=$("avoidingTasksList");
+ if(!panel||!list)return;
+ const candidates=tasks.filter(t=>isTaskInMode(t,currentMode)&&!isTaskArchived(t)&&!isTaskPaused(t)&&!done.has(t.id)&&!skipped.has(t.id)&&(taskDeferralStats[t.id]?.count||0)>=2)
+  .sort((a,b)=>(taskDeferralStats[b.id]?.count||0)-(taskDeferralStats[a.id]?.count||0))
+  .slice(0,4);
+ panel.hidden=!candidates.length;
+ list.innerHTML=candidates.map(t=>'<article class="avoiding-task"><div><strong>'+escapeHtml(t.title)+'</strong><small>Adiada '+taskDeferralStats[t.id].count+' vezes · último adiamento: '+new Date(taskDeferralStats[t.id].lastAt+"T12:00:00").toLocaleDateString("pt-BR")+'</small><p>Primeiro passo: reserve só 5 minutos para abrir a tarefa e avançar uma pequena etapa.</p></div><button class="toolbar-action primary start-five-btn" type="button" data-start-five="'+escapeHtml(t.id)+'">Começar por 5 min</button></article>').join("");
+}
 function render(){
+ document.body.classList.toggle("phone-mode-active",window.quickActivityFilter==="mobile");
+ const phoneNotice=$("mobileModeNotice");if(phoneNotice)phoneNotice.hidden=window.quickActivityFilter!=="mobile";
+ renderAvoidingTasksPanel();
  const list=filtered(), grid=$("taskGrid");
  renderSmartHome();
  renderSmartHome();
@@ -211,11 +256,15 @@ function render(){
    '<span class="task-number" aria-label="Atividade '+number+' de '+list.length+'">'+number+'</span>'+
    '<div class="task-side"><div class="task-icon" style="'+iconStyle(t)+'">'+escapeHtml(t.icon)+'</div>'+(isDone||isSkipped?'':'<button class="pause-btn" type="button" data-pause="'+escapeHtml(t.id)+'" aria-label="Dar uma pausa de 15 dias em '+escapeHtml(t.title)+'" title="Suspender esta atividade por 15 dias">⏸ Dar uma pausa</button>')+'</div>'+
    '<div class="task-main"><div class="title-line"><h4 class="task-title">'+escapeHtml(t.title)+'</h4></div>'+
-   '<div class="tags">'+tags(t)+'<span class="tag occurrence-count-tag" title="Total de conclusões registradas, incluindo repetições">🔁 '+occurrenceCount+'x</span>'+(t.desc&&t.desc.includes('📱 Pode fazer pelo celular')?'<span class="tag mobile-task-tag">📱 Pode fazer pelo celular</span>':(t.desc&&t.desc.includes('📱 Pelo celular')?'<span class="tag mobile-task-tag">📱 Parte pode ser feita pelo celular</span>':''))+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div><label class="task-effort-label" aria-label="Classificar esforço de execução">Esforço <select class="task-effort-select" data-difficulty-id="'+escapeHtml(t.id)+'" aria-label="Esforço para '+escapeHtml(t.title)+'"><option value="" '+(!taskDifficulty[t.id]?"selected":"")+'>Definir</option><option value="easy" '+(taskDifficulty[t.id]==="easy"?"selected":"")+'>🟢 Fácil / rápido</option><option value="hard" '+(taskDifficulty[t.id]==="hard"?"selected":"")+'>🔴 Difícil / demorado</option></select></label>'+
+   '<div class="tags">'+tags(t)+'<span class="tag occurrence-count-tag" title="Total de conclusões registradas, incluindo repetições">🔁 '+occurrenceCount+'x</span>'+(t.desc&&t.desc.includes('📱 Pode fazer pelo celular')?'<span class="tag mobile-task-tag">📱 Pode fazer pelo celular</span>':(t.desc&&t.desc.includes('📱 Pelo celular')?'<span class="tag mobile-task-tag">📱 Parte pode ser feita pelo celular</span>':''))+(taskTimeEstimates[t.id]?'<span class="tag time-estimate-tag">⏱ '+(Number(taskTimeEstimates[t.id])>60?'60+ min':taskTimeEstimates[t.id]+' min')+'</span>':'')+(taskEnergy[t.id]?'<span class="tag energy-estimate-tag">🔋 '+({low:'Energia baixa',medium:'Energia média',high:'Energia alta'}[taskEnergy[t.id]])+'</span>':'')+((taskDeferralStats[t.id]?.count||0)>=2?'<span class="tag avoided-tag">🧱 Adiada '+taskDeferralStats[t.id].count+'x</span>':'')+(isSkipped?'<span class="tag skipped-tag">⏭ PULADA</span>':'')+(isDeferred?'<span class="tag deferred-tag">🕒 MAIS TARDE</span>':'')+'</div><div class="state"><span class="dot"></span>'+escapeHtml(t.priority)+'</div><label class="task-effort-label" aria-label="Classificar esforço de execução">Esforço <select class="task-effort-select" data-difficulty-id="'+escapeHtml(t.id)+'" aria-label="Esforço para '+escapeHtml(t.title)+'"><option value="" '+(!taskDifficulty[t.id]?"selected":"")+'>Definir</option><option value="easy" '+(taskDifficulty[t.id]==="easy"?"selected":"")+'>🟢 Fácil / rápido</option><option value="hard" '+(taskDifficulty[t.id]==="hard"?"selected":"")+'>🔴 Difícil / demorado</option></select></label>'+
    (t.link?'<a class="task-link" href="'+escapeHtml(t.link)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(t.linkLabel||"↗ Abrir link")+"</a>": "")+(t.desc?'<details class="task-description"><summary>Ver descrição</summary><p class="task-desc">'+escapeHtml(t.desc)+'</p></details>':'')+renderVitaminSubtasks(t,isSkipped)+'</div>'+
    '<div class="task-actions"><input class="check" type="checkbox" aria-label="Marcar '+escapeHtml(t.title)+' como concluída" data-id="'+escapeHtml(t.id)+'" '+(isDone?'checked':'')+' '+(isSkipped?'disabled':'')+'><button class="skip-btn" type="button" data-skip="'+escapeHtml(t.id)+'" aria-label="'+(isSkipped?'Retomar':'Pular')+' '+escapeHtml(t.title)+'">'+(isSkipped?'↶ Retomar':'⏭ Pular')+'</button>'+(isDone||isSkipped?'':'<button class="defer-btn" type="button" data-defer="'+escapeHtml(t.id)+'" aria-label="Ver mais tarde: '+escapeHtml(t.title)+'">🕒 Ver mais tarde</button>')+'</div></article>';
  }).join(""):'<div class="empty">Nenhuma atividade encontrada com esses filtros. Experimente alterar a busca.</div>';
  grid.querySelectorAll(".task-effort-select").forEach(el=>el.addEventListener("change",()=>{const id=el.dataset.difficultyId;if(!id)return;if(el.value)taskDifficulty[id]=el.value;else delete taskDifficulty[id];saveTaskDifficulty();showToast("Classificação de esforço salva. ✅");render();}));
+ grid.querySelectorAll(".task-duration-select").forEach(el=>el.addEventListener("change",()=>{const id=el.dataset.durationId;if(!id)return;if(el.value)taskTimeEstimates[id]=Number(el.value);else delete taskTimeEstimates[id];saveTaskTimeEstimates();showToast("Tempo estimado salvo. ⏱️");render();}));
+ grid.querySelectorAll(".task-energy-select").forEach(el=>el.addEventListener("change",()=>{const id=el.dataset.energyId;if(!id)return;if(el.value)taskEnergy[id]=el.value;else delete taskEnergy[id];saveTaskEnergy();showToast("Energia necessária salva. 🔋");render();}));
+ grid.querySelectorAll(".start-five-btn").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.startFive,task=tasks.find(item=>item.id===id);if(!task)return;window.quickActivityFilter="all";document.querySelectorAll("[data-quick]").forEach(item=>{item.classList.toggle("active",item.dataset.quick==="all");item.setAttribute("aria-pressed",String(item.dataset.quick==="all"));});$("searchInput").value=task.title;$("availableTimeFilter").value="all";$("availableEnergyFilter").value="all";render();$("taskGrid").scrollIntoView({behavior:"smooth",block:"start"});showToast("Comece com apenas 5 minutos. O primeiro passo já conta!");}));
+
  grid.querySelectorAll(".skip-btn").forEach(el=>el.addEventListener("click",()=>{
   const id=el.dataset.skip;
   let roundResult;
@@ -241,7 +290,7 @@ function render(){
  }));
  grid.querySelectorAll(".defer-btn").forEach(el=>el.addEventListener("click",()=>{
   const id=el.dataset.defer;
-  deferred.delete(id);deferred.add(id);saveDeferred();
+  deferred.delete(id);deferred.add(id);saveDeferred();recordTaskDeferral(id);
   const roundResult=registerRoundAction(id,"defer",currentMode);
   render();
   showToast(roundResult.completed?"Volta "+roundResult.state.completedLaps+" concluída! Nova volta iniciada.":"Atividade enviada para o final das pendências. 🕒");
@@ -389,6 +438,8 @@ function chooseMode(mode){
  $("periodFilter").value="all";
  $("statusFilter").value="all";
  $("difficultyFilter").value="all";
+ $("availableTimeFilter").value="all";
+ $("availableEnergyFilter").value="all";
  $("searchInput").value="";
  render();
  window.scrollTo({top:0,behavior:"smooth"});
@@ -406,6 +457,8 @@ function goHome(){
  $("areaFilter").value="all";
  $("statusFilter").value="all";
  $("difficultyFilter").value="all";
+ $("availableTimeFilter").value="all";
+ $("availableEnergyFilter").value="all";
  render();
  window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -420,6 +473,8 @@ $("clearFiltersBtn").addEventListener("click",()=>{
  $("areaFilter").value="all";
  $("statusFilter").value="all";
  $("difficultyFilter").value="all";
+ $("availableTimeFilter").value="all";
+ $("availableEnergyFilter").value="all";
  render();showToast("Filtros limpos.");
 });
 window.quickActivityFilter="all";
@@ -429,7 +484,7 @@ $("openSyncSettings").addEventListener("click",()=>{const p=$("syncSettings");p.
 $("closeSyncSettings").addEventListener("click",()=>{$("syncSettings").hidden=true;});
 $("openCentralSettings").addEventListener("click",()=>{const p=$("syncSettings");p.hidden=false;p.scrollIntoView({behavior:"smooth",block:"start"});});
 $("searchInput").addEventListener("input",render);
-["periodFilter","areaFilter","statusFilter","difficultyFilter"].forEach(id=>$(id)?.addEventListener("change",render));
+["periodFilter","areaFilter","statusFilter","difficultyFilter","availableTimeFilter","availableEnergyFilter"].forEach(id=>$(id)?.addEventListener("change",render));
 $("resetBtn").addEventListener("click",()=>{if(!confirm("Desmarcar todas as atividades de hoje e limpar a fila de adiadas?"))return;done.clear();skipped.clear();deferred.clear();subtaskDone={};resetTaskSequence();resetRoundStates();saveSubtaskDone();saveDone();saveSkipped();saveDeferred();render();showToast("Atividades do dia reiniciadas.")});
 $("exportBtn").addEventListener("click",()=>{
  const lines=["ATIVIDADES DO JHON — TRABALHO E ROTINA PESSOAL", "Data: "+new Date().toLocaleDateString("pt-BR"),""];
